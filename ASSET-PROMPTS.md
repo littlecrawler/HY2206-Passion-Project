@@ -18,4 +18,4 @@ Use case: historical-scene. Edit the supplied educational game illustration into
 
 ## Schematic diagrams added on 2 November 2026
 
-The coin mark, early-money shapes, coin-inspection diagram, and copper-and-silver drawing are original SVG illustrations created in code with AI assistance. They were not generated with an image model and do not reproduce museum images or measured historical specimens. The coin diagram uses romanised lettering for legibility; it is not a facsimile of an inscription. All object diagrams are labelled schematic in the exhibit.
+The coin mark, early-money shapes, coin-inspection diagram, and copper-and-silver drawing are original SVG illustrations created in code with AI assistance. They were not generated with an image model and do not reproduce museum images or measured historical specimens. The coin diagram uses English reading labels with traditional Chinese annotations for legibility; it is not a facsimile of an inscription. All object diagrams are labelled schematic in the exhibit.

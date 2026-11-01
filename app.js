@@ -7,8 +7,8 @@
       description: 'Choose a payment from your satchel and offer it to the trader.',
       shortTitle: 'The journey',
       choices: [
-        { icon: 'coins', title: 'Offer iron cash', description: 'Take a string of coins from your satchel.', heading: 'Familiar does not mean effortless.', text: 'You keep the payment in metal form. That makes transport and handling part of the transaction. You would still need to know whether these coins are accepted where you intend to trade.', question: 'What would make the additional burden worth accepting?' },
-        { icon: 'note', title: 'Offer a paper note', description: 'Bring out a privately issued jiaozi note.', heading: 'A lighter object brings another question.', text: 'Paper reduces the physical burden. But you need to establish who issued the note, what it promises, and whether the person you are paying will accept it.', question: 'What information would you want before exchanging your coins?' }
+        { icon: 'coins', title: 'Offer iron cash（鐵錢）', description: 'Take a string of coins from your satchel.', heading: 'Familiar does not mean effortless.', text: 'You keep the payment in metal form. That makes transport and handling part of the transaction. You would still need to know whether these coins are accepted where you intend to trade.', question: 'What would make the additional burden worth accepting?' },
+        { icon: 'note', title: 'Offer a paper note（交子）', description: 'Bring out a privately issued jiaozi note.', heading: 'A lighter object brings another question.', text: 'Paper reduces the physical burden. But you need to establish who issued the note, what it promises, and whether the person you are paying will accept it.', question: 'What information would you want before exchanging your coins?' }
       ]
     },
     {
@@ -179,7 +179,15 @@
       icon.innerHTML = itemIcon(choice.icon);
       const text = document.createElement('span');
       const title = document.createElement('b');
-      title.textContent = choice.title;
+      const labelParts = choice.title.match(/^(.*?)(（[^）]+）)$/);
+      title.textContent = labelParts ? labelParts[1] : choice.title;
+      if (labelParts) {
+        const translation = document.createElement('span');
+        translation.className = 'choice-translation';
+        translation.lang = 'zh-Hant';
+        translation.textContent = labelParts[2];
+        title.append(translation);
+      }
       const description = document.createElement('small');
       description.textContent = choice.description;
       text.append(title, description);

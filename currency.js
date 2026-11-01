@@ -12,7 +12,7 @@
     inscription: {
       kicker: 'READ THE NAME, THEN CHECK THE CONTEXT',
       title: 'An inscription is a historical clue',
-      text: 'Banliang means “half-liang” （半兩）. Yet the Han account below describes four-zhu coins retaining that inscription. A name can continue while the monetary rule behind it changes.',
+      text: 'Banliang means “half-liang” （半兩）. Yet the Han account below describes four-zhu coins （四銖錢） retaining that inscription. A name can continue while the monetary rule behind it changes.',
       question: 'Read the short passage below. Would the inscription alone prove a coin’s actual weight?',
       source: 11
     },
@@ -39,15 +39,15 @@
   const transactions = {
     market: {
       money: 'copper', kicker: 'EVERYDAY EXCHANGE', title: 'Small purchases, copper cash',
-      text: 'Copper coins were commonly used for everyday transactions. The useful question is which denominations and forms a local market would accept.'
+      text: 'Copper coins （銅錢） were commonly used for everyday transactions. The useful question is which denominations and forms a local market would accept.'
     },
     trade: {
       money: 'silver', kicker: 'LARGER PAYMENTS', title: 'Silver enters the transaction',
-      text: 'Silver was important for larger transactions. Copper still circulated alongside it, making conversion between monetary forms part of commercial life.'
+      text: 'Silver （白銀） was important for larger transactions. Copper still circulated alongside it, making conversion between monetary forms part of commercial life.'
     },
     tax: {
       money: 'silver', kicker: 'OBLIGATIONS TO THE STATE', title: 'A payment shaped by fiscal needs',
-      text: 'Silver was important in tax payments, while some obligations could involve copper cash. What a household earned and what it owed might therefore require conversion. The exact practice depended on place, period, and levy.'
+      text: 'Silver （白銀） was important in tax payments, while some obligations could involve copper cash （銅錢）. What a household earned and what it owed might therefore require conversion. The exact practice depended on place, period, and levy.'
     }
   };
 

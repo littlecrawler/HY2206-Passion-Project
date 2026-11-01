@@ -22,6 +22,7 @@ The following are English translations or concise summaries of the student's req
 10. Add more support and visible presentation from literary and historical sources.
 11. Make the development of money the main theme, rather than limiting the project to Song jiaozi.
 12. Revise the website around the agreed broader theme, then push it to the chosen GitHub repository.
+13. Add traditional Chinese annotations to the ancient currency names while keeping English as the main language.
 
 ## Research discovery and verification
 

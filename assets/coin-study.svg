@@ -7,7 +7,8 @@
   <circle cx="260" cy="203" r="129" stroke="#435c46" stroke-width="2"/>
   <path d="M220 163H300V243H220Z" stroke="#b6b184" stroke-width="3"/>
   <path d="M227 170H293V236H227Z" fill="#e7e4d0" stroke="#4b6047" stroke-width="3"/>
-  <g fill="#ddd5a7" font-family="Georgia,serif" font-size="19" letter-spacing="1" text-anchor="middle"><text x="170" y="211">BAN</text><text x="349" y="211">LIANG</text></g>
+  <g fill="#ddd5a7" font-family="Georgia,serif" font-size="19" letter-spacing="1" text-anchor="middle"><text x="170" y="201">LIANG</text><text x="349" y="201">BAN</text></g>
+  <g fill="#ddd5a7" font-family="Microsoft JhengHei,Noto Serif TC,serif" font-size="22" text-anchor="middle" lang="zh-Hant"><text x="170" y="232">（兩）</text><text x="349" y="232">（半）</text></g>
   <path d="M241 94C250 88 275 92 285 98M143 265C151 279 158 285 170 292M323 305L341 293" stroke="#b7ad7e" stroke-opacity=".4" stroke-width="4" stroke-linecap="round"/>
   <path d="M71 88H111L143 111M389 204H442M261 242V288L317 367" stroke="#798669"/>
   <g fill="#52634e" font-family="Arial,sans-serif" font-size="9" letter-spacing="1"><text x="48" y="75">ROUND FACE</text><text x="414" y="225">NAME</text><text x="284" y="389">SQUARE OPENING</text></g>
