@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 300" fill="none">
+  <defs><linearGradient id="metal" x1="355" y1="90" x2="460" y2="240" gradientUnits="userSpaceOnUse"><stop stop-color="#eef0e4"/><stop offset=".5" stop-color="#aab5a7"/><stop offset="1" stop-color="#758878"/></linearGradient><radialGradient id="cash"><stop stop-color="#a99760"/><stop offset="1" stop-color="#626c4b"/></radialGradient><g id="coin"><circle r="48" fill="#4c5b40"/><circle cy="-4" r="48" fill="url(#cash)" stroke="#aa9a64" stroke-width="2"/><circle cy="-4" r="40" stroke="#c3b179" stroke-width="2"/><path d="M-11-15H11V7H-11Z" fill="#ebe5d1" stroke="#69734e" stroke-width="4"/></g></defs>
+  <ellipse cx="162" cy="235" rx="113" ry="13" fill="#324333" opacity=".1"/><ellipse cx="446" cy="236" rx="115" ry="13" fill="#324333" opacity=".1"/>
+  <use href="#coin" transform="translate(120 188) rotate(-19)"/><use href="#coin" transform="translate(181 154) rotate(8)"/><use href="#coin" transform="translate(197 209) rotate(14)"/>
+  <path d="M92 173C69 131 83 95 133 94C184 94 201 116 186 148" stroke="#8b7754" stroke-width="5"/>
+  <path d="M333 111C354 152 384 163 443 162C502 162 535 147 558 112L531 199C504 237 383 241 358 204Z" fill="url(#metal)" stroke="#778c7a" stroke-width="2"/>
+  <path d="M333 111C357 100 369 115 388 132C413 146 477 146 502 132C521 114 536 98 558 112C539 161 355 173 333 111Z" fill="#dce1d2" stroke="#8a9b87" stroke-width="2"/>
+  <path d="M388 132C408 115 479 113 502 132C489 154 404 154 388 132Z" fill="#b7c4b1" stroke="#91a28e"/>
+  <path d="M374 177C400 192 478 195 514 176" stroke="#e0e6d8" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+  <path d="M40 264H580" stroke="#c7cbb7"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 420" fill="none">
+  <defs><radialGradient id="coin"><stop stop-color="#929767"/><stop offset=".7" stop-color="#758261"/><stop offset="1" stop-color="#445b47"/></radialGradient></defs>
+  <circle cx="260" cy="203" r="177" stroke="#bac1a6" stroke-dasharray="3 8"/>
+  <circle cx="260" cy="203" r="148" fill="#374d3d" transform="translate(3 7)"/>
+  <path d="M260 55A148 148 0 1 1 260 351A148 148 0 1 1 260 55ZM227 170V236H293V170Z" fill="url(#coin)" fill-rule="evenodd" stroke="#9d9c70" stroke-width="3"/>
+  <circle cx="260" cy="203" r="137" stroke="#c3bc8c" stroke-opacity=".65" stroke-width="3"/>
+  <circle cx="260" cy="203" r="129" stroke="#435c46" stroke-width="2"/>
+  <path d="M220 163H300V243H220Z" stroke="#b6b184" stroke-width="3"/>
+  <path d="M227 170H293V236H227Z" fill="#e7e4d0" stroke="#4b6047" stroke-width="3"/>
+  <g fill="#ddd5a7" font-family="Georgia,serif" font-size="19" letter-spacing="1" text-anchor="middle"><text x="170" y="211">BAN</text><text x="349" y="211">LIANG</text></g>
+  <path d="M241 94C250 88 275 92 285 98M143 265C151 279 158 285 170 292M323 305L341 293" stroke="#b7ad7e" stroke-opacity=".4" stroke-width="4" stroke-linecap="round"/>
+  <path d="M71 88H111L143 111M389 204H442M261 242V288L317 367" stroke="#798669"/>
+  <g fill="#52634e" font-family="Arial,sans-serif" font-size="9" letter-spacing="1"><text x="48" y="75">ROUND FACE</text><text x="414" y="225">NAME</text><text x="284" y="389">SQUARE OPENING</text></g>
+  <circle cx="143" cy="111" r="3" fill="#8a5436"/><circle cx="389" cy="204" r="3" fill="#8a5436"/><circle cx="261" cy="242" r="3" fill="#8a5436"/>
+</svg>

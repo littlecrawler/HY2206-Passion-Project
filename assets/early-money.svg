@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 280" fill="none">
+  <defs><linearGradient id="shell" x1="60" y1="50" x2="170" y2="200" gradientUnits="userSpaceOnUse"><stop stop-color="#eee5c7"/><stop offset="1" stop-color="#afa286"/></linearGradient><linearGradient id="bronze" x1="290" y1="35" x2="440" y2="215" gradientUnits="userSpaceOnUse"><stop stop-color="#a29c65"/><stop offset=".55" stop-color="#687c60"/><stop offset="1" stop-color="#3e5747"/></linearGradient></defs>
+  <path d="M20 218H640" stroke="#c9ccb8"/>
+  <ellipse cx="113" cy="207" rx="58" ry="7" fill="#283b2d" opacity=".09"/>
+  <path d="M112 47C72 44 52 77 53 121C54 165 73 197 107 200C145 203 171 165 170 123C169 83 148 49 112 47Z" fill="url(#shell)" stroke="#9f9475" stroke-width="2"/>
+  <path d="M111 63C94 93 102 113 100 135C99 152 103 174 112 184C124 159 119 141 123 120C127 100 123 79 111 63Z" fill="#6c6b53"/>
+  <path d="M88 81L105 88M86 99L104 104M85 119L101 121M85 138L101 137M87 157L104 153M95 174L108 167M122 85L139 80M122 103L144 98M122 122L144 119M119 140L141 142M118 157L136 162M114 173L126 182" stroke="#ded4b8" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="324" cy="207" rx="62" ry="7" fill="#283b2d" opacity=".09"/>
+  <path d="M312 46H336L339 90L376 109L371 197H342L324 174L305 197H276L271 109L309 90Z" fill="url(#bronze)" stroke="#53634c" stroke-width="2"/>
+  <path d="M317 54H330V91H317ZM284 117L313 105M335 105L365 117M285 129V184M363 129V184M320 118V153" stroke="#c0b98a" stroke-width="2" opacity=".75"/>
+  <ellipse cx="535" cy="207" rx="66" ry="7" fill="#283b2d" opacity=".09"/>
+  <path d="M536 43C523 49 506 70 497 91L505 143L526 173V182A16 16 0 1 0 548 182L544 168L533 135L535 95L550 58Z" fill="url(#bronze)" stroke="#53634c" stroke-width="2"/>
+  <circle cx="537" cy="194" r="8" fill="#f5f2e9" stroke="#a5aa80" stroke-width="2"/>
+  <path d="M536 57L511 94L517 137L535 177" stroke="#b7b386" stroke-width="2"/>
+  <g fill="#56634f" font-family="Georgia,serif" font-size="19" text-anchor="middle"><text x="112" y="250">Cowrie shell</text><text x="324" y="250">Spade money</text><text x="537" y="250">Knife money</text></g>
+</svg>
