@@ -2,14 +2,16 @@
 
 An interactive history exhibit created for NUS HY2206. It asks why monetary forms changed, what problems they addressed, and why different forms continued to coexist.
 
-This is a consultation demo, updated 2 November 2026, not the final assessed submission.
+Revised 21 November 2026 following professor feedback. The intended audience is university students, especially non-history majors who use digital payments but are new to imperial Chinese history. The structure follows **audience → message → form**.
+
+The new opening explains why the subject matters and what visitors should learn. Two course-linked analyses develop state standardisation and institutional dependence. A personal journey and reflection connect the project to documented decisions and course experiences. The visual treatment references the student's HAWKY GPT Sites portfolio; the existing GitHub website remains the project home.
 
 ## The historical route
 
 1. **Short prologue:** shells and shaped money before imperial unification.
 2. **Qin and Han:** inspect a coin's form, inscription, and issuing rules, then read a passage from the *Records of the Grand Historian*.
 3. **Song Sichuan:** play a fictional merchant's three encounters about iron cash, private jiaozi, and institutional support. This is the deepest interactive case.
-4. **Ming and Qing:** examine a linked Ming museum object and explore broad Qing patterns of copper and silver use.
+4. **Ming and Qing:** examine a photographed Ming museum object and explore broad Qing patterns of copper and silver use.
 5. **Modern epilogue:** distinguish money from a payment service through a conceptual PayNow example.
 
 The route selects turning points rather than covering every dynasty. It does not present a simple progression in which each form replaces the last.
@@ -24,30 +26,31 @@ node preview.mjs
 
 Open the address shown, normally `http://127.0.0.1:8768/`. To use a different port, run `node preview.mjs 8769`.
 
-Open `consultation.html` from the website for the proposed scope, one-minute English pitch, demonstration route, recording plan, and questions for the professor. The brief includes a print button.
+Open `consultation.html` for the revised project brief: audience, message, medium, historical scope, analyses, reflection and submission boundaries. The filename is retained for existing links; the brief includes a print button.
 
-The site uses local styles, scripts, and illustrations. External research links require internet access. The documented preview workflow uses a local HTTP server.
+The site uses local styles, scripts, photographs and illustrations. External research links require internet access. The documented preview workflow uses a local HTTP server.
 
 ## Included interactions
 
 - A clickable chronological route with three core chapters.
 - A coin workbench with shape, inscription, and issuing-rule explanations.
+- Two credited CC0 museum photographs with an enlarged view, Escape-to-close and focus return.
 - Two illustrated Song scenes with a player merchant, trader, and issuing clerk; conversation hotspot; illustrated choices; animated handover; document inspection; and three journal entries.
 - Previous-step navigation, replay, and a selection recap for the merchant story.
 - Five excerpts from three Song-related historical and literary texts, with source context, working translations, and critical-reading notes.
 - Links from merchant decisions to relevant passages, plus a three-question evidence exercise.
 - Qing transaction choices that illustrate copper and silver's different uses.
 - Three selectable layers of a modern payment illustration.
-- Twelve linked bibliography entries, research limitations, and an English consultation brief.
+- Twelve linked bibliography entries, two course references, image credits, research limitations and an English project brief.
 - Responsive layouts, keyboard-operable controls, visible focus, and reduced-motion support.
 
-The website is in English, with necessary Chinese terms in traditional characters inside parentheses. Personal recorded commentary is planned; no personal video has been supplied or embedded.
+The website is in English, with necessary Chinese terms in traditional characters inside parentheses. Original photographed museum labels remain unchanged. No personal video or personal museum photos have been supplied; the credited photographs are by others. Personal reflection is an AI-assisted draft grounded in the student's decisions and course reflection, for author review.
 
 Choices are held in browser memory and reset on refresh. The exhibit does not collect visitor responses or make payments.
 
 ## Historical and visual boundaries
 
-The merchant, dialogue, transaction situations, and payment receipt are learning devices. The two AI-generated scenes are interpretive artwork. Currency diagrams are original schematic drawings, not photographs or facsimiles of surviving objects. No historical prices, fixed exchange rates, or measured coin weights are assigned to them.
+The merchant, dialogue, transaction situations and payment receipt are learning devices. The two AI-generated scenes are interpretive artwork. Currency diagrams are original schematic drawings. Museum photographs are documentary images separately credited in `IMAGE-CREDITS.md`. No historical prices, fixed exchange rates or measured coin weights are assigned to the drawings or photographs.
 
 The chapter summary by Richard von Glahn was consulted, not the full scholarly chapter. Museum records and university teaching resources support the broader route. Digital historical-text passages were checked, but the full scholarship and critical editions remain to be reviewed before final submission.
 
@@ -59,11 +62,13 @@ The Ming object and Qing transaction patterns are separate examples. Local pract
 
 - `index.html`: historical route, activities, source list, and methodology.
 - `style.css`: shared visual language, responsive layout, and print styles.
+- `journal.css` / `journal.js`: revised presentation, audience and reflection sections, and museum-photo viewer.
 - `currency.css` / `currency.js`: timeline, coin inspection, and coexistence chapter.
 - `game.css` / `app.js`: Song merchant adventure and modern payment layers.
 - `evidence.css` / `evidence.js`: reading panels, passage navigation, and evidence exercise.
-- `consultation.html` / `brief.js`: English consultation brief and print action.
-- `assets/`: local schematic SVGs and two interpretive PNG scenes.
+- `consultation.html` / `brief.js`: revised English project brief and print action.
+- `assets/`: local schematic SVGs, two interpretive PNG scenes and two museum photographs.
+- `IMAGE-CREDITS.md`: photo provenance, licences and interpretation limits.
 - `ASSET-PROMPTS.md`: exact image-generation prompts and asset attribution.
 - `AI-USE.md`: assistance record and key research prompts.
 - `preview.mjs`: local preview server.
@@ -77,4 +82,4 @@ The static files can be served from the root of the `main` branch. Pushing repos
 
 ## Before the final submission
 
-Confirm scope and expected depth with the professor; read the full scholarship and appropriate critical editions; review translations and historical claims; add the student's recorded interpretation; test with readers; and complete the separate 500–800-word explanation, bibliography, and AI disclosure.
+Review the assisted reflection in the student's own voice; read the full scholarship and appropriate critical editions; review translations and historical claims; test with readers; and complete the separate 500–800-word explanation, bibliography and AI disclosure. Personal recorded commentary can be added when supplied. The website reflects the reported consultation feedback but does not claim that final assessment requirements are complete.

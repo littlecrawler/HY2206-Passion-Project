@@ -107,7 +107,7 @@
     evidence.className = 'decision-source';
     const link = document.createElement('a');
     link.href = `#${connection.fragment}`;
-    link.textContent = `Read the evidence: ${connection.label} ↗`;
+    link.textContent = `Read the evidence: ${connection.label}`;
     evidence.append(paragraph('decision-source-label', 'FROM THE HISTORICAL RECORD'), paragraph('', connection.description), link);
     feedback.append(evidence);
   }
@@ -200,11 +200,7 @@
       choicesContainer.append(button);
     });
     previousButton.hidden = currentStep === 0;
-    nextButton.replaceChildren(document.createTextNode(currentStep === 2 ? 'Open your journal ' : currentStep === 1 ? 'Visit the issuing office ' : 'Continue the encounter '));
-    const arrow = document.createElement('span');
-    arrow.setAttribute('aria-hidden', 'true');
-    arrow.textContent = '→';
-    nextButton.append(arrow);
+    nextButton.textContent = currentStep === 2 ? 'Open your journal' : currentStep === 1 ? 'Visit the issuing office' : 'Continue the encounter';
     renderFeedback();
     updateProgress();
     if (moveFocus) stageTitle.focus({ preventScroll: true });

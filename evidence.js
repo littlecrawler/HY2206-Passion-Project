@@ -101,7 +101,7 @@
       feedback.textContent = `${isCorrect ? 'That claim fits the evidence. ' : 'Look at the source’s scope. '}${claim.explanation}`;
     }
     document.getElementById('check-progress').textContent = `${answers.filter(answer => answer !== null).length} / 3 claims examined`;
-    next.textContent = currentClaim === claims.length - 1 ? 'Try again ↻' : 'Next claim →';
+    next.textContent = currentClaim === claims.length - 1 ? 'Try again ↻' : 'Next claim';
   }
 
   next.addEventListener('click', () => {

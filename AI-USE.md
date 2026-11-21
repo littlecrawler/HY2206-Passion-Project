@@ -55,4 +55,18 @@ The interpretation emphasises coexistence and regional differences, rather than 
 
 ## Student review still needed
 
+The 21 November revision also adds an assisted first-person reflection. Its factual basis is the student's documented topic choices, project feedback and existing course reflection. The student should review this wording in their own voice.
+
 Read the full historical scholarship, compare the digital historical-text transcriptions with critical editions, review the translations and interpretation, check every final historical claim, and incorporate the relevant original research prompts into the final written documentation. AI-generated prose is not itself a historical source.
+
+## Audience, reflection and museum revision, 21 November 2026
+
+The student relayed professor feedback about the website's importance, a personal journey from idea to product, course-based analysis, one or two analytical ideas and museum photographs. The student corrected the order to **audience, message, form** and authorised revision with “开始调整”. The assistant viewed the student's HAWKY GPT Sites portfolio as a read-only design reference and revised this repository.
+
+Key prompts: “Why it is important to use this website”; “personal reflection: Personal journey”; “How do I have the idea turning real”; “Analysis Using from the course”; “Knowledge of wisdom”; “1-2 idea of analysis”; “Add the photos from the museum”; “老师说要先考虑网站的受众 再考虑自己要传达的信息”; “本地gpt的site网页”. The student also requested a less formulaic visual style inspired by their homepage.
+
+AI assisted with the opening, two analytical passages, personal reflection, visual treatment, photo viewer and project brief. The reflection uses documented choices and the student's existing course reflection: topic choice, broader chronology, requests for characters and textual evidence, the Salt and Iron tutorial, and programming a classroom board game. It does not invent a museum visit, personal photographs, user testing, professor quotations or testing outcomes.
+
+Course material inspected locally: Week 4, *The Creation of Empire (Unit 1)*, slides 11 and 13; Week 8, *The Northern Song Dynasty*, slides 6 and 15. Relevant ideas were paraphrased and applications labelled as interpretation. Private course documents are not reproduced in the repository.
+
+Image discovery included `site:commons.wikimedia.org "Ban Liang" "Museum" coin file`. Commons photo descriptions and CC0 licences were checked, and the Ming catalogue record was matched to the photographed registration 1942,0805.1. Both photos were inspected and downloaded as official Wikimedia thumbnails without retouching. No new generated image was used. See `IMAGE-CREDITS.md`.
