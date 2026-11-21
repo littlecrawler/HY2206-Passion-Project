@@ -1,37 +1,37 @@
 /* One illustrated purchase. The scene and transaction are interpretive. */
-.experience .game-purpose { max-width: none; margin: -12px 0 26px; color: #e1eadb; font-size: 17px; }
-.merchant-game { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; overflow: hidden; border-radius: 22px; background: #f6f6ee; color: var(--ink); }
+.experience .game-purpose { max-width: none; margin: -12px 0 26px; color: #e1eadb; font-size: var(--text-body); }
+.merchant-game { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); gap: 0; overflow: hidden; border-radius: 22px; background: #f6f6ee; color: var(--ink); }
 .market-scene { min-width: 0; background: #1b3c2c; color: #e1eadb; align-self: start; }
 .market-picture { position: relative; isolation: isolate; }
 .market-picture>img { display: block; width: 100%; height: auto; aspect-ratio: 1.25; object-fit: cover; object-position: 50% 48%; }
 .market-picture:after { content: ''; position: absolute; inset: 65% 0 0; background: linear-gradient(transparent,#10291b99); z-index: 0; pointer-events: none; }
-.market-place,.trade-status { position: absolute; z-index: 1; left: 18px; padding: 7px 12px; border-radius: 5px; font: 14px/1.4 var(--sans); max-width: calc(100% - 36px); }
+.market-place,.trade-status { position: absolute; z-index: 1; left: 18px; padding: 7px 12px; border-radius: 5px; font: var(--text-small)/1.4 var(--sans); max-width: calc(100% - 36px); }
 .market-place { top: 18px; color: #f5f5e9; background: #183b34ed; }
 .trade-status { bottom: 18px; background: #f5f5e9; color: #234a36; }
-.market-scene figcaption { padding: 14px 18px 18px; font-size: 16px; line-height: 1.5; }
+.market-scene figcaption { padding: 14px 18px 18px; font-size: var(--text-body); line-height: 1.5; }
 .trade-token { position: absolute; z-index: 2; left: 52%; top: 45%; width: 74px; height: 78px; padding: 6px; background: #f6f1daee; border: 1px solid #b2aa80; border-radius: 10px; box-shadow: 0 5px 15px #142b2940; animation: trade-appear .35s ease-out; }
 .trade-token svg,.market-choice-icon svg { display: block; width: 100%; height: 100%; }
 .merchant-game[data-state="coins"] .trade-token,.merchant-game[data-state="accepted"] .trade-token { left: 22%; top: 56%; }
 .merchant-game[data-state="coins"] .trade-status,.merchant-game[data-state="accepted"] .trade-status { background: #d9eac9; }
 .merchant-game[data-state="declined"] .trade-status { background: #f0d9ba; }
 .market-controls { min-width: 0; padding: 30px; }
-.market-progress { color: #47634a; font: 700 14px/1.5 var(--sans); margin-bottom: 10px; }
+.market-progress { color: #47634a; font: 700 var(--text-small)/1.5 var(--sans); margin-bottom: 10px; }
 .market-controls h3 { font-size: 29px; line-height: 1.2; }
 .market-dialogue { margin: 20px 0; border-left: 3px solid #8da179; padding-left: 16px; }
-.market-dialogue>span { display: block; margin-bottom: 6px; color: #52634e; font: 600 14px/1.4 var(--sans); }
-.market-dialogue p { font: 18px/1.55 var(--body); }
+.market-dialogue>span { display: block; margin-bottom: 6px; color: #52634e; font: 600 var(--text-small)/1.4 var(--sans); }
+.market-dialogue p { font: var(--text-body)/1.6 var(--body); }
 .market-choices { display: grid; gap: 10px; }
 .market-choice { display: flex; align-items: center; gap: 14px; padding: 14px 16px; min-height: 48px; text-align: left; background: #fffef6; color: #234a36; border: 1px solid #b7c3a8; border-radius: 10px; transition: background .15s,border-color .15s; }
 .market-choice:hover { background: #e8efdf; border-color: #456647; }
-.market-choice b { display: block; font: 700 16px/1.4 var(--sans); }
+.market-choice b { display: block; font: 700 var(--text-ui)/1.4 var(--sans); }
 .market-choice b [lang] { display: inline-block; font-weight: 400; }
-.market-choice-detail { display: block; margin-top: 4px; font: 16px/1.45 var(--body); color: #576450; }
+.market-choice-detail { display: block; margin-top: 4px; font: var(--text-body)/1.45 var(--body); color: #576450; }
 .market-choice-icon { flex: 0 0 44px; width: 44px; height: 48px; }
 .market-lesson { padding-top: 18px; margin: 0 0 22px; border-top: 1px solid #ced7c5; }
-.market-lesson h4 { margin: 0 0 8px; font: 700 19px/1.35 var(--serif); }
-.market-lesson p { font-size: 17px; line-height: 1.6; }
-.market-lesson a { display: inline-block; margin-top: 12px; font-size: 15px; color: #315c3b; }
-.market-reset { min-height: 44px; margin-top: 12px; padding: 8px 0; background: transparent; color: #47634a; text-decoration: underline; text-underline-offset: 4px; font-size: 14px; }
+.market-lesson h4 { margin: 0 0 8px; font: 700 1.375rem/1.35 var(--serif); }
+.market-lesson p { font-size: var(--text-body); line-height: 1.6; }
+.market-lesson a { display: inline-block; margin-top: 12px; font-size: var(--text-ui); color: #315c3b; }
+.market-reset { min-height: 44px; margin-top: 12px; padding: 8px 0; background: transparent; color: #47634a; text-decoration: underline; text-underline-offset: 4px; font-size: var(--text-small); }
 .experience>.wrap>.simulation-note { margin-top: 18px; max-width: 90ch; }
 @keyframes trade-appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @media(max-width:850px) {
@@ -40,17 +40,17 @@
   .market-controls { padding: 25px; }
 }
 @media(max-width:650px) {
-  .experience .game-purpose { margin-top: 0; font-size: 16px; }
+  .experience .game-purpose { margin-top: 0; font-size: var(--text-body); }
   .market-picture>img { aspect-ratio: 1.6; }
-  .market-place,.trade-status { left: 12px; max-width: calc(100% - 24px); font-size: 13px; padding: 6px 9px; }
+  .market-place,.trade-status { left: 12px; max-width: calc(100% - 24px); font-size: var(--text-small); padding: 6px 9px; }
   .market-place { top: 12px; }
   .trade-status { bottom: 12px; }
-  .market-scene figcaption { padding: 12px 16px; font-size: 14px; }
+  .market-scene figcaption { padding: 12px 16px; font-size: var(--text-small); }
   .market-controls { padding: 22px 18px; }
   .market-controls h3 { font-size: 27px; }
   .market-choice { padding: 12px; gap: 10px; }
   .market-choice-icon { flex-basis: 36px; width: 36px; height: 40px; }
-  .market-choice-detail { font-size: 16px; }
+  .market-choice-detail { font-size: var(--text-body); }
   .trade-token { width: 51px; height: 56px; top: 40%; padding: 4px; }
   .merchant-game[data-state="coins"] .trade-token,.merchant-game[data-state="accepted"] .trade-token { top: 40%; }
 }
