@@ -183,7 +183,11 @@ h3 { font-size: 27px; line-height: 1.25; }
 .layer-explanation .source-ref { font-size: 13px; }
 .payment-visual { border-radius: 25px; background: #eef3e7; }
 .payment-visual-heading,.phone-kicker,.phone-caption,.phone-detail,.account-node,.institution-base,.visual-caption { font-size: 13px; }
-.phone { border-radius: 32px; width: 230px; }
+.phone { border-radius: 32px; width: 230px; height: auto; min-height: 400px; padding-bottom: 32px; background: #fff; }
+.phone-brand { position: relative; overflow: hidden; width: 126px; height: 88px; margin: 0 auto 8px; }
+.phone-brand img { position: absolute; width: 300px; height: auto; max-width: none; left: 50%; top: 50%; transform: translate(-50%,-46%); }
+.phone .phone-kicker { margin-top: 0; }
+.phone .phone-tick { margin-top: 12px; }
 .live-dot:before { display: none; }
 .transfer-connector>span { font-size: 13px; }
 .comparison-note { font-size: 15px; border-radius: 15px; }

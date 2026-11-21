@@ -75,3 +75,5 @@ Image discovery included `site:commons.wikimedia.org "Ban Liang" "Museum" coin f
 ## Simplifying the merchant activity — 22 November 2026
 
 The student said the game was confusing and its purpose unclear: “这个游戏有点不知所云 不知道在玩什么 能不能精简一下 我不知道这个的目的是什么”. AI assisted with replacing the three abstract encounters with one fictional cloth purchase. The task, the trader’s response, the outcome and the learning point are now visible together. The activity compares transport inconvenience with issuer repayment and acceptance; it removes the journal, conversation hotspot, issuing-office time jump and collapsed explanations. The repayment and weight links continue to use the existing History of the Song excerpts. Fictional outcomes are not evidence that every Song trader behaved this way.
+
+The student then requested “手机既然以paynow为例不妨加上paynow的标志”. The assistant retrieved the unchanged PayNow logo from the official ABS website, added it to the phone illustration, adjusted spacing and recorded the asset source. The logo was not AI-generated.

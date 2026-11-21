@@ -26,3 +26,10 @@ These are documentary photographs by other photographers, not photographs from a
 - Used to examine denomination, coin imagery and printed rules. It is not a Song jiaozi photograph, and the printed denomination does not establish a constant market or redemption value.
 
 Records and licences checked 21 November 2026. For the separate AI-generated Song scenes and original schematic SVGs, see `ASSET-PROMPTS.md`.
+
+## PayNow logo
+
+- File: `assets/paynow-logo.jpg`, 640 × 400 pixels.
+- Source: [official ABS PayNow page](https://www.abs.org.sg/e-payments/pay-now), which supplies this [logo image](https://abs.org.sg/images/default-album/paynow1.jpg) as its social-preview image. Retrieved 22 November 2026.
+- The original file is unchanged. CSS removes surplus white space from the displayed frame while preserving the complete mark, its proportions and original colours.
+- Official brand artwork used to identify the payment service in the educational phone illustration; not covered by the museum photographs' CC0 licences. Brand rights remain with their respective owner.
