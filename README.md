@@ -10,7 +10,7 @@ The new opening explains why the subject matters and what visitors should learn.
 
 1. **Short prologue:** shells and shaped money before imperial unification.
 2. **Qin and Han:** inspect a coin's form, inscription, and issuing rules, then read a passage from the *Records of the Grand Historian*.
-3. **Song Sichuan:** play a fictional merchant's three encounters about iron cash, private jiaozi, and institutional support. This is the deepest interactive case.
+3. **Song Sichuan:** complete one fictional cloth purchase to compare iron cash with a private jiaozi note, its issuer’s promise and the trader’s acceptance. This is the deepest interactive case.
 4. **Ming and Qing:** examine a photographed Ming museum object and explore broad Qing patterns of copper and silver use.
 5. **Modern epilogue:** distinguish money from a payment service through a conceptual PayNow example.
 
@@ -35,8 +35,8 @@ The site uses local styles, scripts, photographs and illustrations. External res
 - A clickable chronological route with three core chapters.
 - A coin workbench with shape, inscription, and issuing-rule explanations.
 - Two credited CC0 museum photographs with an enlarged view, Escape-to-close and focus return.
-- Two illustrated Song scenes with a player merchant, trader, and issuing clerk; conversation hotspot; illustrated choices; animated handover; document inspection; and three journal entries.
-- Previous-step navigation, replay, and a selection recap for the merchant story.
+- One illustrated Song market, one goal (buy a roll of cloth), and immediate outcomes: coins accepted, paper accepted after checking, or an unchecked note refused by this fictional trader.
+- Visible feedback, source links, payment comparisons, and restart; no journal, separate talk button, hidden lesson, or time jump.
 - Five excerpts from three Song-related historical and literary texts, with source context, working translations, and critical-reading notes.
 - Links from merchant decisions to relevant passages, plus a three-question evidence exercise.
 - Qing transaction choices that illustrate copper and silver's different uses.
@@ -50,7 +50,7 @@ Choices are held in browser memory and reset on refresh. The exhibit does not co
 
 ## Historical and visual boundaries
 
-The merchant, dialogue, transaction situations and payment receipt are learning devices. The two AI-generated scenes are interpretive artwork. Currency diagrams are original schematic drawings. Museum photographs are documentary images separately credited in `IMAGE-CREDITS.md`. No historical prices, fixed exchange rates or measured coin weights are assigned to the drawings or photographs.
+The merchant, dialogue, transaction situations and payment receipt are learning devices. The displayed AI-generated market scene is interpretive artwork. The earlier issuing-office image remains in the assets but is not part of the simplified activity. Currency diagrams are original schematic drawings. Museum photographs are documentary images separately credited in `IMAGE-CREDITS.md`. No historical prices, fixed exchange rates or measured coin weights are assigned to the drawings or photographs.
 
 The chapter summary by Richard von Glahn was consulted, not the full scholarly chapter. Museum records and university teaching resources support the broader route. Digital historical-text passages were checked, but the full scholarship and critical editions remain to be reviewed before final submission.
 
@@ -64,7 +64,7 @@ The Ming object and Qing transaction patterns are separate examples. Local pract
 - `style.css`: shared visual language, responsive layout, and print styles.
 - `journal.css` / `journal.js`: revised presentation, audience and reflection sections, and museum-photo viewer.
 - `currency.css` / `currency.js`: timeline, coin inspection, and coexistence chapter.
-- `game.css` / `app.js`: Song merchant adventure and modern payment layers.
+- `game.css` / `app.js`: single-purchase Song activity and modern payment layers.
 - `evidence.css` / `evidence.js`: reading panels, passage navigation, and evidence exercise.
 - `consultation.html` / `brief.js`: revised English project brief and print action.
 - `assets/`: local schematic SVGs, two interpretive PNG scenes and two museum photographs.

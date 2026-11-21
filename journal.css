@@ -119,37 +119,7 @@ h3 { font-size: 27px; line-height: 1.25; }
 .experience .eyebrow { color: #c8dec0; }
 .experience-heading h2 { font-size: clamp(34px,3.5vw,48px); }
 .experience-heading>p { color: #d3dfcf; font-size: 16px; }
-.experience-rail .rail-tag,.experience-rail .reset-button,.experience-rail .step-list li { font-size: 14px; }
-.experience-rail .step-list li span { font-size: 13px; width: 30px; height: 30px; }
-.stage-counter { font-size: 13px; }
-.stage-intro h3 { font-size: 30px; }
-.stage-intro .stage-description { font-size: 16px; max-width: 450px; }
-.game-scene { border-radius: 22px; max-height: none; }
-.scene-location,.journal-count,.character-label,.hotspot-label,.scene-discovery { font-size: 13px; }
-.scene-location { max-width: calc(100% - 195px); }
-.scene-hotspot { min-height: 44px; min-width: 44px; }
-.hotspot-label { top: 48px; }
-.character-label { bottom: 159px; }
-.scene-inventory { width: min(750px,calc(100% - 36px)); border-radius: 15px; }
-.inventory-title { font-size: 13px; letter-spacing: .04em; }
-.scene-inventory .choice { min-height: 80px; border-radius: 12px; }
-.scene-inventory .choice b { font-size: 18px; font-weight: 700; }
-.scene-inventory .choice small { font-size: 13px; }
-.scene-inventory .choice .choice-translation { font-size: 16px; }
-.inspection-card>span:last-child { font-size: 13px; }
-.dialogue-panel { border-radius: 14px; background: #f0f1e4; border-color: #e0e4d4; }
-.dialogue-panel:before { background: #f0f1e4; border-color: #e0e4d4; }
-.dialogue-panel>p { font-size: 19px; }
-.speaker-badge>b { font-size: 13px; letter-spacing: .03em; }
-.choice-hint { font-size: 14px; }
-.field-note { border-radius: 12px; }
-.field-note>summary,.field-note>summary>span:last-child { font-size: 14px; }
-.field-note .decision-feedback p { font-size: 16px; }
-.field-note .decision-source>a { font-size: 14px; }
-.stage-controls .button,.stage-controls .text-button { font-size: 15px; }
 .experience>.wrap>.simulation-note { font-size: 13px; color: #d3dfcf; }
-.experience-complete>p:not(.eyebrow),.choice-summary>div { font-size: 16px; }
-.completed-scene>span { font-size: 13px; letter-spacing: .03em; }
 .reading-room { background: #f0f3e9; border-color: var(--line); }
 .reading-desk { grid-template-columns: 285px minmax(0,1fr); gap: 30px; }
 .reading-index-label { font-size: 13px; }
@@ -355,37 +325,6 @@ h3 { font-size: 27px; line-height: 1.25; }
   .course-analysis { margin-top: 35px; padding-top: 30px; gap: 20px; }
   .analysis-argument p { font-size: 16px; }
   .early-source { gap: 25px; }
-  .experience-rail { flex-wrap: wrap; gap: 12px; }
-  .experience-rail .step-list { width: 100%; gap: 12px; flex-wrap: wrap; }
-  .experience-rail .step-list li { font-size: 13px; gap: 7px; }
-  .experience-rail .step-list li span { width: 26px; height: 26px; font-size: 12px; }
-  .experience-rail .reset-button { margin: 0; }
-  .stage-intro h3 { font-size: 28px; }
-  .game-scene { aspect-ratio: auto; height: 465px; }
-  .scene-background { object-position: 56% 45%; }
-  .scene-location { left: 10px; top: 10px; font-size: 12px; max-width: calc(100% - 110px); padding: 6px 8px; }
-  .journal-count { top: 10px; right: 10px; font-size: 12px; padding: 6px; max-width: 90px; text-align: center; }
-  .scene-hotspot { top: 31%; left: 75%; }
-  .scene-inventory { bottom: 10px; width: calc(100% - 20px); padding: 10px; }
-  .scene-inventory .choice-grid { grid-template-columns: 1fr; gap: 8px; }
-  .scene-inventory .choice { padding: 10px 12px; min-height: 64px; }
-  .scene-inventory .choice b { font-size: 17px; }
-  .scene-inventory .choice small { display: none; }
-  .scene-inventory .choice .choice-translation { font-size: 15px; }
-  .inventory-title { font-size: 12px; margin-bottom: 7px; }
-  .character-label { bottom: 224px; font-size: 12px; }
-  .player-label { left: 24%; }.npc-label { left: 76%; }
-  .scene-discovery { max-width: calc(100% - 24px); white-space: normal; text-align: center; top: 66px; font-size: 12px; }
-  .inspection-card { top: 40%; }
-  .dialogue-panel { display: block; padding: 18px; }
-  .speaker-badge { margin-bottom: 8px; }
-  .speaker-badge>span { display: none; }
-  .dialogue-panel>p { font-size: 18px; }
-  .field-note>summary { align-items: start; padding: 12px; }
-  .field-note>summary>span:last-child { font-size: 12px; }
-  .stage-controls { gap: 10px; flex-wrap: wrap; }
-  .stage-controls .button { min-width: 0; font-size: 14px; padding: 13px 18px; }
-  .stage-controls .text-button { font-size: 14px; }
   .reading-tabs { gap: 7px; }
   .reading-tab { padding: 12px 8px; min-height: 90px; }
   .reading-tab b { font-size: 15px; }

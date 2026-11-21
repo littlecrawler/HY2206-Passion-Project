@@ -70,3 +70,8 @@ AI assisted with the opening, two analytical passages, personal reflection, visu
 Course material inspected locally: Week 4, *The Creation of Empire (Unit 1)*, slides 11 and 13; Week 8, *The Northern Song Dynasty*, slides 6 and 15. Relevant ideas were paraphrased and applications labelled as interpretation. Private course documents are not reproduced in the repository.
 
 Image discovery included `site:commons.wikimedia.org "Ban Liang" "Museum" coin file`. Commons photo descriptions and CC0 licences were checked, and the Ming catalogue record was matched to the photographed registration 1942,0805.1. Both photos were inspected and downloaded as official Wikimedia thumbnails without retouching. No new generated image was used. See `IMAGE-CREDITS.md`.
+
+
+## Simplifying the merchant activity — 22 November 2026
+
+The student said the game was confusing and its purpose unclear: “这个游戏有点不知所云 不知道在玩什么 能不能精简一下 我不知道这个的目的是什么”. AI assisted with replacing the three abstract encounters with one fictional cloth purchase. The task, the trader’s response, the outcome and the learning point are now visible together. The activity compares transport inconvenience with issuer repayment and acceptance; it removes the journal, conversation hotspot, issuing-office time jump and collapsed explanations. The repayment and weight links continue to use the existing History of the Song excerpts. Fictional outcomes are not evidence that every Song trader behaved this way.
