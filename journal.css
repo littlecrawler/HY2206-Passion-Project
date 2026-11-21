@@ -11,10 +11,14 @@
   --rust: #98502f;
   --sans: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
   --serif: 'Trebuchet MS', 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+  --body: 'Times New Roman', 'PMingLiU', 'Songti TC', 'Noto Serif TC', serif;
   --radius: 24px;
 }
 html { scroll-padding-top: 112px; }
-body.research-journal { font-size: 17px; line-height: 1.75; }
+body.research-journal { font-family: var(--body); font-size: 17px; line-height: 1.75; }
+/* Keep headings and interface controls distinct from the reading text. */
+.research-journal :is(button,summary,nav,.header-note,.button,.inline-link,.source-ref,.payment-visual) { font-family: var(--sans); }
+.research-journal :is(.coin-explanation .detail-question,.dialogue-panel>p,.ming-evidence .object-prompt) { font-family: var(--body); }
 h1,h2,h3 { font-weight: 700; letter-spacing: -.045em; }
 h2 { font-size: clamp(34px,3.7vw,51px); line-height: 1.12; }
 h3 { font-size: 27px; line-height: 1.25; }
@@ -97,7 +101,7 @@ h3 { font-size: 27px; line-height: 1.25; }
 .early-source { margin-top: 46px; padding-top: 36px; grid-template-columns: 1fr 1.35fr; gap: 50px; }
 .early-source h3 { font-size: 28px; }
 .early-source .source-attribution { font-size: 14px; }
-.early-source blockquote p:first-child { font: 24px/1.5 Georgia,serif; }
+.early-source blockquote p:first-child { font: 24px/1.5 var(--body); }
 .early-source blockquote p[lang] { font-size: 20px; }
 .early-source p:not(.eyebrow):not(.source-attribution):not(.small-note) { font-size: 16px; }
 .early-source p.small-note { font-size: 13px; }
@@ -161,7 +165,8 @@ h3 { font-size: 27px; line-height: 1.25; }
 .source-context dd { font-size: 15px; }
 .document-intro,.source-reading p,.passage-gloss,.document-footnote { font-size: 16px; }
 .passage-tag { font-size: 13px; letter-spacing: .04em; }
-.document-passage blockquote p { font-family: Georgia,'Microsoft JhengHei',serif; font-size: 23px; }
+.research-journal .document-passage blockquote p { font-family: var(--body); }
+.document-passage blockquote p { font-size: 23px; }
 .document-passage blockquote .original-excerpt { font-size: 20px; }
 .source-reading summary,.document-links a { font-size: 14px; }
 .text-method-note { font-size: 13px; }
@@ -222,7 +227,7 @@ h3 { font-size: 27px; line-height: 1.25; }
 .takeaway-layout { display: grid; grid-template-columns: 1fr 1.45fr; gap: 90px; }
 .personal-takeaway .eyebrow { color: #d4e5c9; }
 .takeaway-layout>div>p { margin-bottom: 20px; font-size: 17px; }
-.takeaway-layout p.takeaway-lead { font: 700 30px/1.4 var(--serif); letter-spacing: -.025em; }
+.takeaway-layout p.takeaway-lead { font: 700 30px/1.4 var(--body); letter-spacing: -.025em; }
 .reader-return { border-top: 1px solid #ffffff38; padding-top: 24px; }
 .sources { grid-template-columns: 1fr 2fr; gap: 60px; align-items: start; }
 .sources-heading>p:not(.eyebrow) { font-size: 16px; margin-top: 20px; }
