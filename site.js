@@ -1,12 +1,12 @@
-import { photos } from './exhibit-data.js';
-import { initDeck } from './deck.js?v=20261122-atrium';
+import { photos } from './exhibit-data.js?v=20261122-gallery';
+import { initDeck } from './deck.js?v=20261122-gallery';
 
 // Keep bookmarks from earlier versions useful.
-if (document.body.dataset.page === 'home') {
+if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) {
   const aliases = {
     experience: 'cards.html#song', story: 'read.html#song', metal: 'read.html#qin-han',
     beginnings: 'read.html#early-money', coexistence: 'read.html#ming-qing',
-    today: 'read.html#today', 'reading-room': 'read.html#song',
+    'reading-room': 'read.html#song',
     journey: 'project.html', reflection: 'project.html', sources: 'references.html',
     'photo-credits': 'references.html#source-18', 'project-notes': 'project.html',
     'course-1': 'references.html#source-16', 'course-2': 'references.html#source-17'
@@ -61,5 +61,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261122-atrium').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261122-gallery').then(({ initMuseum }) => initMuseum());
 }

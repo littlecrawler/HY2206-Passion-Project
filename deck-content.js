@@ -1,9 +1,9 @@
-import { photos } from './exhibit-data.js';
+import { photos } from './exhibit-data.js?v=20261122-gallery';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
 export const cite = ids => ids.map(id => '<a class="citation" href="references.html#source-' + id + '" aria-label="Reference ' + id + '">[' + id + ']</a>').join(' ');
-export const defaults = () => ({ pane: 'activity', zoom: 1, compare: 50, detail: 'shape', coinBack: false, money: 'iron', issuer: 'known', yuanStage: 0, transaction: 'market', paymentLayer: 0, document: 'history' });
+export const defaults = () => ({ pane: 'activity', zoom: 1, compare: 50, detail: 'shape', coinBack: false, money: 'iron', issuer: 'repaid', yuanStage: 0, transaction: 'market', paymentLayer: 0, document: 'history' });
 
 function choices(action, options, selected, label) {
   return '<div class="activity-choices" role="group" aria-label="' + label + '">' + options.map(([value, label]) => '<button type="button" data-action="' + action + '" data-value="' + value + '" aria-pressed="' + (String(selected) === String(value)) + '">' + label + '</button>').join('') + '</div>';
@@ -48,7 +48,7 @@ export function activity(period, state) {
       const d = details[state.detail];
       return '<h3 class="activity-title">Read a coin in three ways</h3>' +
         choices('detail', [['shape','Shape'],['inscription','Inscription'],['rules','Rules']], state.detail, 'Inspect the coin') +
-        '<div class="coin-detail-visual" data-detail="' + state.detail + '">' + picture('banliang') + '<div class="coin-inscription" aria-hidden="true">' + (state.detail === 'inscription' ? '<span lang="zh-Hant">（半兩）</span><span>A four-zhu coin could keep this name.</span>' : state.detail === 'rules' ? '<span>Who may cast?</span><span>Permission could change.</span>' : '<img src="assets/coin-mark.svg" alt=""><span>Round coin. Square opening.</span>') + '</div></div>' + feedback(d[0], text(d[1]), [d[2]]);
+        '<div class="coin-detail-visual" data-detail="' + state.detail + '"><figure>' + picture('banliangDetail',state.detail === 'rules' ? '' : 'coin-obverse-photo') + '<figcaption class="coin-photo-credit">Fred Cherrygarden ' + cite([21]) + '</figcaption></figure><div class="coin-inscription">' + (state.detail === 'inscription' ? '<span lang="zh-Hant">兩 ← 半</span><span>Read right to left: Ban liang<span lang="zh-Hant">（半兩）</span>.</span>' : state.detail === 'rules' ? '<span>Who may cast?</span><span>Permission could change.</span>' : '<span>Round coin.</span><span>Square opening.</span>') + '</div></div>' + feedback(d[0], text(d[1]), [d[2]]);
     }
     case 'tang':
       return '<h3 class="activity-title">Turn the coin itself</h3><div class="coin-turntable"><div class="coin-flipper' + (state.coinBack ? ' is-reverse' : '') + '" id="coin-flipper"><div class="coin-surface coin-obverse" aria-hidden="' + state.coinBack + '"></div><div class="coin-surface coin-reverse" aria-hidden="' + !state.coinBack + '"></div></div></div>' +
@@ -56,12 +56,12 @@ export function activity(period, state) {
         '<p class="activity-caption">On the inscribed face, find Kaiyuan tongbao<span lang="zh-Hant">（開元通寶）</span>. The new naming convention began in 621. ' + cite([13]) + '</p>';
     case 'song': {
       const isPaper = state.money === 'paper';
-      const issuerKnown = state.issuer === 'known';
+      const repaid = state.issuer === 'repaid';
       return '<h3 class="activity-title">What would you carry to market?</h3>' +
         choices('money', [['iron','Iron cash'],['paper','Paper note']], state.money, 'Choose what to carry') +
-        '<div class="journey-comparison"><div class="journey-object">' + (isPaper ? '<div class="paper-token"><span>Jiaozi<span lang="zh-Hant">（交子）</span></span><strong>A promise<br>of payment</strong></div>' : picture('iron')) + '</div><dl class="trade-measures"><div><dt>Carrying it</dt><dd>' + (isPaper ? 'Lighter' : 'Heavy') + '</dd><span class="burden-track" aria-hidden="true"><span style="width:' + (isPaper ? '18%' : '90%') + '"></span></span></div><div><dt>What matters?</dt><dd>' + (isPaper ? 'The issuer’s promise' : 'Local acceptance') + '</dd></div></dl></div>' +
-        (isPaper ? choices('issuer', [['known','Known issuer'],['unknown','Unknown issuer']], state.issuer, 'Change the trader’s knowledge of the issuer') : '') +
-        feedback(isPaper ? (issuerKnown ? 'Lighter—and a promise to assess' : 'Lighter—but harder to accept') : 'Metal has a carrying cost', isPaper ? (issuerKnown ? 'Knowing the issuer could encourage acceptance. Repayment still mattered: the official history records issuers who could not meet their obligations.' : 'An unfamiliar issuer gives a trader more reason to question repayment. Changing the material does not settle the question of trust.') : 'The History of the Song describes heavy iron money as inconvenient for trade. Try paper to see which problem changes—and which remains.', [6]);
+        '<div class="journey-comparison"><div class="journey-object">' + (isPaper ? '<figure class="paper-photograph">' + picture('songpaper') + '<figcaption>Reproduction<span lang="zh-Hant">（復刻圖）</span> ' + cite([20]) + '</figcaption></figure>' : picture('iron')) + '</div><dl class="trade-measures"><div><dt>Carrying it</dt><dd>' + (isPaper ? 'Lighter' : 'Heavy') + '</dd><span class="burden-track" aria-hidden="true"><span style="width:' + (isPaper ? '18%' : '90%') + '"></span></span></div><div><dt>What matters?</dt><dd>' + (isPaper ? 'The issuer’s promise' : 'Local acceptance') + '</dd></div></dl></div>' +
+        (isPaper ? choices('issuer', [['repaid','If the issuer repays'],['failed','If repayment fails']], state.issuer, 'Compare repayment outcomes') : '') +
+        feedback(isPaper ? (repaid ? 'A promise honoured' : 'A problem recorded in the source') : 'Metal has a carrying cost', isPaper ? (repaid ? 'If the issuer fulfils the promise, the holder can receive the money owed. The paper saves carrying weight; repayment makes the promise useful.' : 'The History of the Song records private issuers who “could not repay what they owed”（不能償所負）, followed by continuing disputes. Carrying less weight did not remove this risk.') : 'The History of the Song describes heavy iron money as inconvenient for trade. Try paper to see which problem changes—and which remains.', [6]);
     }
     case 'yuan': {
       const stages = [

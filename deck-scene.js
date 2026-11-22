@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { periods, photos } from './exhibit-data.js';
+import { periods, photos } from './exhibit-data.js?v=20261122-gallery';
 
 const ease = t => t * t * (3 - 2 * t);
 const clamp = THREE.MathUtils.clamp;
@@ -8,7 +8,7 @@ const colors = Array(8).fill('#bcd6df');
 
 export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip, reducedMotion=false }) {
   const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'low-power'});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.2;
@@ -52,9 +52,9 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
     for(const word of words){const next=line?line+' '+word:word;if(ctx.measureText(next).width>maxWidth&&line){ctx.fillText(line,x,y);y+=lineHeight;line=word;lines++;if(lines>=maxLines-1)break;}else line=next;}
     ctx.fillText(line,x,y);return y+lineHeight;
   }
-  function baseCanvas() { const c=document.createElement('canvas');c.width=small?720:1280;c.height=small?1024:800;return c; }
+  function baseCanvas() { const c=document.createElement('canvas');c.width=(small?720:1400)*2;c.height=(small?1024:750)*2;c.getContext('2d').scale(2,2);return c; }
   function backTexture(index) {
-    const c=baseCanvas(),ctx=c.getContext('2d'),w=c.width,h=c.height;
+    const c=baseCanvas(),ctx=c.getContext('2d'),w=c.width/2,h=c.height/2;
     ctx.fillStyle='#1b3345';ctx.fillRect(0,0,w,h);
     ctx.strokeStyle=colors[index]+'55';ctx.lineWidth=2;ctx.strokeRect(25,25,w-50,h-50);
     for(let i=-h;i<w;i+=42){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+h,h);ctx.strokeStyle=colors[index]+'14';ctx.stroke();}
@@ -65,7 +65,7 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
     return texture(c);
   }
   async function frontTexture(index,id) {
-    const portrait=small,c=baseCanvas(),ctx=c.getContext('2d'),w=c.width,h=c.height,p=periods[index],img=await loadImage(id);
+    const portrait=small,c=baseCanvas(),ctx=c.getContext('2d'),w=c.width/2,h=c.height/2,p=periods[index],img=await loadImage(id);
     const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#1b3549');bg.addColorStop(1,'#0b1828');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
     ctx.strokeStyle=colors[index]+'99';ctx.lineWidth=2;ctx.strokeRect(20,20,w-40,h-40);
     const x=portrait?42:48,y=portrait?230:130,boxW=portrait?w-84:590,boxH=portrait?440:530;
@@ -88,7 +88,7 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
     const g=new THREE.ExtrudeGeometry(rounded(width,height,.17),{depth:.07,bevelEnabled:true,bevelSegments:3,bevelSize:.022,bevelThickness:.02,steps:1});geometryResources.push(g);
     const edgeMat=new THREE.MeshStandardMaterial({color:0x7b9ba8,metalness:.82,roughness:.25});materialResources.push(edgeMat);
     const body=new THREE.Mesh(g,edgeMat);body.castShadow=true;body.receiveShadow=true;group.add(body);
-    const mat=new THREE.MeshStandardMaterial({map:backTexture(index),roughness:.38,metalness:.12});materialResources.push(mat);
+    const mat=new THREE.MeshBasicMaterial({map:backTexture(index),toneMapped:false});materialResources.push(mat);
     const face=new THREE.Mesh(plane(width-.025,height-.025),mat);face.position.z=.095;group.add(face);
     const reverse=new THREE.Mesh(plane(width-.025,height-.025),mat);reverse.position.z=-.025;reverse.rotation.y=Math.PI;group.add(reverse);
     if(isMain) { frontMaterial=new THREE.MeshBasicMaterial({map:mat.map,toneMapped:false});materialResources.push(frontMaterial);face.material=frontMaterial; }
@@ -102,27 +102,33 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
   }
   function rebuild() {
     buildVersion++;clearRig();
-    width=small?3.15:6;height=small?4.48:3.75;
-    for(let i=5;i>=1;i--){const c=card((current+i)%periods.length);c.position.set((i%2?-.13:.17)*i,-.035*i,-.105*i);c.rotation.z=(i%2?-1:1)*(.018+i*.013);rig.add(c);}
+    width=small?3.15:7;height=small?4.48:3.75;
+    for(let i=3;i>=1;i--){const c=card((current+i)%periods.length);c.position.set((i%2?-.1:.12)*i,-.025*i,-.105*i);c.rotation.z=(i%2?-1:1)*(.012+i*.009);rig.add(c);}
     main=card(current,true);rig.add(main);setPhoto(selected);resizeCamera();
   }
   function resizeCamera() {
     const rect=canvas.parentElement.getBoundingClientRect();if(!rect.width||!rect.height)return;
     renderer.setSize(rect.width,rect.height,false);camera.aspect=rect.width/rect.height;camera.updateProjectionMatrix();
     const tan=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2);
-    const distance=Math.max(height/(2*tan)*1.18,width/(2*tan*camera.aspect)*1.24)+.4;
-    camera.position.set(0,.13,distance);camera.lookAt(0,0,0);start();
+    const distance=Math.max(height/(2*tan)*1.15,width/(2*tan*camera.aspect)*(small?1.12:1.2))+.4;
+    camera.position.set(0,0,distance);camera.lookAt(0,0,0);camera.updateMatrixWorld();
+    const tl=new THREE.Vector3(-width/2,height/2,.475).project(camera),br=new THREE.Vector3(width/2,-height/2,.475).project(camera);
+    const style=canvas.parentElement.style;
+    style.setProperty('--card-left',((tl.x+1)/2*rect.width)+'px');
+    style.setProperty('--card-top',((1-tl.y)/2*rect.height)+'px');
+    style.setProperty('--card-width',((br.x-tl.x)/2*rect.width)+'px');
+    style.setProperty('--card-height',((tl.y-br.y)/2*rect.height)+'px');update(performance.now());renderer.render(scene,camera);start();
   }
   function resize() {const next=canvas.parentElement.clientWidth<650;if(next!==small){small=next;rebuild();}else resizeCamera();}
   function update(now) {
     const dt=Math.min((now-lastTime)/1000,.04);lastTime=now;if(!reducedMotion)time+=dt;
     if(turn){const t=clamp((now-turn.start)/760,0,1);flipValue=THREE.MathUtils.lerp(turn.from,turn.to,ease(t));if(t===1)turn=null;}
     if(deal){const t=clamp((now-deal.start)/deal.duration,0,1),k=ease(t);dealX=THREE.MathUtils.lerp(deal.from,deal.to,k);dealZ=Math.sin(t*Math.PI)*.5;dealAngle=dealX*.06;if(t===1){const resolve=deal.resolve;deal=null;resolve();}}
-    main.position.set(dealX,reducedMotion?0:Math.sin(time*.65)*.025,.38+dealZ);
-    main.rotation.set(-.035+(reducedMotion?0:hoverY*.07),flipValue-.075+(reducedMotion?0:hoverX*.11),-.015+dealAngle);
-    rig.rotation.set(-.03,0,-.015);
+    main.position.set(dealX,0,.38+dealZ);
+    main.rotation.set(0,flipValue,dealAngle);
+    rig.rotation.set(0,0,0);
   }
-  function tick(now) {frame=0;if(paused||disposed||document.hidden||!inView)return;update(now);renderer.render(scene,camera);if(!reducedMotion||turn||deal)frame=requestAnimationFrame(tick);}
+  function tick(now) {frame=0;if(paused||disposed||document.hidden||!inView)return;update(now);renderer.render(scene,camera);if(turn||deal)frame=requestAnimationFrame(tick);}
   function start() {if(!frame&&!paused&&!disposed&&!document.hidden&&inView){lastTime=performance.now();frame=requestAnimationFrame(tick);}}
   function cancel() {if(deal){deal.resolve();deal=null;}turn=null;dealX=dealZ=dealAngle=0;}
   function animateDeal(from,to,duration) {paused=false;if(reducedMotion){dealX=0;return Promise.resolve();}return new Promise(resolve=>{deal={from,to,duration,resolve,start:performance.now()};start();});}

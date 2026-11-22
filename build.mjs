@@ -4,7 +4,7 @@ import { deckPage } from './deck-template.mjs';
 import { readingAdditions } from './deck-content.js';
 import { museumPage } from './museum-template.mjs';
 
-const version = '20261122-atrium';
+const version = '20261122-gallery';
 await mkdir(new URL('vendor/three/', import.meta.url), { recursive: true });
 for (const [source, target] of [['build/three.module.min.js','three.module.min.js'],['build/three.core.min.js','three.core.min.js'],['examples/jsm/environments/RoomEnvironment.js','RoomEnvironment.js'],['examples/jsm/objects/Reflector.js','Reflector.js'],['LICENSE','LICENSE']]) {
   await copyFile(new URL('node_modules/three/' + source, import.meta.url), new URL('vendor/three/' + target, import.meta.url));
@@ -47,10 +47,8 @@ function recording(video) {
   return '<article class="recording"><h3 id="' + video.id + '-title">' + video.title + '</h3><p>' + video.description + '</p><div class="video-screen">' + screen + '</div></article>';
 }
 
-const home = '<section class="home-hero wrap"><div class="hero-copy"><h1>A history of<br>money in China.</h1><p class="lead">From shells to paper notes, how did money change—and why did older forms stay?</p><p>Choose how you explore.</p><nav class="visit-modes" aria-label="Choose a visiting mode"><a href="museum.html"><strong>3D Museum </strong><span>One museum, eight galleries</span></a><a href="cards.html"><strong>Flashcards </strong><span>Turn, compare and discover</span></a><a href="read.html"><strong>Read the history </strong><span>Browse at your own pace</span></a></nav></div><div class="hero-objects" aria-label="Objects from the history of money"><a href="museum.html#early-money" class="hero-object shells"><img src="' + photos.cowries.src + '" alt="Cowrie shells used as money"><span>Shells<span lang="zh-Hant">（貝幣）</span></span></a><a href="museum.html#qin-han" class="hero-object coins"><img src="' + photos.banliang.src + '" alt="Qin and Han banliang coins"><span>Coins<span lang="zh-Hant">（半兩錢）</span></span></a><a href="museum.html#ming-qing" class="hero-object paper"><img src="' + photos.ming.src + '" alt="A Ming paper banknote"><span>Paper<span lang="zh-Hant">（寶鈔）</span></span></a></div></section>' +
-  '<section class="home-route wrap"><h2>From early China to today.</h2>' + timeline('museum.html') + '</section>' +
-  '<section class="videos-section wrap" id="videos"><h2>About this website</h2><div class="video-grid">' + recordings.map(recording).join('') + '</div><a class="text-link" href="project.html">Read my journey and reflection</a></section>';
-
+const home = museumPage() +
+  '<section class="videos-section wrap" id="videos"><h2>About this project</h2><div class="video-grid">' + recordings.map(recording).join('') + '</div><div class="actions"><a class="text-link" href="project.html">Read my journey and reflection</a><a class="text-link" href="#hall">Return to the museum</a></div></section>';
 const cards = deckPage(timeline('cards.html'));
 
 const read = '<div class="wrap"><header class="page-heading"><h1>Read the history</h1><p class="lead">The same eight periods, open for you to browse.</p><a class="text-link" href="museum.html">Visit the museum</a></header>' + timeline('read.html') +
@@ -68,7 +66,7 @@ const project = '<div class="wrap project-page"><header class="page-heading"><h1
 const referencePage = '<div class="wrap references-page"><header class="page-heading"><h1>Reference list</h1><p>Historical sources, course readings and image credits.</p></header><ol class="reference-list">' + references.map(r => '<li id="source-' + r.id + '">' + r.html + '</li>').join('') + '</ol></div>';
 
 for (const [filename, title, page, body] of [
-  ['index.html', 'A history of money in China', 'home', home],
+  ['index.html', 'A history of money in China', 'museum', home],
   ['cards.html', 'Explore the flashcards', 'cards', cards],
   ['museum.html', 'Eight-room museum', 'museum', museumPage()],
   ['read.html', 'Read the history', 'read', read],

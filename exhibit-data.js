@@ -1,6 +1,8 @@
 // Shared by the static reading pages and the flashcards.
 // Historical photographs are documented in IMAGE-CREDITS.md.
 export const photos = {
+  banliangDetail: { src: 'assets/museum/han-banliang-closeup.jpg', title: 'Western Han banliang（半兩錢）', place: 'Cherrygarden collection · Obverse and reverse', credit: 'Fred Cherrygarden · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Ban_Liang_(Western_Han).jpg', alt: 'Close-up photographs of a Western Han bronze banliang coin: the inscription 半兩 is read from right to left around a square opening; the reverse has no inscription.' },
+  songpaper: { src: 'assets/museum/song-paper-reproduction.jpg', title: 'Paper-note reproduction（紙幣復刻圖）', place: 'Reproduced image commonly associated with jiaozi', credit: 'Scan from 社會歷史博物館 · Wikimedia Commons · Public domain', url: 'https://commons.wikimedia.org/wiki/File:Jiao_zi.jpg', alt: 'A reproduced paper-money image with rows of coin symbols and an illustrated scene, commonly used to illustrate jiaozi; not a surviving original note.' },
   cowries: { src: 'assets/museum/cowries.jpg', title: 'Cowrie money（貝幣）', place: 'Shanghai Museum', credit: 'Gary Lee Todd · CC0', url: 'https://commons.wikimedia.org/wiki/File:Cowrie_Shells_Used_as_Currency.jpg', alt: 'A display of natural cowrie shells used as currency in the Shanghai Museum.' },
   spades: { src: 'assets/museum/spade-money.jpg', title: 'Spade money（布幣）', place: 'Shanghai Museum', credit: 'Gary Lee Todd · CC0', url: 'https://commons.wikimedia.org/wiki/File:Spade_Coins,_Warring_States.jpg', alt: 'Four flat bronze spade-shaped coins from the Warring States period.' },
   knives: { src: 'assets/museum/knife-money.jpg', title: 'Knife money（刀幣）', place: 'Shanghai Museum', credit: 'Gary Lee Todd · CC0', url: 'https://commons.wikimedia.org/wiki/File:Knife_Coins,_Warring_States_03.jpg', alt: 'Three long bronze knife coins with a hole at the end of each handle.' },
@@ -36,7 +38,7 @@ export const periods = [
     question: 'What changed when an empire set the standard?',
     answerTitle: 'Coins became an imperial standard.',
     story: 'Qin promoted banliang coins（半兩錢）as a common standard. The round coin with a square hole endured, but its weight and rules could change. Under the Han, wuzhu coins（五銖錢）became an important new standard.',
-    sources: [9, 11], photos: ['banliang'],
+    sources: [9, 11], photos: ['banliangDetail','banliang'],
     quote: { english: 'They then cast four-zhu coins, inscribed ‘half-liang’.', chinese: '乃更鑄四銖錢，其文為「半兩」', attribution: 'Records of the Grand Historian（史記）, vol. 30', source: 11 },
     more: 'The passage describes a Han coin whose inscription still said “half-liang” after its prescribed weight changed. It shows why an inscription cannot automatically be treated as a measurement. Standardisation connected money with political authority.'
   },
@@ -104,7 +106,9 @@ export const references = [
   { id: 16, html: 'HY2206. <cite>The Creation of Empire (Unit 1)</cite>, Week 4, slides 11 and 13; Tutorial 2, <cite>The Debate on Salt and Iron</cite>. Course materials.' },
   { id: 17, html: 'HY2206. <cite>The Northern Song Dynasty</cite>, Week 8, slides 6 and 15. Course materials.' },
   { id: 18, html: 'Todd, Gary Lee. Photographs of Chinese monetary objects. Wikimedia Commons, CC0. ' + ['cowries','spades','knives','banliang','tang','iron','yuan','copper','silver'].map(id => '<a href="' + photos[id].url + '">' + photos[id].title + '</a>').join('; ') + '.' },
-  { id: 19, html: 'BabelStone. <a href="' + photos.ming.url + '">British Museum Ming banknote</a>. Photograph, 2010. Wikimedia Commons, CC0.' }
+  { id: 19, html: 'BabelStone. <a href="' + photos.ming.url + '">British Museum Ming banknote</a>. Photograph, 2010. Wikimedia Commons, CC0.' },
+  { id: 20, html: '<a href="https://commons.wikimedia.org/wiki/File:Jiao_zi.jpg">Paper-money reproduction</a>. Scan from <cite>社會歷史博物館</cite>, ISBN 7-5347-1397-8; Wikimedia Commons, public domain. Used as an illustrative reproduction. On the absence of surviving original jiaozi notes, see <a href="https://dawb.xmu.edu.cn/wbglzx/dawbts/wbzc/sdbz/14.htm">Xiamen University, “策展人說：世界上最早的紙幣——交子”</a>, 17 January 2025.' },
+  { id: 21, html: 'Cherrygarden, Fred. <a href="' + photos.banliangDetail.url + '">Ban Liang (Western Han)</a>. Photograph, 5 June 2020. Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. Displayed at reduced resolution; the activity shows an obverse detail. No retouching.' }
 ];
 
 // Fill in these local file paths after recording. Do not publish mock recordings.

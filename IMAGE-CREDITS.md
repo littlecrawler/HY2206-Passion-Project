@@ -50,3 +50,11 @@ All eight files below are Gary Lee Todd photographs, released under **CC0 1.0** 
 | qing-silver.jpg | Qing silver ingot, Shanghai Museum | [Source and licence](https://commons.wikimedia.org/wiki/File:Silver_Ingots_of_the_Qing_Dynasty.jpg) |
 
 The Northern Song iron coin is an illustration of the material, not an identified early Sichuan specimen. The Yuan image is identified as a museum display; the photograph alone is not an independent authentication of the object. The PayNow logo is official artwork, not an artefact photograph.
+
+## Paper-note reproduction
+
+`assets/museum/song-paper-reproduction.jpg`: unchanged 308 × 537 scan from *社會歷史博物館*, ISBN 7-5347-1397-8. [Wikimedia Commons source](https://commons.wikimedia.org/wiki/File:Jiao_zi.jpg), public domain. This is a reproduced image commonly associated with jiaozi, not a photograph of an extant original note; its identification is not treated as independent evidence. Displayed as “Reproduction（復刻圖）”.
+
+## Banliang close-up
+
+`assets/museum/han-banliang-closeup.jpg`: Fred Cherrygarden, *Ban Liang (Western Han)*, 5 June 2020. [Source](https://commons.wikimedia.org/wiki/File:Ban_Liang_(Western_Han).jpg), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Unretouched Wikimedia 1280-pixel version. The activity frames the obverse with CSS; the complete image remains available on enlargement. This detail presentation retains CC BY-SA 4.0. The photographed coin is not asserted to weigh four zhu.

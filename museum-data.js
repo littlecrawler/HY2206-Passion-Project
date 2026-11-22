@@ -1,9 +1,9 @@
-import { periods } from './exhibit-data.js';
+import { periods } from './exhibit-data.js?v=20261122-gallery';
 
 export const rooms = periods.map((period, index) => ({
   ...period, index, accent: '#b9d4de',
-  side: index < 4 ? -1 : 1,
-  bay: index < 4 ? index : 7 - index,
-  z: 14 - (index < 4 ? index : 7 - index) * 11,
-  angle: index < 4 ? Math.PI / 2 : -Math.PI / 2
+  theta: (-73.5 + index * 21) * Math.PI / 180,
+  x: Math.sin((-73.5 + index * 21) * Math.PI / 180) * 24,
+  z: -Math.cos((-73.5 + index * 21) * Math.PI / 180) * 24,
+  angle: (73.5 - index * 21) * Math.PI / 180
 }));

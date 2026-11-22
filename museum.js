@@ -1,15 +1,21 @@
-import { rooms } from './museum-data.js?v=20261122-atrium';
-import { photos } from './exhibit-data.js';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js';
+import { rooms } from './museum-data.js?v=20261122-gallery';
+import { photos } from './exhibit-data.js?v=20261122-gallery';
+import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-gallery';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
-  const shell=$('.museum-shell'), intro=$('#room-intro'), welcome=$('#museum-welcome');
-  const exhibit=$('#exhibit-dialog'), map=$('#room-map'), finish=$('#museum-finish'), panel=$('#exhibit-panel');
+  const shell=$('.museum-shell'), intro=$('#room-intro'), directory=$('#museum-directory');
+  const exhibit=$('#exhibit-dialog'), finish=$('#museum-finish'), panel=$('#exhibit-panel');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)');
   const states=rooms.map(()=>({...defaults(),pane:'story'}));
   const rail=[...document.querySelectorAll('[data-room]')];
   let current=-1, entered=false, scene, lastOpener=null, travelling=false;
+
+  function setDirectory(open,focus=false) {
+    directory.hidden=!open;shell.dataset.directory=open?'open':'closed';
+    $('#open-room-map').setAttribute('aria-expanded',String(open));
+    if(focus)(open?rail[Math.max(0,current)]:$('#open-room-map')).focus({preventScroll:true});
+  }
 
   function image(id) {
     const photo=photos[id];
@@ -34,34 +40,35 @@ export function initMuseum() {
   function updateRoom() {
     const room=rooms[Math.max(0,current)];
     shell.dataset.location=entered?'gallery':'hall';
-    welcome.hidden=entered;intro.hidden=!entered;
+    intro.hidden=!entered;
     $('#room-date').textContent=room.date;$('#room-title').textContent=room.label;$('#room-question').textContent=room.question;
-    $('#room-count').textContent=entered?'Gallery '+(current+1)+' of 8':'Eight galleries';
+    $('#room-count').textContent=entered?'Gallery '+(current+1)+' of 8':'Main hall';
     $('#previous-room').disabled=current<=0||travelling;
     $('#previous-room').textContent='Previous gallery';
     $('#next-room').textContent=!entered?'Start the visit':current===7?'Finish visit':'Next gallery';
     $('#return-hall').hidden=!entered;
     $('#fallback-photo').src=photos[room.photos[0]].src;$('#fallback-photo').alt=photos[room.photos[0]].alt;
     rail.forEach((button,index)=>{if(entered&&index===current)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
-    document.querySelectorAll('[data-map-room]').forEach(button=>{if(entered&&Number(button.dataset.mapRoom)===current)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');});
     document.title=(entered?room.label+' · 3D museum':'Eight-room museum')+' · Money in China';
   }
   function goTo(index,{push=true,animate=true}={}) {
     if(travelling&&animate)return;
     current=Math.max(-1,Math.min(7,index));entered=current>=0;
+    setDirectory(!entered);$('#gallery-hover').hidden=true;
     if(push)history.pushState(null,'','#'+(entered?rooms[current].id:'hall'));
     updateRoom();scene?.show(current,animate); if(exhibit.open){if(entered)renderExhibit();else exhibit.close();}
+    if(push)shell.scrollIntoView({behavior:'instant',block:'start'});
   }
   function openExhibit(photoId) {
     if(!entered||travelling)return;
     renderExhibit(photoId);lastOpener=$('#explore-room');exhibit.showModal();scene?.setPaused(true);
   }
   function followHash() {
+    if(location.hash==='#videos')return;
     const index=rooms.findIndex(room=>room.id===location.hash.slice(1));
     if(index>=0)goTo(index,{push:false,animate:false});
     else goTo(-1,{push:false,animate:false});
   }
-  $('#enter-museum').addEventListener('click',()=>goTo(0));
   $('#return-hall').addEventListener('click',()=>goTo(-1));
   $('#explore-room').addEventListener('click',()=>openExhibit());
   $('#previous-room').addEventListener('click',()=>{if(entered)goTo(current-1);});
@@ -71,13 +78,10 @@ export function initMuseum() {
     else{lastOpener=$('#next-room');finish.showModal();scene?.setPaused(true);}
   });
   rail.forEach(button=>button.addEventListener('click',()=>goTo(Number(button.dataset.room))));
-  $('#open-room-map').addEventListener('click',()=>{lastOpener=$('#open-room-map');map.showModal();scene?.setPaused(true);});
-  map.addEventListener('click',event=>{
-    const button=event.target.closest('[data-map-room]');if(!button)return;
-    map.close();goTo(Number(button.dataset.mapRoom));
-  });
+  $('#open-room-map').addEventListener('click',()=>setDirectory(directory.hidden,true));
+  $('#directory-close').addEventListener('click',()=>setDirectory(false,true));
   document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>document.getElementById(button.dataset.close).close()));
-  for(const dialog of [exhibit,map,finish]) {
+  for(const dialog of [exhibit,finish]) {
     dialog.addEventListener('close',()=>{scene?.setPaused(false);lastOpener?.focus({preventScroll:true});});
     dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();});
   }
@@ -110,16 +114,21 @@ export function initMuseum() {
     if(event.key==='ArrowLeft'){event.preventDefault();goTo(Math.max(-1,current-1));}
     if(event.key==='Enter'){event.preventDefault();if(entered)openExhibit();else goTo(0);}
   });
+  directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261122-atrium').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+  import('./museum-scene.js?v=20261122-gallery').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
     initialRoom:current,reducedMotion:reduce.matches,onSelect:openExhibit,onRoom:index=>goTo(index),
+    onHover(index,x,y){
+      const hint=$('#gallery-hover');hint.hidden=index<0||entered||travelling;
+      if(!hint.hidden){hint.textContent='Enter '+rooms[index].label;hint.style.left=Math.min(shell.clientWidth-210,Math.max(12,x+18))+'px';hint.style.top=Math.max(12,y-44)+'px';}
+    },
     onTravel(value){
       travelling=value;shell.classList.toggle('is-travelling',value);
       shell.querySelectorAll('button').forEach(button=>button.disabled=value);updateRoom();
     },
     onReady(){document.body.dataset.renderer='webgl';$('#museum-loading').hidden=true;}
   })).then(result=>{
-    scene=result;scene.show(current,false);scene.setPaused(exhibit.open||map.open||finish.open);
+    scene=result;scene.show(current,false);scene.setPaused(exhibit.open||finish.open);
     reduce.addEventListener('change',event=>scene.setReducedMotion(event.matches));
   }).catch(error=>{
     document.body.dataset.renderer='fallback';$('#museum-loading').hidden=true;$('#museum-canvas').hidden=true;$('#rotate-hint').hidden=true;

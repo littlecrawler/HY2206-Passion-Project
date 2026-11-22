@@ -1,5 +1,5 @@
-import { photos, periods } from './exhibit-data.js';
-import { activity, evidence, defaults, escape, text, cite } from './deck-content.js';
+import { photos, periods } from './exhibit-data.js?v=20261122-gallery';
+import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261122-gallery';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -32,14 +32,15 @@ export function initDeck() {
 
   function fitCard() {
     if (finished) return;
-    const frontHeight=Math.max(340,Math.min(650,innerHeight-document.querySelector('.site-header').offsetHeight-timeline[0].parentElement.offsetHeight-document.querySelector('.deck-status').offsetHeight-document.querySelector('.deck-controls').offsetHeight-document.querySelector('#deck-photo-tools').offsetHeight-42));
-    const height = engineReady ? (flipped ? Math.max(back.offsetHeight,frontHeight) : frontHeight) : Math.ceil((flipped ? back : front).offsetHeight);
+    const frontHeight=Math.max(innerWidth>780?520:400,Math.min(700,innerHeight-document.querySelector('.site-header').offsetHeight-timeline[0].parentElement.offsetHeight-document.querySelector('.deck-status').offsetHeight-document.querySelector('.deck-controls').offsetHeight-document.querySelector('#deck-photo-tools').offsetHeight-42));
+    const height = engineReady ? frontHeight : Math.ceil((flipped ? back : front).offsetHeight);
     if (height) flipper.style.height = height + 'px';
   }
   const sizeObserver = new ResizeObserver(fitCard);
   sizeObserver.observe(front);
   sizeObserver.observe(back);
   stage.addEventListener('load', fitCard, true);
+  window.addEventListener('resize',fitCard);
 
   function syncControls() {
     previous.disabled = busy || turning || current === 0;
@@ -53,6 +54,7 @@ export function initDeck() {
     if ((busy || turning) && !immediate) return;
     clearTimeout(flipTimer);
     flipped = answer;
+    if(answer)back.scrollTop=0;
     turning = !immediate && !reduce.matches;
     if (immediate) flipper.classList.add('no-transition');
     front.inert = engineReady || answer || turning;
@@ -288,7 +290,7 @@ export function initDeck() {
   }, true);
   window.addEventListener('hashchange', followHash);
   window.addEventListener('resize', () => {
-    if (innerWidth > 780 && states[current].pane === 'story') {
+    if (!engineReady && innerWidth > 780 && states[current].pane === 'story') {
       states[current].pane = 'activity';
       renderPanel();
     }
@@ -296,7 +298,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261122-atrium').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261122-gallery').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,reducedMotion:reduce.matches,
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
   })).then(result=>{

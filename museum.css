@@ -1,8 +1,12 @@
-body[data-page="museum"] { --museum-accent:#b9d4de; overflow:hidden; }
+body[data-page="museum"] { --museum-accent:#b9d4de; overflow-x:clip; }
+body[data-page="museum"] .site-header { position:fixed; top:0; left:0; right:0; }
 body[data-page="museum"] .site-footer { display:none; }
-.museum-shell { height:calc(100svh - 76px); min-height:440px; position:relative; isolation:isolate; overflow:hidden; }
+.museum-shell { height:100svh; min-height:580px; position:relative; isolation:isolate; overflow:hidden; background:#101c28; }
 .museum-stage, #museum-canvas, .museum-fallback, .museum-shade { position:absolute; inset:0; width:100%; height:100%; }
-#museum-canvas { display:block; touch-action:none; outline-offset:-5px; cursor:grab; }
+#museum-canvas { display:block; touch-action:none; outline-offset:-5px; cursor:grab; opacity:0; transition:opacity .8s ease; }
+body[data-renderer="webgl"] #museum-canvas { opacity:1; }
+.museum-fallback img { visibility:hidden; }
+body[data-renderer="fallback"] .museum-fallback img { visibility:visible; }
 .museum-fallback { display:grid; place-items:center; padding:8% 8% 12% 38%; background:#111e2a; }
 .museum-fallback img { max-height:65vh; width:100%; object-fit:contain; }
 body[data-renderer="webgl"] .museum-fallback { display:none; }
@@ -38,6 +42,27 @@ body[data-renderer="webgl"] .museum-fallback { display:none; }
 .museum-shell[data-location="hall"] .room-travel { display:none; }
 .museum-shell[data-location="hall"] .museum-bottom { grid-template-columns:155px 1fr; }
 .museum-shell.is-travelling :is(.room-intro,.museum-welcome,.rotate-hint) { opacity:0; }
+.museum-directory { position:absolute; z-index:4; top:112px; left:3%; width:350px; padding:24px; border:1px solid #9cbccd3a; border-radius:14px; background:linear-gradient(145deg,#152939ed,#0a1723e8); box-shadow:0 20px 70px #02081266,inset 0 1px 0 #dfedf115; backdrop-filter:blur(18px); }
+.directory-heading { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:20px; }
+.directory-heading h1 { font-size:27px; font-weight:500; letter-spacing:-.035em; }
+.directory-heading button { border:0; background:none; color:#cfdee6; width:34px; min-height:34px; flex-shrink:0; font:26px/1 var(--heading); }
+.directory-heading button:hover { color:white; background:#ffffff12; border-radius:4px; }
+.directory-galleries { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.directory-galleries button { display:flex; align-items:center; gap:10px; background:#20344385; border:1px solid #7091a133; color:#e7eff3; text-align:left; padding:8px; min-height:70px; border-radius:6px; font:17px/1.25 var(--heading); transition:background .2s,border-color .2s,transform .2s; }
+.directory-galleries button:hover:not(:disabled) { background:#365366; border-color:#b5cbdc; transform:translateY(-2px); }
+.directory-galleries button[aria-current] { background:#34566b; border-color:#c0dce9; }
+.directory-galleries img { width:42px; height:48px; object-fit:contain; background:#071521; border-radius:3px; flex-shrink:0; }
+.directory-project { display:block; margin-top:22px; padding-top:17px; border-top:1px solid #9cbccd33; font-size:18px; line-height:1.4; color:#d2e2eb; }
+.museum-shell[data-directory="open"] .room-intro { visibility:hidden; }
+.gallery-hover { position:absolute; pointer-events:none; z-index:3; background:#102534e8; color:#e6f2f6; border:1px solid #9cbccd66; padding:9px 14px; border-radius:5px; font:17px/1.3 var(--heading); }
+.museum-bottom,.museum-shell[data-location="hall"] .museum-bottom { grid-template-columns:1fr auto; bottom:25px; align-items:center; }
+.room-status { flex-direction:row; align-items:center; gap:22px; }
+.room-status #room-count { padding-left:14px; border-left:2px solid #b8d1df; font-size:17px; }
+.room-status .museum-button { font-weight:500; min-height:45px; }
+.rotate-hint { top:105px; }
+.museum-loading { top:140px; }
+body[data-page="museum"] .videos-section { padding-top:110px; padding-bottom:75px; }
+body[data-page="museum"] .videos-section .actions { gap:32px; }
 .museum-noscript { position:absolute; inset:25% 15%; z-index:10; padding:40px; text-align:center; background:#112231; }
 .museum-dialog { border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); padding:28px; width:min(1130px,94vw); max-height:90svh; box-shadow:0 30px 90px #0009; }
 .museum-dialog::backdrop { background:#03080dc9; backdrop-filter:blur(8px); }
@@ -74,10 +99,13 @@ body[data-renderer="webgl"] .museum-fallback { display:none; }
   .museum-bottom { grid-template-columns:1fr auto; gap:12px; }
   .room-rail { grid-column:1 / -1; grid-row:1; }
   .room-status { flex-direction:row; gap:22px; align-items:center; }
-  .museum-shell[data-location="hall"] .museum-bottom { grid-template-columns:1fr; }
+  .museum-shell[data-location="hall"] .museum-bottom { grid-template-columns:1fr auto; }
+  .museum-directory { width:330px; left:3%; padding:20px; }
+  .directory-galleries button { font-size:16px; padding:7px; gap:8px; }
+  .directory-galleries img { width:37px; }
 }
 @media (max-width:780px) {
-  .museum-shell { height:calc(100svh - 66px); min-height:460px; }
+  .museum-shell { height:100svh; min-height:560px; }
   .museum-welcome { left:6%; top:4%; max-width:75%; }
   .museum-welcome h1 { font-size:32px; }
   .museum-welcome p { font-size:20px; }
@@ -113,18 +141,39 @@ body[data-renderer="webgl"] .museum-fallback { display:none; }
   .museum-fallback { padding:5% 8% 70%; }
   .museum-finish { padding:23px; }
   .museum-finish h2 { font-size:36px; }
+  .museum-directory { top:auto; left:5%; width:90%; bottom:88px; padding:18px; border-radius:12px; }
+  .directory-heading { margin-bottom:12px; }
+  .directory-heading h1 { font-size:25px; }
+  .directory-galleries { gap:7px; }
+  .directory-galleries button { min-height:43px; padding:10px 12px; font-size:17px; }
+  .directory-galleries img { display:none; }
+  .directory-project { font-size:17px; margin-top:13px; padding-top:12px; }
+  .room-status { flex-direction:row; flex-wrap:wrap; gap:15px; }
+  .room-status #room-count { font-size:16px; padding-left:10px; }
+  .museum-shell[data-location="hall"] .room-status { justify-content:space-between; }
+  .gallery-hover { display:none; }
+  .museum-loading { top:90px; }
 }
 @media (max-height:620px) and (min-width:781px) {
   .room-intro { top:10%; }
   .room-intro h1 { font-size:34px; }
   .room-question { font-size:23px; margin-top:14px; }
+  .museum-directory { top:90px; padding:18px; }
+  .directory-galleries button { min-height:58px; }
+  .directory-heading { margin-bottom:13px; }
+  .directory-project { margin-top:14px; padding-top:12px; }
 }
 @media (max-height:560px) and (min-width:600px) {
   .museum-shell { min-height:0; }
-  .room-intro { top:7%; bottom:auto; width:32%; }
+  .room-intro { top:94px; bottom:auto; width:32%; }
   .room-intro h1 { font-size:30px; }
   .room-question { font-size:20px; }
   .room-rail { display:none; }
   .museum-bottom { grid-template-columns:1fr auto; }
+  .museum-directory { top:84px; bottom:84px; width:min(360px,46%); padding:14px; overflow-y:auto; }
+  .directory-heading h1 { font-size:22px; }
+  .directory-heading { margin-bottom:10px; }
+  .directory-galleries img { display:none; }
+  .directory-galleries button { min-height:36px; padding:7px; }
 }
 @media (prefers-reduced-motion:reduce) { .museum-shell *, .museum-dialog * { scroll-behavior:auto; transition:none !important; animation:none !important; } }

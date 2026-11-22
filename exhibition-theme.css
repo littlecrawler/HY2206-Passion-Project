@@ -8,6 +8,7 @@ body[data-page],body[data-page] :is(.deck-face,.photo-dialog,.museum-dialog) {
 body[data-page] { background:radial-gradient(ellipse at 80% 0%,#23394b,transparent 60%),#0d1823; }
 body[data-page="museum"] { background:#0d1823; }
 body[data-page] .site-header { background:#0d1823f2; border-color:var(--line); backdrop-filter:blur(14px); }
+body[data-page="museum"] .site-header { background:#07121dc9; border-color:#7895a133; backdrop-filter:blur(12px); }
 body[data-page] .header-inner { min-height:76px; }
 body[data-page] .brand { font-size:23px; }
 body[data-page] .brand img { filter:grayscale(1) brightness(2.8); }
@@ -55,6 +56,11 @@ body[data-page] .deck-face a:hover { color:#e2f4ff; }
 body[data-page] .tour-finish { background:#1a3041; }
 body[data-page] .deck-controls { background:#0d1823ee; }
 .evidence-reading { scrollbar-color:#7d9caf #152936; }
+.paper-photograph .activity-photo img { height:240px; }
+.paper-photograph figcaption { font-size:17px; line-height:1.4; margin-top:9px; text-align:center; color:var(--muted); }
+.coin-obverse-photo { width:min(100%,250px); aspect-ratio:1; margin:auto; background:white; }
+.coin-obverse-photo img { width:200%; max-width:none; height:100%; object-fit:fill; }
+.coin-photo-credit { text-align:center; font-size:17px; color:var(--muted); margin-top:8px; }
 @media (max-width:1060px) { body[data-page] #main-nav { background:#112331; border-color:#4a626f; } }
 @media (max-width:780px) {
   body[data-page] .header-inner { min-height:66px; }
