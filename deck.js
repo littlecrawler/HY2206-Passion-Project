@@ -1,5 +1,5 @@
-import { photos, periods } from './exhibit-data.js?v=20261122-floating-title';
-import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261122-floating-title';
+import { photos, periods } from './exhibit-data.js?v=20261123-continuous-flip';
+import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261123-continuous-flip';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -69,7 +69,7 @@ export function initDeck() {
     document.querySelector('#card-count').textContent = 'Card ' + (current + 1) + ' of ' + periods.length;
     fitCard();
     syncControls();
-    if (turning) flipTimer = setTimeout(settleFlip, 850);
+    if (turning) { if(!engineReady) flipTimer = setTimeout(settleFlip, 850); }
     else deckScene?.setPaused(answer);
     if (immediate) {
       void flipper.offsetHeight;
@@ -294,8 +294,9 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261122-floating-title').then(({createDeckScene})=>createDeckScene(canvas,{
-    initialIndex:current,photoId:states[current].photo,reducedMotion:reduce.matches,
+  import('./deck-scene.js?v=20261123-continuous-flip').then(({createDeckScene})=>createDeckScene(canvas,{
+    initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
+    onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
   })).then(result=>{
     deckScene=result;engineReady=true;document.body.dataset.deckRenderer='webgl';canvas.hidden=false;

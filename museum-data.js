@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261122-floating-title';
+import { periods } from './exhibit-data.js?v=20261123-continuous-flip';
 
 export const hallViewZ = 18;
 

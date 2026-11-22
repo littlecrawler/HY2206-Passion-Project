@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Reflector } from './vendor/three/Reflector.js';
-import { rooms } from './museum-data.js?v=20261122-floating-title';
+import { rooms } from './museum-data.js?v=20261123-continuous-flip';
 
 // Architectural surfaces only. Every object on display is a credited photograph.
 export function buildArchitecture(scene, { renderer, box, writing, photograph, mats, resources, selectables }) {

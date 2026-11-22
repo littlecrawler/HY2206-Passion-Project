@@ -1,5 +1,5 @@
-import { photos } from './exhibit-data.js?v=20261122-floating-title';
-import { initDeck } from './deck.js?v=20261122-floating-title';
+import { photos } from './exhibit-data.js?v=20261123-continuous-flip';
+import { initDeck } from './deck.js?v=20261123-continuous-flip';
 
 // Keep bookmarks from earlier versions useful.
 if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) {
@@ -87,5 +87,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261122-floating-title').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261123-continuous-flip').then(({ initMuseum }) => initMuseum());
 }

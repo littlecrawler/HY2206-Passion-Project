@@ -4,9 +4,9 @@ import { deckPage } from './deck-template.mjs';
 import { readingAdditions } from './deck-content.js';
 import { museumPage } from './museum-template.mjs';
 
-const version = '20261122-floating-title';
+const version = '20261123-continuous-flip';
 await mkdir(new URL('vendor/three/', import.meta.url), { recursive: true });
-for (const [source, target] of [['build/three.module.min.js','three.module.min.js'],['build/three.core.min.js','three.core.min.js'],['examples/jsm/environments/RoomEnvironment.js','RoomEnvironment.js'],['examples/jsm/objects/Reflector.js','Reflector.js'],['LICENSE','LICENSE']]) {
+for (const [source, target] of [['build/three.module.min.js','three.module.min.js'],['build/three.core.min.js','three.core.min.js'],['examples/jsm/environments/RoomEnvironment.js','RoomEnvironment.js'],['examples/jsm/objects/Reflector.js','Reflector.js'],['examples/jsm/renderers/CSS3DRenderer.js','CSS3DRenderer.js'],['LICENSE','LICENSE']]) {
   await copyFile(new URL('node_modules/three/' + source, import.meta.url), new URL('vendor/three/' + target, import.meta.url));
 }
 const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');

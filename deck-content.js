@@ -1,4 +1,4 @@
-import { photos } from './exhibit-data.js?v=20261122-floating-title';
+import { photos } from './exhibit-data.js?v=20261123-continuous-flip';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');

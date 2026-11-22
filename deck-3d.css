@@ -18,6 +18,7 @@ body[data-deck-renderer="webgl"] .deck-page .timeline-date { display:none; }
 body[data-deck-renderer="webgl"] .deck-status { margin-top:12px; }
 .deck-canvas { position:absolute; inset:0; width:100%; height:100%; display:block; z-index:3; cursor:grab; touch-action:pan-y; }
 .deck-canvas:active { cursor:grabbing; }
+.deck-text-layer { position:absolute; inset:0; z-index:5; pointer-events:none; }
 .deck-photo-tools { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:16px; margin:0 0 14px; }
 .deck-photo-tools .photo-choices { margin:0; }
 .deck-photo-tools .photo-choice { color:#c9e0e8; border-color:#536f80; }
@@ -28,8 +29,8 @@ body[data-deck-renderer="webgl"] .pile-card { display:none; }
 body[data-deck-renderer="webgl"] .deck-motion { z-index:4; pointer-events:none; }
 body[data-deck-renderer="webgl"] .deck-flipper { transform:none; transition:none; }
 body[data-deck-renderer="webgl"] .deck-front { visibility:hidden; pointer-events:none; }
-body[data-deck-renderer="webgl"] .deck-back { transform:none; opacity:0; visibility:hidden; pointer-events:none; inset:var(--card-top,10%) auto auto var(--card-left,10%); width:var(--card-width,80%); height:var(--card-height,80%); min-height:0; padding:24px 28px; overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#7c9baa #142838; border:2px solid #8ba9b6; border-radius:16px; box-shadow:none; background:#102332; }
-body[data-deck-renderer="webgl"] .is-reading .deck-back { opacity:1; visibility:visible; pointer-events:auto; }
+body[data-deck-renderer="webgl"] .deck-back { opacity:1; visibility:visible; pointer-events:none; inset:0 auto auto 0; width:var(--card-width,80%); height:var(--card-height,80%); min-height:0; padding:24px 28px; overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#7c9baa #142838; border:2px solid #8ba9b6; border-radius:16px; box-shadow:none; background:#102332; }
+body[data-deck-renderer="webgl"] .is-reading .deck-back { pointer-events:auto; }
 body[data-deck-renderer="webgl"] .is-reading .deck-canvas { opacity:1; pointer-events:none; }
 body[data-deck-renderer="webgl"] .deck-back::after { display:none; }
 body[data-deck-renderer="webgl"] .deck-back .back-heading { padding-bottom:12px; margin-bottom:14px; }

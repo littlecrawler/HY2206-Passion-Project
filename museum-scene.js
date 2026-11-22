@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261122-floating-title';
-import { rooms, hallViewZ } from './museum-data.js?v=20261122-floating-title';
-import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261122-floating-title';
-import { photos } from './exhibit-data.js?v=20261122-floating-title';
+import { buildArchitecture } from './museum-architecture.js?v=20261123-continuous-flip';
+import { rooms, hallViewZ } from './museum-data.js?v=20261123-continuous-flip';
+import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-continuous-flip';
+import { photos } from './exhibit-data.js?v=20261123-continuous-flip';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * (3 - 2 * t);
@@ -156,7 +156,7 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   function beginMove(curve,end,fromProjection,travel) {
     const toProjection=projection();
     const motion=travel?travelMotion(curve):null,fromRotation=camera.quaternion.clone(),toRotation=orientation(end.position,end.target);
-    const duration=travel?clamp(900+curve.getLength()*10,1250,2100):clamp(350+fromRotation.angleTo(toRotation)*220,450,650);
+    const duration=travel?clamp(1800+curve.getLength()*14,2400,3200):clamp(350+fromRotation.angleTo(toRotation)*220,450,650);
     moving={start:performance.now(),duration,
       curve,motion,end,fromProjection,toProjection,fromRotation,toRotation};
     applyProjection(fromProjection,toProjection,0);

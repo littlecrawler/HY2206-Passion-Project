@@ -1,6 +1,6 @@
-import { rooms } from './museum-data.js?v=20261122-floating-title';
-import { photos } from './exhibit-data.js?v=20261122-floating-title';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-floating-title';
+import { rooms } from './museum-data.js?v=20261123-continuous-flip';
+import { photos } from './exhibit-data.js?v=20261123-continuous-flip';
+import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261123-continuous-flip';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
@@ -43,7 +43,6 @@ export function initMuseum() {
   function updateRoom() {
     const room=rooms[Math.max(0,current)];
     shell.dataset.location=entered?'gallery':'hall';
-    $('#hall-title').hidden=entered;
     intro.hidden=!entered;
     $('#room-objects').hidden=!entered;
     const focused=entered?states[current].viewPhoto:null;
@@ -154,7 +153,7 @@ export function initMuseum() {
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261122-floating-title').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+  import('./museum-scene.js?v=20261123-continuous-flip').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
     initialRoom:current,reducedMotion:reduce.matches,onSelect:focusObject,onLeaveObject:leaveObject,onRoom:index=>goTo(index),
     onObjectPositions(positions){
       positions.forEach(({id,x,y,visible})=>{
