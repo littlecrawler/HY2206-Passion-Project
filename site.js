@@ -1,5 +1,5 @@
-import { photos } from './exhibit-data.js?v=20261122-gallery';
-import { initDeck } from './deck.js?v=20261122-gallery';
+import { photos } from './exhibit-data.js?v=20261122-viewfit';
+import { initDeck } from './deck.js?v=20261122-viewfit';
 
 // Keep bookmarks from earlier versions useful.
 if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) {
@@ -61,5 +61,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261122-gallery').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261122-viewfit').then(({ initMuseum }) => initMuseum());
 }

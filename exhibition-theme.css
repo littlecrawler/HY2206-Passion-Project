@@ -1,11 +1,14 @@
 /* One palette across the museum, cards, reading pages and dialogs. */
 :root { color-scheme:dark; }
+html { min-height:100%; background:#0d1823; }
 body[data-page],body[data-page] :is(.deck-face,.photo-dialog,.museum-dialog) {
   --paper:#0d1823; --ink:#e4ebf0; --green:#bcd6df; --muted:#b4c4cf;
   --line:#3a4d5b; --wash:#182b3a; --white:#111f2b;
   color:var(--ink);
 }
-body[data-page] { background:radial-gradient(ellipse at 80% 0%,#23394b,transparent 60%),#0d1823; }
+body[data-page] { min-height:100svh; display:flex; flex-direction:column; background:radial-gradient(ellipse at 80% 0%,#23394b,transparent 60%),#0d1823; background-repeat:no-repeat; background-attachment:fixed; }
+body[data-page] > main { flex:1; min-width:0; }
+body[data-page] > .site-footer { flex-shrink:0; }
 body[data-page="museum"] { background:#0d1823; }
 body[data-page] .site-header { background:#0d1823f2; border-color:var(--line); backdrop-filter:blur(14px); }
 body[data-page="museum"] .site-header { background:#07121dc9; border-color:#7895a133; backdrop-filter:blur(12px); }

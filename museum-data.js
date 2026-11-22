@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261122-gallery';
+import { periods } from './exhibit-data.js?v=20261122-viewfit';
 
 export const rooms = periods.map((period, index) => ({
   ...period, index, accent: '#b9d4de',

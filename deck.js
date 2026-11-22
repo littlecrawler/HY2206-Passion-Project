@@ -1,5 +1,5 @@
-import { photos, periods } from './exhibit-data.js?v=20261122-gallery';
-import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261122-gallery';
+import { photos, periods } from './exhibit-data.js?v=20261122-viewfit';
+import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261122-viewfit';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -32,7 +32,7 @@ export function initDeck() {
 
   function fitCard() {
     if (finished) return;
-    const frontHeight=Math.max(innerWidth>780?520:400,Math.min(700,innerHeight-document.querySelector('.site-header').offsetHeight-timeline[0].parentElement.offsetHeight-document.querySelector('.deck-status').offsetHeight-document.querySelector('.deck-controls').offsetHeight-document.querySelector('#deck-photo-tools').offsetHeight-42));
+    const frontHeight=Math.max(innerWidth>780?520:400,Math.min(960,innerHeight-document.querySelector('.site-header').offsetHeight-timeline[0].parentElement.offsetHeight-document.querySelector('.deck-status').offsetHeight-document.querySelector('.deck-controls').offsetHeight-document.querySelector('#deck-photo-tools').offsetHeight-42));
     const height = engineReady ? frontHeight : Math.ceil((flipped ? back : front).offsetHeight);
     if (height) flipper.style.height = height + 'px';
   }
@@ -298,7 +298,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261122-gallery').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261122-viewfit').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,reducedMotion:reduce.matches,
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
   })).then(result=>{

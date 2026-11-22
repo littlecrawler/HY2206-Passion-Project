@@ -1,4 +1,4 @@
-import { photos } from './exhibit-data.js?v=20261122-gallery';
+import { photos } from './exhibit-data.js?v=20261122-viewfit';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
@@ -89,7 +89,7 @@ export function activity(period, state) {
       const layers = [
         ['A familiar interface', 'The phone helps you identify a recipient and initiate a payment. Look beneath it to find the accounts involved.'],
         ['Funds move between accounts', 'PayNow transfers Singapore-dollar funds between participating bank or e-wallet accounts. The transfer is more than the number shown on a screen.'],
-        ['Institutions make the system work', 'Providers, shared rules and reliable records support a payment. Convenience still depends on arrangements beyond the object in your hand.']
+        ['What makes a payment work', 'Easy payments also rely on banks, payment networks and accurate transaction records.']
       ];
       const l = layers[state.paymentLayer];
       return '<h3 class="activity-title">Look behind a PayNow payment</h3>' +

@@ -1,6 +1,6 @@
-import { rooms } from './museum-data.js?v=20261122-gallery';
-import { photos } from './exhibit-data.js?v=20261122-gallery';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-gallery';
+import { rooms } from './museum-data.js?v=20261122-viewfit';
+import { photos } from './exhibit-data.js?v=20261122-viewfit';
+import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-viewfit';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
@@ -41,6 +41,14 @@ export function initMuseum() {
     const room=rooms[Math.max(0,current)];
     shell.dataset.location=entered?'gallery':'hall';
     intro.hidden=!entered;
+    $('#room-objects').hidden=!entered;
+    if(entered){
+      const focused=states[current].viewPhoto;
+      $('#room-objects').innerHTML='<button type="button" data-room-view aria-pressed="'+!focused+'">Room view</button>'+room.photos.map(id=>'<button type="button" data-focus-object="'+id+'" aria-pressed="'+(focused===id)+'">'+text(photos[id].title.split('（')[0].trim())+'</button>').join('');
+      $('#room-objects').querySelectorAll('button').forEach(button=>button.disabled=travelling);
+      const active=$('#room-objects').querySelector('[aria-pressed="true"]');
+      if(active)$('#room-objects').scrollLeft=active.offsetLeft-($('#room-objects').clientWidth-active.offsetWidth)/2;
+    }
     $('#room-date').textContent=room.date;$('#room-title').textContent=room.label;$('#room-question').textContent=room.question;
     $('#room-count').textContent=entered?'Gallery '+(current+1)+' of 8':'Main hall';
     $('#previous-room').disabled=current<=0||travelling;
@@ -54,6 +62,7 @@ export function initMuseum() {
   function goTo(index,{push=true,animate=true}={}) {
     if(travelling&&animate)return;
     current=Math.max(-1,Math.min(7,index));entered=current>=0;
+    shell.dataset.photoFocus='false';if(entered)states[current].viewPhoto=null;
     setDirectory(!entered);$('#gallery-hover').hidden=true;
     if(push)history.pushState(null,'','#'+(entered?rooms[current].id:'hall'));
     updateRoom();scene?.show(current,animate); if(exhibit.open){if(entered)renderExhibit();else exhibit.close();}
@@ -80,6 +89,14 @@ export function initMuseum() {
   rail.forEach(button=>button.addEventListener('click',()=>goTo(Number(button.dataset.room))));
   $('#open-room-map').addEventListener('click',()=>setDirectory(directory.hidden,true));
   $('#directory-close').addEventListener('click',()=>setDirectory(false,true));
+  $('#room-objects').addEventListener('click',event=>{
+    const button=event.target.closest('button');if(!button||travelling||!entered)return;
+    const id=button.dataset.focusObject;
+    states[current].viewPhoto=id||null;shell.dataset.photoFocus=String(Boolean(id));
+    if(id){states[current].photo=id;scene?.focusPhoto(id);}
+    else scene?.show(current,false);
+    updateRoom();
+  });
   document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>document.getElementById(button.dataset.close).close()));
   for(const dialog of [exhibit,finish]) {
     dialog.addEventListener('close',()=>{scene?.setPaused(false);lastOpener?.focus({preventScroll:true});});
@@ -116,7 +133,7 @@ export function initMuseum() {
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261122-gallery').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+  import('./museum-scene.js?v=20261122-viewfit').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
     initialRoom:current,reducedMotion:reduce.matches,onSelect:openExhibit,onRoom:index=>goTo(index),
     onHover(index,x,y){
       const hint=$('#gallery-hover');hint.hidden=index<0||entered||travelling;

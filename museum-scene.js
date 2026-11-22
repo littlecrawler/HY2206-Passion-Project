@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261122-gallery';
-import { rooms } from './museum-data.js?v=20261122-gallery';
-import { photos } from './exhibit-data.js?v=20261122-gallery';
+import { buildArchitecture } from './museum-architecture.js?v=20261122-viewfit';
+import { rooms } from './museum-data.js?v=20261122-viewfit';
+import { photos } from './exhibit-data.js?v=20261122-viewfit';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * (3 - 2 * t);
@@ -37,9 +37,9 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     white: new THREE.MeshBasicMaterial({ color: '#c4d4dc', toneMapped: false })
   };
   const cube = new THREE.BoxGeometry(1, 1, 1), resources = [], selectables = [];
-  const textures = new Map(), photoTasks = [], loader = new THREE.TextureLoader();
+  const textures = new Map(), photoTargets = new Map(), photoTasks = [], loader = new THREE.TextureLoader();
   let current = initialRoom, paused = false, disposed = false, frame = 0, moving = null;
-  let small = false, width = 1, height = 1, yaw = 0, pitch = 0, pointer = null;
+  let small = false, width = 1, height = 1, yaw = 0, pitch = 0, pointer = null, focusedPhoto = null;
   const pose = { position: vector(), target: vector() };
   const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
 
@@ -71,6 +71,8 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
   }
   function photograph(parent, id, roomIndex, x, y, z, w = 6.6, h = 4.5, angle = 0, hallPreview = false) {
     const group = new THREE.Group(); group.position.set(x, y, z); group.rotation.y = angle; parent.add(group);
+    const target = {group,w,h,side:Math.abs(angle)>.1};
+    if(!hallPreview)photoTargets.set(roomIndex+':'+id,target);
     box(group, w + .22, h + .22, .14, 0, 0, -.04, mats.metal);
     box(group, w, h, .18, 0, 0, 0, mats.dark);
     box(group, w + .05, .025, .12, 0, h / 2 + .26, .08, mats.warm);
@@ -78,10 +80,12 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
       if (disposed || !map) return;
       const ratio = map.image.width / map.image.height;
       const pw = Math.min(w - .18, (h - .18) * ratio), ph = pw / ratio;
+      target.w=pw;target.h=ph;
       const geo = new THREE.PlaneGeometry(pw, ph); resources.push(geo);
       const mat = new THREE.MeshBasicMaterial({ map, toneMapped: false }); resources.push(mat);
       const photo = new THREE.Mesh(geo, mat); photo.position.z = .101; photo.userData = { photo: id, room: roomIndex, hallPreview };
       group.add(photo); selectables.push(photo); requestFrame();
+      if(!hallPreview&&roomIndex===current&&focusedPhoto===id)focusPhoto(id,false);
     }));
     writing(group, photos[id].title, w, .55, 0, -h / 2 - .55, .05, { size: 70 });
   }
@@ -92,8 +96,28 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
 
   const architecture = buildArchitecture(scene, { renderer, box, writing, photograph, mats, resources, selectables });
 
+  function objectViewport() {
+    if(small)return {fraction:.42,offsetY:height*.17};
+    const nav=document.getElementById('room-objects');
+    const top=Math.max(145,(nav?.getBoundingClientRect().bottom||125)-canvas.getBoundingClientRect().top+22),bottom=height-112;
+    return {fraction:Math.max(.2,Math.min(.7,(bottom-top)/height)),offsetY:height/2-(top+bottom)/2};
+  }
   function destination(index) {
     if (index < 0) return { position: vector(0,small?5.3:5.4,small?21:15.5), target: vector(0,small?2.3:3.9,-9) };
+    if(focusedPhoto){
+      const object=photoTargets.get(index+':'+focusedPhoto);
+      if(object){
+        const v=objectViewport().fraction,h=small?.86:.57;
+        const need=Math.max((object.h+.7)/v,(object.w+.35)/(camera.aspect*h));
+        const limit=object.side?7.2:10.3;
+        camera.fov=Math.max(small?68:50,THREE.MathUtils.radToDeg(2*Math.atan(need/(2*limit))));
+        camera.updateProjectionMatrix();
+        const distance=need/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)));
+        const target=object.group.localToWorld(vector(0,-.12,.12));
+        const normal=vector(0,0,1).applyQuaternion(object.group.getWorldQuaternion(new THREE.Quaternion()));
+        return {target,position:target.clone().addScaledVector(normal,distance)};
+      }
+    }
     const distance=8.5, framingX=.5-.3*distance*Math.tan(THREE.MathUtils.degToRad(25))*camera.aspect;
     return {
       position: localPoint(index, small ? .5 : framingX, small ? 3.5 : 3.6, small ? 5.4 : 2.65),
@@ -111,7 +135,7 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     if (index >= 0) galleryLight.position.copy(localPoint(index, 0, 7, 1));
   }
   function show(index, animate = true) {
-    const previous = current; current = index; yaw = pitch = 0;
+    const previous = current; current = index; yaw = pitch = 0; focusedPhoto=null;
     camera.fov=small?(index<0?68:68):(index<0?63:50);setFraming();camera.updateProjectionMatrix();
     const end = destination(index); setLight(index);
     if (!animate || reducedMotion || previous === index) {
@@ -135,6 +159,15 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     moving = { start: performance.now(), duration: Math.min(2800, 1200 + distances.at(-1) * 28), points: compact, distances, curve:new THREE.CatmullRomCurve3(compact,false,'centripetal'), fromTarget: pose.target.clone(), end };
     onTravel?.(true); requestFrame();
   }
+  function focusPhoto(id,animate=true) {
+    if(current<0||!photoTargets.has(current+':'+id))return;
+    focusedPhoto=id;yaw=pitch=0;setFraming();
+    const end=destination(current);
+    if(!animate||reducedMotion||pose.position.distanceTo(end.position)<.01){moving=null;pose.position.copy(end.position);pose.target.copy(end.target);onTravel?.(false);requestFrame();return;}
+    const points=[pose.position.clone(),end.position],distance=points[0].distanceTo(points[1]);
+    moving={start:performance.now(),duration:800,distances:[0,distance],curve:new THREE.CatmullRomCurve3(points,false,'centripetal'),fromTarget:pose.target.clone(),end};
+    onTravel?.(true);requestFrame();
+  }
   function tick(now) {
     frame = 0; if (paused || disposed || document.hidden) return;
     if (moving) {
@@ -150,6 +183,7 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
   function requestFrame() { if (!frame && !paused && !disposed && !document.hidden) frame = requestAnimationFrame(tick); }
   function setFraming() {
     if(current<0&&!small)camera.setViewOffset(width,height,-Math.min(350,width*.25)/2,0,width,height);
+    else if(focusedPhoto)camera.setViewOffset(width,height,small?0:-width*.14,objectViewport().offsetY,width,height);
     else camera.clearViewOffset();
   }
   function resize() {
@@ -189,9 +223,9 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
   resize();setLight(current);cameraUpdate();renderer.render(scene,camera);onReady?.();
   Promise.all(photoTasks).then(requestFrame);
   return {
-    show,
+    show,focusPhoto,
     setPaused(value) { paused = value; if (value) { cancelAnimationFrame(frame); frame = 0; } else requestFrame(); },
-    setReducedMotion(value) { reducedMotion = value; if (value && moving) show(current, false); },
+    setReducedMotion(value) { reducedMotion = value; if (value && moving) {if(focusedPhoto)focusPhoto(focusedPhoto,false);else show(current, false);} },
     dispose() {
       disposed = true; cancelAnimationFrame(frame); observer.disconnect(); document.removeEventListener('visibilitychange', visibility);
       resources.forEach(resource => resource.dispose()); Object.values(mats).forEach(mat => mat.dispose()); cube.dispose(); env.dispose(); renderer.dispose();

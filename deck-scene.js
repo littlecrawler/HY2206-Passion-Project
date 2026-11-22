@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { periods, photos } from './exhibit-data.js?v=20261122-gallery';
+import { periods, photos } from './exhibit-data.js?v=20261122-viewfit';
 
 const ease = t => t * t * (3 - 2 * t);
 const clamp = THREE.MathUtils.clamp;
@@ -98,7 +98,7 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
     selected=id;const version=buildVersion,material=frontMaterial;
     const map=await frontTexture(current,id);
     if(disposed||version!==buildVersion||id!==selected){map.dispose();return;}
-    material.map=map;material.needsUpdate=true;start();
+    material.map=map;material.needsUpdate=true;update(performance.now());renderer.render(scene,camera);start();
   }
   function rebuild() {
     buildVersion++;clearRig();
@@ -123,15 +123,25 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
   function update(now) {
     const dt=Math.min((now-lastTime)/1000,.04);lastTime=now;if(!reducedMotion)time+=dt;
     if(turn){const t=clamp((now-turn.start)/760,0,1);flipValue=THREE.MathUtils.lerp(turn.from,turn.to,ease(t));if(t===1)turn=null;}
-    if(deal){const t=clamp((now-deal.start)/deal.duration,0,1),k=ease(t);dealX=THREE.MathUtils.lerp(deal.from,deal.to,k);dealZ=Math.sin(t*Math.PI)*.5;dealAngle=dealX*.06;if(t===1){const resolve=deal.resolve;deal=null;resolve();}}
+    if(deal){const t=clamp((now-deal.start)/deal.duration,0,1),k=ease(t);dealX=THREE.MathUtils.lerp(deal.from,deal.to,k);dealZ=Math.sin(t*Math.PI)*.5;dealAngle=dealX*.06;if(t===1){const resolve=deal.resolve;clearTimeout(deal.timer);deal=null;resolve();}}
     main.position.set(dealX,0,.38+dealZ);
     main.rotation.set(0,flipValue,dealAngle);
     rig.rotation.set(0,0,0);
   }
   function tick(now) {frame=0;if(paused||disposed||document.hidden||!inView)return;update(now);renderer.render(scene,camera);if(turn||deal)frame=requestAnimationFrame(tick);}
   function start() {if(!frame&&!paused&&!disposed&&!document.hidden&&inView){lastTime=performance.now();frame=requestAnimationFrame(tick);}}
-  function cancel() {if(deal){deal.resolve();deal=null;}turn=null;dealX=dealZ=dealAngle=0;}
-  function animateDeal(from,to,duration) {paused=false;if(reducedMotion){dealX=0;return Promise.resolve();}return new Promise(resolve=>{deal={from,to,duration,resolve,start:performance.now()};start();});}
+  function cancel() {if(deal){clearTimeout(deal.timer);deal.resolve();deal=null;}turn=null;dealX=dealZ=dealAngle=0;}
+  function animateDeal(from,to,duration) {
+    paused=false;
+    if(reducedMotion||document.hidden||!inView){dealX=0;return Promise.resolve();}
+    return new Promise(resolve=>{
+      const animation={from,to,duration,resolve,start:performance.now()};deal=animation;
+      // Page visibility or a missed frame must not leave navigation disabled.
+      animation.timer=setTimeout(()=>{if(deal!==animation)return;dealX=to;dealZ=dealAngle=0;deal=null;resolve();start();},duration+150);
+      cancelAnimationFrame(frame);frame=0;
+      start();
+    });
+  }
   function show(index,id) {cancel();current=index;selected=id||periods[index].photos[0];flipValue=0;targetSide=false;paused=false;rebuild();start();}
   function flip(answer,immediate=false) {paused=false;targetSide=answer;const to=answer?Math.PI:0;if(immediate||reducedMotion){flipValue=to;turn=null;}else turn={from:flipValue,to,start:performance.now()};start();}
   canvas.addEventListener('pointermove',event=>{const r=canvas.getBoundingClientRect();hoverX=(event.clientX-r.left)/r.width*2-1;hoverY=(event.clientY-r.top)/r.height*2-1;if(pointer&&Math.hypot(event.clientX-pointer.x,event.clientY-pointer.y)>8)pointer.moved=true;start();});
