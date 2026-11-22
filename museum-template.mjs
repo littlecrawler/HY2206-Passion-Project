@@ -6,6 +6,7 @@ export function museumPage() {
   return '<section class="museum-shell" id="hall" data-directory="open" aria-label="Money Through Time: eight galleries">' +
     '<div class="museum-stage" id="museum-stage"><div class="museum-fallback" id="museum-fallback"><img id="fallback-photo" src="' + photos.banliang.src + '" alt="' + photos.banliang.alt + '"></div><canvas id="museum-canvas" aria-label="Three-dimensional museum. Click a doorway to enter a gallery. Click an exhibit to face it." tabindex="0"></canvas></div><div class="exhibit-hotspots" id="exhibit-hotspots" aria-label="View wall exhibits"></div>' +
     '<div class="museum-shade" aria-hidden="true"></div><p class="museum-loading" id="museum-loading" role="status">Opening the museum…</p>' +
+    '<div class="hall-title" id="hall-title"><h1>Money <span>Through Time</span></h1></div>' +
     '<aside class="museum-directory" id="museum-directory" aria-labelledby="directory-title"><div class="directory-heading"><h2 id="directory-title">Museum guide</h2><button type="button" id="directory-close" aria-label="Hide museum guide">×</button></div>' +
     '<p class="directory-location" id="directory-location">Main hall</p><nav class="directory-galleries" aria-label="Museum galleries">' +
     rooms.map((r,i) => '<button type="button" data-room="' + i + '" aria-label="Gallery ' + (i+1) + ': ' + escape(r.label) + '"><img src="' + photos[r.photos[0]].src + '" alt="" decoding="async"><span>' + text(r.label) + '</span></button>').join('') +

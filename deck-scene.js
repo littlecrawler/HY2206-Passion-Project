@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { periods, photos } from './exhibit-data.js?v=20261122-money-through-time';
+import { periods, photos } from './exhibit-data.js?v=20261122-floating-title';
 
 const ease = t => t * t * (3 - 2 * t);
 const clamp = THREE.MathUtils.clamp;
@@ -26,7 +26,7 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
   const rig=new THREE.Group();scene.add(rig);
   const surface=new THREE.Mesh(new THREE.PlaneGeometry(30,20),new THREE.ShadowMaterial({opacity:.28}));surface.position.z=-1.1;surface.receiveShadow=true;scene.add(surface);
   let current=initialIndex,selected=photoId||periods[current].photos[0],small=false,main,frontMaterial;
-  let frame=0,paused=false,inView=true,disposed=false,lastTime=0,time=0,flipValue=0,targetSide=false;
+  let frame=0,paused=false,disposed=false,lastTime=0,time=0,flipValue=0,targetSide=false;
   let turn=null,deal=null,dealX=0,dealZ=0,dealAngle=0,hoverX=0,hoverY=0,pointer=null;
   let width=6,height=3.75,buildVersion=0;
   const images=new Map();
@@ -54,14 +54,17 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
   }
   function baseCanvas() { const c=document.createElement('canvas');c.width=(small?720:1400)*2;c.height=(small?1024:750)*2;c.getContext('2d').scale(2,2);return c; }
   function backTexture(index) {
-    const c=baseCanvas(),ctx=c.getContext('2d'),w=c.width/2,h=c.height/2;
-    ctx.fillStyle='#1b3345';ctx.fillRect(0,0,w,h);
-    ctx.strokeStyle=colors[index]+'55';ctx.lineWidth=2;ctx.strokeRect(25,25,w-50,h-50);
-    for(let i=-h;i<w;i+=42){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+h,h);ctx.strokeStyle=colors[index]+'14';ctx.stroke();}
-    ctx.strokeStyle=colors[index];ctx.lineWidth=4;ctx.beginPath();ctx.arc(w/2,h/2,Math.min(w,h)*.19,0,Math.PI*2);ctx.stroke();
-    const box=Math.min(w,h)*.12;ctx.strokeRect(w/2-box/2,h/2-box/2,box,box);
-    ctx.fillStyle='#e1eced';ctx.textAlign='left';ctx.font='500 43px "Trebuchet MS",sans-serif';ctx.fillText(String(index+1).padStart(2,'0'),48,82);
-    ctx.textAlign='right';ctx.font='500 34px "Trebuchet MS",sans-serif';ctx.fillText(periods[index].label,w-48,h-50);
+    const c=baseCanvas(),ctx=c.getContext('2d'),w=c.width/2,h=c.height/2,p=periods[index];
+    ctx.fillStyle='#11212f';ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle=colors[index]+'99';ctx.lineWidth=2;ctx.strokeRect(20,20,w-40,h-40);
+    ctx.textAlign='left';ctx.fillStyle='#e4edf0';ctx.font='500 54px "Trebuchet MS",sans-serif';
+    ctx.fillText(p.label,48,91,w-150);
+    ctx.fillStyle=colors[index];ctx.textAlign='right';ctx.font='36px "Trebuchet MS",sans-serif';ctx.fillText(String(index+1).padStart(2,'0'),w-48,86);
+    ctx.strokeStyle='#3a4d5b';ctx.beginPath();ctx.moveTo(48,116);ctx.lineTo(w-48,116);ctx.stroke();
+    ctx.textAlign='left';ctx.fillStyle='#e4edf0';ctx.font='500 '+(small?40:48)+'px "Trebuchet MS",sans-serif';
+    const end=wrap(ctx,p.answerTitle,48,194,w-96,small?50:60,3);
+    ctx.font=(small?34:43)+'px "Times New Roman",serif';ctx.fillStyle='#cddce5';
+    wrap(ctx,p.story,48,end+26,w-96,small?45:58,small?14:8);
     return texture(c);
   }
   async function frontTexture(index,id) {
@@ -91,7 +94,15 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
     const mat=new THREE.MeshBasicMaterial({map:backTexture(index),toneMapped:false});materialResources.push(mat);
     const face=new THREE.Mesh(plane(width-.025,height-.025),mat);face.position.z=.095;group.add(face);
     const reverse=new THREE.Mesh(plane(width-.025,height-.025),mat);reverse.position.z=-.025;reverse.rotation.y=Math.PI;group.add(reverse);
-    if(isMain) { frontMaterial=new THREE.MeshBasicMaterial({map:mat.map,toneMapped:false});materialResources.push(frontMaterial);face.material=frontMaterial; }
+    const faceMaterial=new THREE.MeshBasicMaterial({map:mat.map,toneMapped:false});materialResources.push(faceMaterial);face.material=faceMaterial;
+    if(isMain) frontMaterial=faceMaterial;
+    else {
+      const version=buildVersion;
+      frontTexture(index,periods[index].photos[0]).then(map=>{
+        if(disposed||version!==buildVersion){map.dispose();return;}
+        faceMaterial.map=map;faceMaterial.needsUpdate=true;start();
+      });
+    }
     return group;
   }
   async function setPhoto(id) {
@@ -103,7 +114,7 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
   function rebuild() {
     buildVersion++;clearRig();
     width=small?3.15:7;height=small?4.48:3.75;
-    for(let i=3;i>=1;i--){const c=card((current+i)%periods.length);c.position.set((i%2?-.1:.12)*i,-.025*i,-.105*i);c.rotation.z=(i%2?-1:1)*(.012+i*.009);rig.add(c);}
+    for(let i=Math.min(3,periods.length-current-1);i>=1;i--){const c=card(current+i);c.position.set((i%2?-.2:.22)*i,-.03*i,-.13*i);c.rotation.z=(i%2?-1:1)*(.035+i*.025);rig.add(c);}
     main=card(current,true);rig.add(main);setPhoto(selected);resizeCamera();
   }
   function resizeCamera() {
@@ -123,19 +134,26 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
   function update(now) {
     const dt=Math.min((now-lastTime)/1000,.04);lastTime=now;if(!reducedMotion)time+=dt;
     if(turn){const t=clamp((now-turn.start)/760,0,1);flipValue=THREE.MathUtils.lerp(turn.from,turn.to,ease(t));if(t===1)turn=null;}
-    if(deal){const t=clamp((now-deal.start)/deal.duration,0,1),k=ease(t);dealX=THREE.MathUtils.lerp(deal.from,deal.to,k);dealZ=Math.sin(t*Math.PI)*.5;dealAngle=dealX*.06;if(t===1){const resolve=deal.resolve;clearTimeout(deal.timer);deal=null;resolve();}}
-    main.position.set(dealX,0,.38+dealZ);
-    main.rotation.set(0,flipValue,dealAngle);
-    rig.rotation.set(0,0,0);
+    if(deal){const t=clamp((now-deal.start)/deal.duration,0,1),k=ease(t);dealX=THREE.MathUtils.lerp(deal.from,deal.to,k);dealZ=THREE.MathUtils.lerp(deal.fromZ,0,k)+Math.sin(t*Math.PI)*.3;dealAngle=dealX*.075;if(t===1){const resolve=deal.resolve;clearTimeout(deal.timer);deal=null;resolve();}}
+    const lift=Math.sin(flipValue),distance=camera.position.z-.475;
+    const turnScale=distance/(distance+width*lift);
+    main.scale.setScalar(turnScale);
+    // Lift the whole edge clear of the next card, while keeping the turn in frame.
+    main.position.set(dealX,0,.38+dealZ+(width*turnScale/2+.12)*lift+flipValue/Math.PI*.07);
+    main.rotation.set(lift*.08,flipValue,dealAngle-(1-flipValue/Math.PI)*.018);
+    const frontWeight=1-clamp(flipValue/(Math.PI*.25),0,1);
+    rig.rotation.set(-hoverY*.035*frontWeight,hoverX*.045*frontWeight,0);
   }
-  function tick(now) {frame=0;if(paused||disposed||document.hidden||!inView)return;update(now);renderer.render(scene,camera);if(turn||deal)frame=requestAnimationFrame(tick);}
-  function start() {if(!frame&&!paused&&!disposed&&!document.hidden&&inView){lastTime=performance.now();frame=requestAnimationFrame(tick);}}
+  // Rendering is already on demand. A visibility observer on the initially
+  // hidden canvas could prevent a user-triggered flip from ever starting.
+  function tick(now) {frame=0;if(paused||disposed||document.hidden)return;update(now);renderer.render(scene,camera);if(turn||deal)frame=requestAnimationFrame(tick);}
+  function start() {if(!frame&&!paused&&!disposed&&!document.hidden){lastTime=performance.now();frame=requestAnimationFrame(tick);}}
   function cancel() {if(deal){clearTimeout(deal.timer);deal.resolve();deal=null;}turn=null;dealX=dealZ=dealAngle=0;}
-  function animateDeal(from,to,duration) {
+  function animateDeal(from,to,duration,fromZ=0) {
     paused=false;
-    if(reducedMotion||document.hidden||!inView){dealX=0;return Promise.resolve();}
+    if(reducedMotion||document.hidden){dealX=0;return Promise.resolve();}
     return new Promise(resolve=>{
-      const animation={from,to,duration,resolve,start:performance.now()};deal=animation;
+      const animation={from,to,fromZ,duration,resolve,start:performance.now()};deal=animation;
       // Page visibility or a missed frame must not leave navigation disabled.
       animation.timer=setTimeout(()=>{if(deal!==animation)return;dealX=to;dealZ=dealAngle=0;deal=null;resolve();start();},duration+150);
       cancelAnimationFrame(frame);frame=0;
@@ -150,14 +168,13 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
   canvas.addEventListener('pointercancel',()=>{pointer=null;});
   canvas.addEventListener('pointerup',event=>{if(!pointer)return;const clicked=!pointer.moved;pointer=null;if(!clicked||turn||deal||targetSide)return;const r=canvas.getBoundingClientRect();pointerNdc.set((event.clientX-r.left)/r.width*2-1,-(event.clientY-r.top)/r.height*2+1);raycaster.setFromCamera(pointerNdc,camera);if(raycaster.intersectObject(main,true).length)onFlip();});
   const resizeObserver=new ResizeObserver(resize);resizeObserver.observe(canvas.parentElement);
-  const visibilityObserver=new IntersectionObserver(entries=>{inView=entries[0].isIntersecting;if(inView)start();else {cancelAnimationFrame(frame);frame=0;}},{rootMargin:'150px'});visibilityObserver.observe(canvas);
   function visibility(){if(document.hidden){cancelAnimationFrame(frame);frame=0;}else start();}document.addEventListener('visibilitychange',visibility);
   small=canvas.parentElement.clientWidth<650;rebuild();await loadImage(selected);start();
   return {show,flip,setPhoto,cancel,
-    dealOut(direction){return animateDeal(0,direction*width*1.5,300);},
-    dealIn(direction){return animateDeal(-direction*width*1.1,0,460);},
+    dealOut(direction){return animateDeal(0,direction*width*1.5,280);},
+    dealIn(){return animateDeal(0,0,280,-.5);},
     setPaused(value){paused=value;if(value){cancelAnimationFrame(frame);frame=0;}else start();},
     setReducedMotion(value){reducedMotion=value;if(value){turn=null;flipValue=targetSide?Math.PI:0;}start();},
-    dispose(){disposed=true;cancelAnimationFrame(frame);cancel();resizeObserver.disconnect();visibilityObserver.disconnect();document.removeEventListener('visibilitychange',visibility);clearRig();environment.dispose();renderer.dispose();}
+    dispose(){disposed=true;cancelAnimationFrame(frame);cancel();resizeObserver.disconnect();document.removeEventListener('visibilitychange',visibility);clearRig();environment.dispose();renderer.dispose();}
   };
 }

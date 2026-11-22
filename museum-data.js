@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261122-money-through-time';
+import { periods } from './exhibit-data.js?v=20261122-floating-title';
 
 export const hallViewZ = 18;
 

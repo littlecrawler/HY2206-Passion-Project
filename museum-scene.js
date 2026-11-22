@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261122-money-through-time';
-import { rooms, hallViewZ } from './museum-data.js?v=20261122-money-through-time';
-import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261122-money-through-time';
-import { photos } from './exhibit-data.js?v=20261122-money-through-time';
+import { buildArchitecture } from './museum-architecture.js?v=20261122-floating-title';
+import { rooms, hallViewZ } from './museum-data.js?v=20261122-floating-title';
+import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261122-floating-title';
+import { photos } from './exhibit-data.js?v=20261122-floating-title';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * (3 - 2 * t);
@@ -156,7 +156,8 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   function beginMove(curve,end,fromProjection,travel) {
     const toProjection=projection();
     const motion=travel?travelMotion(curve):null,fromRotation=camera.quaternion.clone(),toRotation=orientation(end.position,end.target);
-    moving={start:performance.now(),duration:motion?.duration||Math.max(800,fromRotation.angleTo(toRotation)*600),
+    const duration=travel?clamp(900+curve.getLength()*10,1250,2100):clamp(350+fromRotation.angleTo(toRotation)*220,450,650);
+    moving={start:performance.now(),duration,
       curve,motion,end,fromProjection,toProjection,fromRotation,toRotation};
     applyProjection(fromProjection,toProjection,0);
     onTravel?.(true);requestFrame();
@@ -205,7 +206,7 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
     frame = 0; if (paused || disposed || document.hidden) return;
     if (moving) {
       const elapsed=now-moving.start,t=clamp(elapsed/moving.duration,0,1),progress=ease(t);
-      pose.position.copy(moving.motion?moving.motion.sample(elapsed).position:moving.curve.getPointAt(progress));
+      pose.position.copy(moving.motion?moving.motion.sample(t*moving.motion.duration).position:moving.curve.getPointAt(progress));
       // Keep a steady exhibit-facing view instead of snapping to the path's
       // tangent at each corner (or spinning around when backing out of a room).
       const turn=moving.motion?ease(clamp(t/.65,0,1)):progress;
@@ -225,7 +226,6 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect(); if (!rect.width || !rect.height) return;
     width = rect.width; height = rect.height; small = width <= 780;
-    architecture.title.scale.setScalar(small?.4:1);
     renderer.setSize(width, height, false); camera.aspect = width / height; camera.fov = small ? 68 : (current<0?58:50);setFraming(); camera.updateProjectionMatrix();
     const end = destination(current); moving = null; pose.position.copy(end.position); pose.target.copy(end.target); onTravel?.(false); requestFrame();
   }

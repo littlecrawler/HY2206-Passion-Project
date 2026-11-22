@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { rooms } from './museum-data.js?v=20261122-money-through-time';
+import { rooms } from './museum-data.js?v=20261122-floating-title';
 
 export function roomPoint(index, x, y, z) {
   const room = rooms[index];

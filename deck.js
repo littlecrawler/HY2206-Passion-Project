@@ -1,5 +1,5 @@
-import { photos, periods } from './exhibit-data.js?v=20261122-money-through-time';
-import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261122-money-through-time';
+import { photos, periods } from './exhibit-data.js?v=20261122-floating-title';
+import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261122-floating-title';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -16,7 +16,7 @@ export function initDeck() {
   const finish = document.querySelector('#tour-finish');
   const timeline = [...document.querySelectorAll('[data-period]')];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const states = periods.map(defaults);
+  const states = periods.map(()=>({...defaults(),pane:'story'}));
   let current = 0;
   let flipped = false;
   let finished = false;
@@ -101,6 +101,8 @@ export function initDeck() {
   function renderPanel() {
     const p = periods[current];
     const state = states[current];
+    document.querySelector('[data-pane="activity"]').hidden=p.hasActivity===false;
+    if(p.hasActivity===false&&state.pane==='activity')state.pane='story';
     document.querySelectorAll('[data-pane]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pane === state.pane)));
     panel.innerHTML = state.pane === 'story' ? '<div class="mobile-story"><h3 class="activity-title">' + text(p.answerTitle) + '</h3><p>' + text(p.story) + ' ' + cite(p.sources) + '</p><a class="text-link" href="read.html#' + p.id + '">Read more</a></div>' : state.pane === 'sources' ? evidence(p, state) : activity(p, state);
     fitCard();
@@ -129,6 +131,10 @@ export function initDeck() {
     showSide(false, true);
     document.querySelector('#pile-near-label').textContent = periods[(current + 1) % periods.length].label;
     document.querySelector('#pile-far-label').textContent = periods[(current + 2) % periods.length].label;
+    document.querySelector('#pile-near-photo').src=photos[periods[(current+1)%periods.length].photos[0]].src;
+    document.querySelector('#pile-far-photo').src=photos[periods[(current+2)%periods.length].photos[0]].src;
+    document.querySelector('.pile-near').hidden=current+1>=periods.length;
+    document.querySelector('.pile-far').hidden=current+2>=periods.length;
     timeline.forEach((link, i) => {
       if (i === current) link.setAttribute('aria-current', 'step');
       else link.removeAttribute('aria-current');
@@ -256,12 +262,6 @@ export function initDeck() {
       document.querySelector('#zoom-value').textContent = zoom.toFixed(1) + '×';
       event.target.setAttribute('aria-valuetext', zoom.toFixed(1) + ' times');
     }
-    if (event.target.dataset.action === 'compare') {
-      const amount = Math.min(100, Math.max(0, Number(event.target.value)));
-      states[current].compare = amount;
-      document.querySelector('.image-comparison').style.setProperty('--reveal', amount + '%');
-      event.target.setAttribute('aria-valuetext', amount + ' percent spade photograph');
-    }
   });
   stage.addEventListener('keydown', event => {
     if (event.target !== stage) return;
@@ -290,15 +290,11 @@ export function initDeck() {
   }, true);
   window.addEventListener('hashchange', followHash);
   window.addEventListener('resize', () => {
-    if (!engineReady && innerWidth > 780 && states[current].pane === 'story') {
-      states[current].pane = 'activity';
-      renderPanel();
-    }
     fitCard();
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261122-money-through-time').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261122-floating-title').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,reducedMotion:reduce.matches,
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
   })).then(result=>{

@@ -1,6 +1,6 @@
-import { rooms } from './museum-data.js?v=20261122-money-through-time';
-import { photos } from './exhibit-data.js?v=20261122-money-through-time';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-money-through-time';
+import { rooms } from './museum-data.js?v=20261122-floating-title';
+import { photos } from './exhibit-data.js?v=20261122-floating-title';
+import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-floating-title';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
@@ -29,6 +29,8 @@ export function initMuseum() {
   }
   function renderPanel() {
     const room=rooms[current],state=states[current];
+    $('[data-exhibit-pane="activity"]').hidden=room.hasActivity===false;
+    if(room.hasActivity===false&&state.pane==='activity')state.pane='story';
     document.querySelectorAll('[data-exhibit-pane]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.exhibitPane===state.pane)));
     panel.innerHTML=state.pane==='story'?'<div class="exhibit-story"><h3>'+text(room.answerTitle)+'</h3><p>'+text(room.story)+' '+cite(room.sources)+'</p></div>':state.pane==='sources'?evidence(room,state):activity(room,state);
   }
@@ -41,6 +43,7 @@ export function initMuseum() {
   function updateRoom() {
     const room=rooms[Math.max(0,current)];
     shell.dataset.location=entered?'gallery':'hall';
+    $('#hall-title').hidden=entered;
     intro.hidden=!entered;
     $('#room-objects').hidden=!entered;
     const focused=entered?states[current].viewPhoto:null;
@@ -142,7 +145,6 @@ export function initMuseum() {
   panel.addEventListener('input',event=>{
     const input=event.target,state=states[current];
     if(input.dataset.action==='zoom') {state.zoom=Number(input.value);$('#lens-photo').style.transform='scale('+state.zoom+')';$('#zoom-value').textContent=state.zoom.toFixed(1)+'×';input.setAttribute('aria-valuetext',state.zoom.toFixed(1)+' times');}
-    if(input.dataset.action==='compare') {state.compare=Number(input.value);$('.image-comparison').style.setProperty('--reveal',state.compare+'%');input.setAttribute('aria-valuetext',state.compare+' percent spade photograph');}
   });
   $('#museum-canvas').addEventListener('keydown',event=>{
     if(event.key==='Escape'){event.preventDefault();leaveObject();}
@@ -152,7 +154,7 @@ export function initMuseum() {
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261122-money-through-time').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+  import('./museum-scene.js?v=20261122-floating-title').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
     initialRoom:current,reducedMotion:reduce.matches,onSelect:focusObject,onLeaveObject:leaveObject,onRoom:index=>goTo(index),
     onObjectPositions(positions){
       positions.forEach(({id,x,y,visible})=>{

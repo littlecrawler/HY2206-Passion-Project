@@ -12,6 +12,13 @@ body[data-renderer="fallback"] .museum-fallback img { visibility:visible; }
 body[data-renderer="webgl"] .museum-fallback { display:none; }
 .museum-shade { pointer-events:none; z-index:1; background:linear-gradient(0deg,#080f1bf5,transparent 24%,transparent 84%,#080f1b80); }
 .museum-shell[data-location="gallery"] .museum-shade { background:linear-gradient(90deg,#080f1bf2, #080f1b80 26%,transparent 48%),linear-gradient(0deg,#080f1b,transparent 24%); }
+.hall-title { position:absolute; z-index:2; top:clamp(112px,12svh,180px); left:calc(3% + 370px); right:4%; display:flex; justify-content:center; pointer-events:none; opacity:0; transition:opacity .25s; }
+.hall-title[hidden] { display:none; }
+body[data-renderer] .hall-title { opacity:1; }
+.hall-title h1 { margin:0; padding:17px 28px 20px; border:1px solid #b7d5e52e; border-radius:16px; background:linear-gradient(140deg,#a9ccdd16,#0c1d2c50); box-shadow:0 18px 52px #02091055,inset 0 1px 0 #e3f4ff18; backdrop-filter:blur(16px); color:#eef6fb; font:400 clamp(32px,3.4vw,62px)/1.15 "Segoe UI",sans-serif; letter-spacing:-.045em; white-space:nowrap; text-shadow:0 2px 18px #bfdfff25; animation:hall-title-float 6s ease-in-out infinite; }
+.hall-title h1 span { color:#c1dce9; }
+.museum-shell.is-travelling .hall-title { opacity:0; }
+@keyframes hall-title-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
 .museum-welcome,.room-intro { position:absolute; z-index:2; left:4%; pointer-events:none; transition:opacity .25s; }
 .museum-welcome { top:5%; max-width:350px; }
 .museum-welcome h1 { font-size:38px; font-weight:500; letter-spacing:-.035em; }
@@ -117,6 +124,9 @@ body[data-page="museum"] .videos-section .actions { gap:32px; }
   .directory-galleries img { width:37px; }
 }
 @media (max-width:780px) {
+  .hall-title { top:91px; left:6%; right:6%; }
+  .hall-title h1 { padding:14px 18px 16px; font-size:clamp(24px,7.2vw,42px); border-radius:13px; }
+  .museum-shell[data-directory="open"] .hall-title { opacity:0; }
   .museum-shell { height:100svh; min-height:560px; }
   .museum-welcome { left:6%; top:4%; max-width:75%; }
   .museum-welcome h1 { font-size:32px; }

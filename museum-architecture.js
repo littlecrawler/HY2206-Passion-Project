@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Reflector } from './vendor/three/Reflector.js';
-import { rooms } from './museum-data.js?v=20261122-money-through-time';
+import { rooms } from './museum-data.js?v=20261122-floating-title';
 
 // Architectural surfaces only. Every object on display is a credited photograph.
 export function buildArchitecture(scene, { renderer, box, writing, photograph, mats, resources, selectables }) {
@@ -34,8 +34,6 @@ export function buildArchitecture(scene, { renderer, box, writing, photograph, m
   const skyMat=new THREE.MeshBasicMaterial({color:'#728f9c',side:THREE.DoubleSide,toneMapped:false});resources.push(skyMat);
   const sky=new THREE.Mesh(new THREE.CircleGeometry(8.5,96),skyMat);sky.rotation.x=Math.PI/2;sky.position.y=12.5;hall.add(sky);resources.push(sky.geometry);
   for(let n=0;n<24;n++) { const a=n*Math.PI/12;const rib=box(hall,.1,.2,8.5,Math.sin(a)*13.3,10.95,Math.cos(a)*13.3,mats.dark);rib.rotation.y=a; }
-
-  const title=writing(hall,'Money Through Time',22,2.6,0,8.55,1,{size:150,color:'#d7edf3'});
 
   const portals=[];
   rooms.forEach((room,index)=>{
@@ -74,5 +72,5 @@ export function buildArchitecture(scene, { renderer, box, writing, photograph, m
     box(bench,3.8,.2,1.15,0,.77,0,mats.stone);
     for(const x of [-1.4,1.4])box(bench,.15,.65,.85,x,.36,0,mats.dark);
   }
-  return { title, highlight(index){portals.forEach((material,n)=>material.color.set(n===index?'#e8f7ff':'#93b1c0'));} };
+  return { highlight(index){portals.forEach((material,n)=>material.color.set(n===index?'#e8f7ff':'#93b1c0'));} };
 }

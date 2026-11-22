@@ -1,9 +1,9 @@
-import { photos } from './exhibit-data.js?v=20261122-money-through-time';
+import { photos } from './exhibit-data.js?v=20261122-floating-title';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
 export const cite = ids => ids.map(id => '<a class="citation" href="references.html#source-' + id + '" aria-label="Reference ' + id + '">[' + id + ']</a>').join(' ');
-export const defaults = () => ({ pane: 'activity', zoom: 1, compare: 50, detail: 'shape', coinBack: false, money: 'iron', issuer: 'repaid', yuanStage: 0, transaction: 'market', paymentLayer: 0, document: 'history' });
+export const defaults = () => ({ pane: 'activity', zoom: 1, detail: 'shape', coinBack: false, money: 'iron', issuer: 'repaid', yuanStage: 0, transaction: 'market', paymentLayer: 0, document: 'history' });
 
 function choices(action, options, selected, label) {
   return '<div class="activity-choices" role="group" aria-label="' + label + '">' + options.map(([value, label]) => '<button type="button" data-action="' + action + '" data-value="' + value + '" aria-pressed="' + (String(selected) === String(value)) + '">' + label + '</button>').join('') + '</div>';
@@ -34,11 +34,6 @@ export function activity(period, state) {
       return '<h3 class="activity-title">Look closely at the shells</h3><div class="object-lens"><img id="lens-photo" src="' + photos.cowries.src + '" alt="' + photos.cowries.alt + '" style="transform:scale(' + state.zoom + ')"></div>' +
         '<label class="range-label" for="object-zoom">Magnification <output id="zoom-value" for="object-zoom">' + state.zoom.toFixed(1) + '×</output></label><input class="activity-range" id="object-zoom" data-action="zoom" type="range" min="1" max="2.5" step="0.1" value="' + state.zoom + '" aria-valuetext="' + state.zoom.toFixed(1) + ' times">' +
         '<p class="activity-caption">A natural object could be recognised as money. Later makers copied the shell’s form in bronze. ' + cite([10]) + '</p>';
-    case 'warring-states':
-      return '<h3 class="activity-title">Compare two shapes of money</h3><div class="image-comparison" style="--reveal:' + state.compare + '%"><img src="' + photos.knives.src + '" alt="' + photos.knives.alt + '"><div class="comparison-overlay"><img src="' + photos.spades.src + '" alt="' + photos.spades.alt + '"></div><span class="comparison-divider" aria-hidden="true"></span></div>' +
-        '<div class="comparison-labels"><span>Spade money<span lang="zh-Hant">（布幣）</span></span><span>Knife money<span lang="zh-Hant">（刀幣）</span></span></div>' +
-        '<label class="sr-only" for="shape-comparison">Reveal spade money or knife money</label><input class="activity-range" id="shape-comparison" data-action="compare" type="range" min="0" max="100" value="' + state.compare + '" aria-valuetext="' + state.compare + ' percent spade photograph">' +
-        '<p class="activity-caption">Move the slider to compare Warring States forms. Different regions could use different money at the same time. ' + cite([9]) + '</p>';
     case 'qin-han': {
       const details = {
         shape: ['The square opening', 'Round coins with square holes became a lasting form. Their shared shape made a common standard visible.', 9],

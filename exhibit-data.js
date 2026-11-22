@@ -27,6 +27,7 @@ export const periods = [
   },
   {
     id: 'warring-states', label: 'Eastern Zhou', date: '770–221 BCE', era: 'Spring and Autumn · Warring States',
+    hasActivity: false,
     question: 'Why did money come in so many shapes?',
     answerTitle: 'Different states, different money.',
     story: 'Spade money（布幣）, knife money（刀幣）and round coins circulated in different regions. These forms belonged to a politically divided world. Before imperial unification, there was no single coin standard across all the states.',
