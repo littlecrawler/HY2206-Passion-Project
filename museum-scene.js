@@ -1,227 +1,250 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { rooms } from './museum-data.js';
+import { Reflector } from './vendor/three/Reflector.js';
+import { rooms } from './museum-data.js?v=20261122-atrium';
 import { photos } from './exhibit-data.js';
-import { makeSculpture } from './museum-objects.js';
 
-const SPACING=22;
-const TAU=Math.PI*2;
-const clamp=THREE.MathUtils.clamp;
+const clamp = THREE.MathUtils.clamp;
+const ease = t => t * t * (3 - 2 * t);
+const vector = (...v) => new THREE.Vector3(...v);
 
-export async function createMuseum(canvas, { onSelect, onReady, initialRoom=2, reducedMotion=false }) {
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance',alpha:false});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<781?1.5:1.7));
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.16;
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  const scene=new THREE.Scene(); scene.background=new THREE.Color(0x070f1c); scene.fog=new THREE.Fog(0x070f1c,23,58);
-  const environment=new RoomEnvironment();
-  const pmrem=new THREE.PMREMGenerator(renderer);
-  const envTarget=pmrem.fromScene(environment,.035);
-  scene.environment=envTarget.texture;
-  scene.environmentIntensity=.55;
+// The architecture surrounds documentary photographs; no object replicas are generated.
+export async function createMuseum(canvas, { onSelect, onRoom, onTravel, onReady, initialRoom = -1, reducedMotion = false }) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 781 ? 1.3 : 1.6));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.35;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#111922'); scene.fog = new THREE.Fog('#111922', 47, 95);
+  const environment = new RoomEnvironment(), pmrem = new THREE.PMREMGenerator(renderer);
+  const env = pmrem.fromScene(environment, .04);
+  scene.environment = env.texture; scene.environmentIntensity = .5;
   environment.dispose(); pmrem.dispose();
-  const camera=new THREE.PerspectiveCamera(48,1,.1,100);
-  const mainLight=new THREE.SpotLight(0xffe5bc,180,42,Math.PI*.28,.62,1.7);
-  mainLight.castShadow=true; mainLight.shadow.mapSize.set(innerWidth<781?512:1024,innerWidth<781?512:1024);
-  mainLight.shadow.bias=-.0004; mainLight.shadow.normalBias=.025;
-  scene.add(mainLight,mainLight.target);
-  const fill=new THREE.PointLight(0x8ccbe9,55,26,1.7); scene.add(fill);
-  const edge=new THREE.PointLight(0x76e1d5,40,24,1.65); scene.add(edge);
-  scene.add(new THREE.HemisphereLight(0x7da6cf,0x17191f,1.15));
+  const camera = new THREE.PerspectiveCamera(61, 1, .1, 130);
+  scene.add(new THREE.HemisphereLight(0xd2e4ef, 0x293039, 1.55));
+  const skylight = new THREE.DirectionalLight(0xeaf4fa, 1.5);
+  skylight.position.set(-7, 14, 12); scene.add(skylight);
+  const galleryLight = new THREE.PointLight(0xffe9d0, 180, 18, 1.8); scene.add(galleryLight);
+  const mats = {
+    wall: new THREE.MeshStandardMaterial({ color: '#36404a', roughness: .85 }),
+    gallery: new THREE.MeshStandardMaterial({ color: '#29333e', roughness: .9 }),
+    stone: new THREE.MeshStandardMaterial({ color: '#343d44', roughness: .45, metalness: .22 }),
+    dark: new THREE.MeshStandardMaterial({ color: '#111820', roughness: .55, metalness: .35 }),
+    metal: new THREE.MeshStandardMaterial({ color: '#7a8589', roughness: .32, metalness: .85 }),
+    warm: new THREE.MeshBasicMaterial({ color: '#dccbb2', toneMapped: false }),
+    white: new THREE.MeshBasicMaterial({ color: '#c4d4dc', toneMapped: false })
+  };
+  const cube = new THREE.BoxGeometry(1, 1, 1), resources = [], selectables = [];
+  const textures = new Map(), photoTasks = [], loader = new THREE.TextureLoader();
+  let current = initialRoom, paused = false, disposed = false, frame = 0, moving = null;
+  let small = false, width = 1, height = 1, yaw = 0, pitch = 0, pointer = null;
+  const pose = { position: vector(), target: vector() };
+  const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
 
-  const textureLoader=new THREE.TextureLoader();
-  const texturePromises=new Map();
-  let disposed=false, paused=false, frame=0, current=initialRoom, renderedRoom=initialRoom;
-  let moving=null, lastTime=0, idleTime=0, yaw=0, pitch=0, pointer=null;
-  let small=innerWidth<=780, viewX=initialRoom*SPACING;
-  const raycaster=new THREE.Raycaster(); const pointerNdc=new THREE.Vector2();
-  const roomGroups=[], sculptures=[], selectables=[];
-  const materialCache=new Map();
-  const cube=new THREE.BoxGeometry(1,1,1);
-  const blackMetal=new THREE.MeshStandardMaterial({color:0x111e2b,metalness:.68,roughness:.27});
-  const wallMaterial=new THREE.MeshStandardMaterial({color:0x13202f,metalness:.35,roughness:.6});
-  const floorMaterial=new THREE.MeshStandardMaterial({color:0x101b29,metalness:.68,roughness:.29});
-  const edgingMaterial=new THREE.MeshStandardMaterial({color:0x506578,metalness:.85,roughness:.25});
-
-  function material(color,glow=false) {
-    const key=color+(glow?'g':'');
-    if(!materialCache.has(key)) materialCache.set(key,glow?new THREE.MeshBasicMaterial({color}):new THREE.MeshStandardMaterial({color,metalness:.55,roughness:.4}));
-    return materialCache.get(key);
+  function box(parent, w, h, d, x, y, z, material = mats.wall) {
+    const mesh = new THREE.Mesh(cube, material); mesh.scale.set(w, h, d); mesh.position.set(x, y, z); parent.add(mesh); return mesh;
   }
-  function box(parent,w,h,d,x,y,z,mat=wallMaterial) {
-    const m=new THREE.Mesh(cube,mat); m.scale.set(w,h,d); m.position.set(x,y,z); parent.add(m); return m;
-  }
-  function line(parent,points,color,opacity=1) {
-    const geometry=new THREE.BufferGeometry().setFromPoints(points.map(p=>new THREE.Vector3(...p)));
-    const object=new THREE.Line(geometry,new THREE.LineBasicMaterial({color,transparent:opacity<1,opacity})); parent.add(object); return object;
-  }
-  function writing(value,width,height,{font=80,color='#b2c8d6',background=null,align='center'}={}) {
-    const canvas=document.createElement('canvas'); canvas.width=1024; canvas.height=256;
-    const ctx=canvas.getContext('2d'); if(background){ctx.fillStyle=background;ctx.fillRect(0,0,1024,256);}
-    ctx.fillStyle=color; ctx.font='500 '+font+'px "Trebuchet MS","Microsoft JhengHei",sans-serif'; ctx.textAlign=align; ctx.textBaseline='middle';
-    ctx.fillText(value,align==='center'?512:30,128,980);
-    const map=new THREE.CanvasTexture(canvas); map.colorSpace=THREE.SRGBColorSpace;
-    const plane=new THREE.Mesh(new THREE.PlaneGeometry(width,height),new THREE.MeshBasicMaterial({map,transparent:true,depthWrite:false})); return plane;
+  function writing(parent, lines, w, h, x, y, z, { color = '#e0e8eb', size = 70 } = {}) {
+    const c = document.createElement('canvas'); c.width = 1536; c.height = Math.round(1536 * h / w);
+    const ctx = c.getContext('2d'); ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const values = Array.isArray(lines) ? lines : [lines];
+    values.forEach((value, i) => {
+      ctx.font = (i ? '400 ' : '500 ') + (i ? size * .58 : size) + 'px "Trebuchet MS","Microsoft JhengHei",sans-serif';
+      ctx.fillText(value, c.width / 2, c.height * (i + .5) / values.length, c.width - 40);
+    });
+    const map = new THREE.CanvasTexture(c); map.colorSpace = THREE.SRGBColorSpace; resources.push(map);
+    const mat = new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, toneMapped: false }); resources.push(mat);
+    const geo = new THREE.PlaneGeometry(w, h); resources.push(geo);
+    const mesh = new THREE.Mesh(geo, mat); mesh.position.set(x, y, z); parent.add(mesh); return mesh;
   }
   function loadPhoto(id) {
-    if(!texturePromises.has(id)) texturePromises.set(id,new Promise(resolve=>{
-      textureLoader.load(photos[id].src,map=>{map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());resolve(map);start();},undefined,()=>resolve(null));
+    if (!textures.has(id)) textures.set(id, new Promise(resolve => {
+      loader.load(photos[id].src, map => {
+        map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+        if (disposed) { map.dispose(); resolve(null); return; }
+        resources.push(map); resolve(map); requestFrame();
+      }, undefined, () => resolve(null));
     }));
-    return texturePromises.get(id);
+    return textures.get(id);
   }
-  function photoPanel(parent,id,x,y,z,angle=0) {
-    const group=new THREE.Group(); group.position.set(x,y,z); group.rotation.y=angle; parent.add(group);
-    box(group,2.9,3.4,.16,0,0,0,blackMetal);
-    box(group,3.01,.025,.2,0,1.75,0,material('#aecdd6',true));
-    loadPhoto(id).then(map=>{
-      if(disposed||!map)return;
-      const aspect=map.image.width/map.image.height;
-      const w=Math.min(2.55,2.65*aspect),h=w/aspect;
-      const image=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map}));
-      image.position.set(0,.2,.09); image.userData.photo=id; group.add(image); selectables.push(image);
-      const title=writing(photos[id].title,2.75,.55,{font:43,color:'#d5e3e8'});title.position.set(0,-1.35,.1);group.add(title);
-    });
-    return group;
+  function photograph(parent, id, roomIndex, x, y, z, w = 6.6, h = 4.5, angle = 0) {
+    const group = new THREE.Group(); group.position.set(x, y, z); group.rotation.y = angle; parent.add(group);
+    box(group, w + .22, h + .22, .14, 0, 0, -.04, mats.metal);
+    box(group, w, h, .18, 0, 0, 0, mats.dark);
+    box(group, w + .05, .025, .12, 0, h / 2 + .26, .08, mats.warm);
+    photoTasks.push(loadPhoto(id).then(map => {
+      if (disposed || !map) return;
+      const ratio = map.image.width / map.image.height;
+      const pw = Math.min(w - .18, (h - .18) * ratio), ph = pw / ratio;
+      const geo = new THREE.PlaneGeometry(pw, ph); resources.push(geo);
+      const mat = new THREE.MeshBasicMaterial({ map, toneMapped: false }); resources.push(mat);
+      const photo = new THREE.Mesh(geo, mat); photo.position.z = .101; photo.userData = { photo: id, room: roomIndex };
+      group.add(photo); selectables.push(photo); requestFrame();
+    }));
+    writing(group, photos[id].title, w, .55, 0, -h / 2 - .55, .05, { size: 70 });
+  }
+  function localPoint(index, x, y, z) {
+    const room = rooms[index];
+    return vector(x, y, z).applyAxisAngle(vector(0, 1, 0), room.angle).add(vector(room.side * 16, 0, room.z));
   }
 
-  rooms.forEach((room,index)=>{
-    const group=new THREE.Group();group.position.x=index*SPACING;scene.add(group);roomGroups.push(group);
-    const accent=material(room.accent,true),warm=material(room.warm,true);
-    const floor=box(group,SPACING,.22,22,0,-.16,2,floorMaterial);floor.receiveShadow=true;
-    box(group,18,8.6,.35,0,4.1,-6.5);
-    box(group,.45,8.6,9,-9,4.1,-2.2);box(group,.45,8.6,9,9,4.1,-2.2);
-    // Tall reveals, ceiling ribs and a shared front passage connect the galleries.
-    for(const side of [-1,1]) {
-      box(group,.32,7.8,.4,side*8.55,3.7,2.6,blackMetal);
-      box(group,.045,6.9,.05,side*8.35,3.65,2.81,accent);
-      box(group,.16,.11,13,side*7.65,.02,1.5,accent);
-      box(group,.3,.4,13,side*8.4,7.5,-.6,blackMetal);
-      for(let j=0;j<5;j++) box(group,.1,6.3,.25,side*(6.5+j*.37),3.2,-6.21,blackMetal);
+  // Four bays on each side are connected by a continuous central atrium.
+  const hall = new THREE.Group(); scene.add(hall);
+  box(hall, 21, .35, 54, 0, -.2, -2, mats.stone);
+  const mirror = new Reflector(new THREE.PlaneGeometry(20.8, 53.8), {
+    textureWidth: innerWidth < 781 ? 512 : 1024, textureHeight: 1024, color: 0x6b7c85, clipBias: .004
+  });
+  mirror.rotation.x = -Math.PI / 2; mirror.position.set(0, -.013, -2); scene.add(mirror);
+  const floorOverlay = new THREE.Mesh(new THREE.PlaneGeometry(20.8, 53.8), new THREE.MeshStandardMaterial({
+    color: '#303c47', roughness: .38, metalness: .25, transparent: true, opacity: .83, depthWrite: false
+  }));
+  floorOverlay.rotation.x = -Math.PI / 2; floorOverlay.position.set(0, -.006, -2); scene.add(floorOverlay);
+  resources.push(mirror.geometry, floorOverlay.geometry, floorOverlay.material);
+  for (let z = -27; z <= 25; z += 2.75) box(hall, 20.7, .008, .018, 0, .003, z, mats.dark);
+  for (let x = -8.25; x <= 8.25; x += 2.75) box(hall, .018, .008, 53.7, x, .004, -2, mats.dark);
+  for (const side of [-1, 1]) {
+    box(hall, .045, .014, 51, side * 8.8, .015, -1.5, mats.warm);
+    box(hall, 1.5, 1.1, 54, side * 10.5, 8.9, -2, mats.stone);
+    box(hall, .07, .06, 53, side * 9.55, 8.22, -2, mats.white);
+    for (let z = -24.5; z <= 20; z += 11) {
+      box(hall, .85, 8.3, .85, side * 9.8, 4.15, z, mats.stone);
+      box(hall, .055, 7.3, .92, side * 9.34, 4.1, z, mats.metal);
     }
-    for(let j=0;j<5;j++) {
-      const z=-5+j*3.1;
-      box(group,17.2,.22,.23,0,7.5,z,blackMetal);
-      box(group,10.4,.022,.045,0,7.37,z,accent);
-    }
-    for(let x=-8;x<=8;x+=2) line(group,[[x,-.04,-6],[x,-.04,12]],'#3e5466',.35);
-    for(let z=-5;z<13;z+=2) line(group,[[-9,-.04,z],[9,-.04,z]],'#3e5466',.28);
-    const wallTitle=writing(room.wallTitle,11.2,2.3,{font:112,color:room.accent});wallTitle.position.set(.5,6.16,-6.25);group.add(wallTitle);
-    const wallDate=writing(room.era+'  /  '+room.date,8.2,.7,{font:43,color:'#7b98ac'});wallDate.position.set(.5,4.9,-6.24);group.add(wallDate);
-    const backRing=new THREE.Mesh(new THREE.TorusGeometry(2.55,.035,8,100),accent);
-    backRing.position.set(1.8,3.3,-5.95);group.add(backRing);
-    if(index===2||index===5) {backRing.visible=false;line(group,[[-.85,.7,-5.95],[-.85,5.8,-5.95],[4.45,5.8,-5.95],[4.45,.7,-5.95],[-.85,.7,-5.95]],room.accent,.8);}
-    if(index===1) {backRing.scale.x=.67; const ring2=backRing.clone();ring2.position.x=-.1;group.add(ring2);}
-    if(index===4) {backRing.visible=false;for(let j=0;j<5;j++)box(group,.028,3.8,.03,.4+j*.73,2.8,-6.0,accent);}
-    if(index===7) {backRing.visible=false;for(let j=0;j<6;j++)line(group,[[-1.5+j*.8,1,-5.95],[-1.5+j*.8,4.6,-5.95],[3.8,4.6-j*.5,-5.95]],room.accent,.5);}
-    // The plinth and floating sculpture remain separate from the museum photograph.
-    const base=new THREE.Mesh(new THREE.CylinderGeometry(2.05,2.25,.25,64),blackMetal);base.position.set(1.8,.12,-.1);group.add(base);
-    const middle=new THREE.Mesh(new THREE.CylinderGeometry(1.75,1.88,.82,64),blackMetal);middle.position.set(1.8,.66,-.1);middle.castShadow=true;middle.receiveShadow=true;group.add(middle);
-    const top=new THREE.Mesh(new THREE.CylinderGeometry(1.9,1.76,.13,64),edgingMaterial);top.position.set(1.8,1.12,-.1);top.receiveShadow=true;group.add(top);
-    for(const [radius,y] of [[2.12,.25],[1.82,1.17],[3.1,-.015]]) {
-      const ring=new THREE.Mesh(new THREE.TorusGeometry(radius,.016,8,96),y===1.17?warm:accent);ring.rotation.x=-Math.PI/2;ring.position.set(1.8,y,-.1);group.add(ring);
-    }
-    const sculpture=makeSculpture(room.sculpture,loadPhoto);sculpture.position.set(1.8,3.1,-.1);sculpture.scale.setScalar(1.14);group.add(sculpture);sculptures.push(sculpture);
-    sculpture.traverse(object=>{if(object.isMesh){object.userData.exhibit=index;selectables.push(object);}});
-    const label=writing(room.label,2.5,.6,{font:63,color:'#b8ced7'});label.position.set(1.8,.7,1.72);group.add(label);
-    photoPanel(group,room.photos[0],6.1,3.1,-3.3,-.2);
-    if(room.photos.length>1)photoPanel(group,room.photos[1],-4.9,3,-3.5,.16);
-    else {
-      const panel=box(group,2.8,4.4,.2,-4.9,2.6,-4.5,blackMetal);
-      const term=writing(photos[room.photos[0]].title,2.65,.85,{font:57,color:'#a5bdca'});term.position.set(-4.9,3.5,-4.38);group.add(term);
-      const number=writing(String(index+1).padStart(2,'0'),2.3,2.3,{font:180,color:room.accent});number.position.set(-4.9,2.1,-4.38);group.add(number);
-    }
-    if(room.photos.length>2)photoPanel(group,room.photos[2],-6.2,3.1,.3,.58);
-    // Architectural light spill, not a full-screen bloom filter.
-    const spillGeometry=new THREE.PlaneGeometry(6.4,6.4);
-    const glowCanvas=document.createElement('canvas');glowCanvas.width=glowCanvas.height=128;
-    const glowCtx=glowCanvas.getContext('2d'),gradient=glowCtx.createRadialGradient(64,64,0,64,64,64);
-    gradient.addColorStop(0,room.accent+'60');gradient.addColorStop(1,room.accent+'00');glowCtx.fillStyle=gradient;glowCtx.fillRect(0,0,128,128);
-    const glowMap=new THREE.CanvasTexture(glowCanvas);glowMap.colorSpace=THREE.SRGBColorSpace;
-    const glow=new THREE.Mesh(spillGeometry,new THREE.MeshBasicMaterial({map:glowMap,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
-    glow.rotation.x=-Math.PI/2;glow.position.set(1.8,.005,-.1);group.add(glow);
+  }
+  box(hall, 24, .5, 54, 0, 10.2, -2, mats.dark);
+  box(hall, 8.4, .06, 52, 0, 9.89, -2, mats.white);
+  for (let z = -27; z <= 25; z += 5.5) {
+    box(hall, 21, .35, .22, 0, 9.1, z, mats.stone);
+    box(hall, 8.4, .06, .1, 0, 9.84, z, mats.dark);
+  }
+  box(hall, 22, 10, .5, 0, 5, -27.5, mats.wall);
+  writing(hall, ['Money in China', 'A history in eight galleries'], 13, 2.3, 0, 5.7, -27.23, { size: 140 });
+  box(hall, 12, .035, .07, 0, 3.9, -27.15, mats.warm);
+  for (const z of [-14, 8]) {
+    box(hall, 4, .25, 1.3, 0, .8, z, mats.stone);
+    box(hall, 3.5, .6, .6, 0, .38, z, mats.dark);
+  }
+  rooms.forEach((room, index) => {
+    const group = new THREE.Group(); group.position.set(room.side * 16, 0, room.z); group.rotation.y = room.angle; scene.add(group);
+    box(group, 9, .3, 12.2, 0, -.18, 0, mats.stone);
+    box(group, 9, 8.4, .3, 0, 4.2, -6.1, mats.gallery);
+    box(group, .3, 8.4, 12.3, -4.4, 4.2, 0, mats.gallery);
+    box(group, .3, 8.4, 12.3, 4.4, 4.2, 0, mats.gallery);
+    box(group, 9, .35, 12.4, 0, 8.5, 0, mats.dark);
+    box(group, 1.75, 8.5, .6, -3.62, 4.25, 6, mats.wall);
+    box(group, 1.75, 8.5, .6, 3.62, 4.25, 6, mats.wall);
+    box(group, 5.5, 2, .6, 0, 7.5, 6, mats.wall);
+    for (const x of [-2.76, 2.76]) box(group, .06, 6.5, .75, x, 3.25, 6.05, mats.warm);
+    box(group, 5.55, .06, .75, 0, 6.49, 6.05, mats.warm);
+    box(group, 4.7, .035, .9, 0, .015, 6.1, mats.metal);
+    writing(group, room.label, 5.25, .66, 0, 7.25, 6.32, { size: 142 });
+    writing(group, room.date, 5.3, .4, 0, 6.72, 6.32, { size: 80, color: '#bccbd2' });
+    const portal = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 6.4), new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide }));
+    portal.position.set(0, 3.2, 6.4); portal.userData.room = index; group.add(portal); selectables.push(portal); resources.push(portal.geometry, portal.material);
+    box(group, 6.7, .045, .12, 0, 7.75, -4.8, mats.white);
+    photograph(group, room.photos[0], index, .5, 3.65, -5.84);
+    room.photos.slice(1).forEach((id, n) => {
+      const side = n % 2 ? 1 : -1;
+      photograph(group, id, index, side * 4.2, 3.35, -.6, 3.5, 3.6, -side * Math.PI / 2);
+    });
   });
 
-  const dustGeometry=new THREE.BufferGeometry();const dustPositions=new Float32Array(70*3);
-  for(let i=0;i<70;i++){dustPositions[i*3]=(Math.random()-.5)*14;dustPositions[i*3+1]=1+Math.random()*6;dustPositions[i*3+2]=-5+Math.random()*10;}
-  dustGeometry.setAttribute('position',new THREE.BufferAttribute(dustPositions,3));
-  const dust=new THREE.Points(dustGeometry,new THREE.PointsMaterial({color:0xb7d5e1,size:.025,transparent:true,opacity:.35,depthWrite:false}));scene.add(dust);
-
-  function setLighting(index) {
-    renderedRoom=index; const x=index*SPACING;
-    mainLight.position.set(x+.3,8,3.5);mainLight.target.position.set(x+1.8,2.2,-.3);
-    fill.position.set(x-3.8,4,4);fill.color.set(rooms[index].accent);
-    edge.position.set(x+5,4.5,-3.5);edge.color.set(rooms[index].warm);
+  function destination(index) {
+    if (index < 0) return { position: vector(0, small ? 4.4 : 5.1, small ? 27 : 24), target: vector(0, 4.1, -13) };
+    const distance=8.5, framingX=.5-.3*distance*Math.tan(THREE.MathUtils.degToRad(25))*camera.aspect;
+    return {
+      position: localPoint(index, small ? .5 : framingX, small ? 3.5 : 3.6, small ? 5.4 : 2.65),
+      target: localPoint(index, small ? .5 : framingX, small ? .8 : 3.5, -5.85)
+    };
   }
-  function setCamera() {
-    if(small) {camera.position.set(viewX+1.8,3.9,11.7);camera.lookAt(viewX+1.8,1.45,-.3);}
-    else {camera.position.set(viewX-2.2,3.65,10.3);camera.lookAt(viewX+.25,2.65,-.8);}
-    dust.position.x=viewX;
+  function cameraUpdate() {
+    camera.position.copy(pose.position);
+    const spherical = new THREE.Spherical().setFromVector3(pose.target.clone().sub(pose.position));
+    spherical.theta += yaw; spherical.phi = clamp(spherical.phi + pitch, .35, Math.PI - .35);
+    camera.lookAt(pose.position.clone().add(new THREE.Vector3().setFromSpherical(spherical)));
   }
-  function resize() {
-    const rect=canvas.parentElement.getBoundingClientRect();small=rect.width<=780;
-    renderer.setSize(rect.width,rect.height,false);camera.aspect=rect.width/rect.height;camera.fov=small?54:48;camera.updateProjectionMatrix();setCamera();start();
+  function setLight(index) {
+    galleryLight.intensity = index < 0 ? 0 : 100;
+    if (index >= 0) galleryLight.position.copy(localPoint(index, 0, 7, 1));
   }
-  const observer=new ResizeObserver(resize);observer.observe(canvas.parentElement);resize();setLighting(initialRoom);
-  function show(index,animate=true) {
-    if(disposed)return;current=index;yaw=0;pitch=0;
-    if(reducedMotion||!animate) {moving=null;viewX=index*SPACING;setLighting(index);setCamera();renderOnce();return;}
-    moving={from:viewX,to:index*SPACING,start:performance.now(),duration:clamp(950+Math.abs(index-viewX/SPACING)*120,1000,1700)};
-    start();
-  }
-  function renderOnce() { update(performance.now());renderer.render(scene,camera); }
-  function update(now) {
-    const dt=Math.min((now-lastTime)/1000,.04);lastTime=now;
-    if(moving) {
-      const t=clamp((now-moving.start)/moving.duration,0,1), eased=t*t*(3-2*t);
-      viewX=THREE.MathUtils.lerp(moving.from,moving.to,eased);
-      const nearest=clamp(Math.round(viewX/SPACING),0,7);if(nearest!==renderedRoom)setLighting(nearest);
-      if(t===1)moving=null;
+  function show(index, animate = true) {
+    const previous = current; current = index; yaw = pitch = 0;
+    camera.fov=small?(index<0?76:68):(index<0?61:50);camera.updateProjectionMatrix();
+    const end = destination(index); setLight(index);
+    if (!animate || reducedMotion || previous === index) {
+      moving = null; pose.position.copy(end.position); pose.target.copy(end.target); onTravel?.(false); requestFrame(); return;
     }
-    const nearest=viewX/SPACING;roomGroups.forEach((g,i)=>{g.visible=Math.abs(i-nearest)<1.2;});
-    if(!reducedMotion&&!pointer)idleTime+=dt;
-    sculptures.forEach((model,i)=>{
-      if(!roomGroups[i].visible)return;
-      model.position.y=3.1+(reducedMotion?0:Math.sin(idleTime*.65+i)*.065);
-      model.rotation.y=i===current?yaw+(reducedMotion?0:Math.sin(idleTime*.27)*.12):0;
-      model.rotation.x=i===current?pitch:0;
-    });
-    setCamera();
+    // The route goes through the doorways, never directly through a gallery wall.
+    const points = [pose.position.clone()];
+    if (previous >= 0) {
+      points.push(localPoint(previous, 0, 3.7, 4.8), localPoint(previous, 0, 3.9, 7.3));
+      points.push(vector(rooms[previous].side * 5.6, 4.1, rooms[previous].z));
+    }
+    if (index >= 0) {
+      points.push(vector(rooms[index].side * 5.6, 4.1, rooms[index].z));
+      points.push(localPoint(index, 0, 3.9, 7.3), localPoint(index, 0, 3.7, 4.8));
+    }
+    points.push(end.position);
+    const compact = points.filter((point, i) => !i || point.distanceTo(points[i - 1]) > .1);
+    const distances = [0]; for (let i = 1; i < compact.length; i++) distances.push(distances.at(-1) + compact[i].distanceTo(compact[i - 1]));
+    moving = { start: performance.now(), duration: Math.min(2800, 1200 + distances.at(-1) * 28), points: compact, distances, fromTarget: pose.target.clone(), end };
+    onTravel?.(true); requestFrame();
   }
-  function tick(now) {frame=0;if(disposed||paused||document.hidden)return;update(now);renderer.render(scene,camera);if(!reducedMotion||moving)frame=requestAnimationFrame(tick);}
-  function start() {if(!frame&&!paused&&!disposed&&!document.hidden){lastTime=performance.now();frame=requestAnimationFrame(tick);}}
-  function pick(event) {
-    const rect=canvas.getBoundingClientRect();pointerNdc.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);
-    raycaster.setFromCamera(pointerNdc,camera);
-    return raycaster.intersectObjects(selectables,false).find(hit=>{
-      let p=hit.object;while(p){if(!p.visible)return false;p=p.parent;}return true;
-    });
+  function tick(now) {
+    frame = 0; if (paused || disposed || document.hidden) return;
+    if (moving) {
+      const t = clamp((now - moving.start) / moving.duration, 0, 1), progress = ease(t), travelled = progress * moving.distances.at(-1);
+      let segment = 1; while (segment < moving.distances.length - 1 && moving.distances[segment] < travelled) segment++;
+      const start = moving.distances[segment - 1], span = moving.distances[segment] - start;
+      pose.position.lerpVectors(moving.points[segment - 1], moving.points[segment], span ? (travelled - start) / span : 1);
+      pose.target.lerpVectors(moving.fromTarget, moving.end.target, progress);
+      if (t === 1) { pose.position.copy(moving.end.position); pose.target.copy(moving.end.target); moving = null; onTravel?.(false); }
+    }
+    cameraUpdate(); renderer.render(scene, camera); if (moving) requestFrame();
   }
-  function down(event) {if(event.button!==0||moving)return;pointer={x:event.clientX,y:event.clientY,lastX:event.clientX,lastY:event.clientY,moved:false};canvas.setPointerCapture(event.pointerId);}
-  function move(event) {
-    if(!pointer)return;
-    const dx=event.clientX-pointer.lastX,dy=event.clientY-pointer.lastY;
-    if(Math.hypot(event.clientX-pointer.x,event.clientY-pointer.y)>6)pointer.moved=true;
-    if(pointer.moved){yaw+=dx*.009;pitch=clamp(pitch+dy*.006,-.55,.55);if(reducedMotion)renderOnce();}
-    pointer.lastX=event.clientX;pointer.lastY=event.clientY;
+  function requestFrame() { if (!frame && !paused && !disposed && !document.hidden) frame = requestAnimationFrame(tick); }
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect(); if (!rect.width || !rect.height) return;
+    width = rect.width; height = rect.height; small = width <= 780;
+    renderer.setSize(width, height, false); camera.aspect = width / height; camera.fov = small ? (current<0?76:68) : (current<0?61:50); camera.updateProjectionMatrix();
+    const end = destination(current); moving = null; pose.position.copy(end.position); pose.target.copy(end.target); onTravel?.(false); requestFrame();
   }
-  function up(event) {
-    if(!pointer)return;const clicked=!pointer.moved;pointer=null;
-    if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId);
-    if(clicked) {const hit=pick(event);if(hit)onSelect(hit.object.userData.photo);}
+  function hit(event) {
+    const rect = canvas.getBoundingClientRect(); ndc.set((event.clientX - rect.left) / width * 2 - 1, -(event.clientY - rect.top) / height * 2 + 1);
+    raycaster.setFromCamera(ndc, camera);
+    return raycaster.intersectObjects(selectables).find(result => current < 0 ? !result.object.userData.photo : (result.object.userData.photo && result.object.userData.room === current));
   }
-  canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',()=>{pointer=null;});
-  function visibility(){if(document.hidden){cancelAnimationFrame(frame);frame=0;}else start();}
-  document.addEventListener('visibilitychange',visibility);
-  await loadPhoto(rooms[initialRoom].photos[0]);
-  renderOnce();start();onReady?.();
+  canvas.addEventListener('pointerdown', event => {
+    if (event.button !== 0 || moving) return;
+    pointer = { x: event.clientX, y: event.clientY, yaw, pitch, moved: false }; canvas.setPointerCapture(event.pointerId);
+  });
+  canvas.addEventListener('pointermove', event => {
+    if (moving) return;
+    if (pointer) {
+      const dx = event.clientX - pointer.x, dy = event.clientY - pointer.y;
+      if (Math.hypot(dx, dy) > 6) pointer.moved = true;
+      yaw = clamp(pointer.yaw - dx * .0022, current < 0 ? -.8 : -.6, current < 0 ? .8 : .6);
+      pitch = clamp(pointer.pitch - dy * .0017, -.32, .32); canvas.style.cursor = 'grabbing'; requestFrame();
+    } else canvas.style.cursor = hit(event) ? 'pointer' : 'grab';
+  });
+  canvas.addEventListener('pointerup', event => {
+    if (!pointer) return; const clicked = !pointer.moved; pointer = null; canvas.style.cursor = 'grab';
+    if (!clicked || moving) return; const result = hit(event); if (!result) return;
+    if (current < 0) onRoom?.(result.object.userData.room); else onSelect?.(result.object.userData.photo);
+  });
+  canvas.addEventListener('pointercancel', () => { pointer = null; });
+  function visibility() { if (document.hidden) { cancelAnimationFrame(frame); frame = 0; } else requestFrame(); }
+  document.addEventListener('visibilitychange', visibility);
+  const observer = new ResizeObserver(resize); observer.observe(canvas.parentElement);
+  resize(); setLight(current); await Promise.all(photoTasks); requestFrame(); onReady?.();
   return {
     show,
-    setPaused(value){paused=value;if(value){cancelAnimationFrame(frame);frame=0;}else start();},
-    setReducedMotion(value){reducedMotion=value;start();},
-    dispose(){disposed=true;cancelAnimationFrame(frame);observer.disconnect();document.removeEventListener('visibilitychange',visibility);envTarget.dispose();renderer.dispose();},
-    diagnostics(){return {room:current,drawCalls:renderer.info.render.calls,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures};}
+    setPaused(value) { paused = value; if (value) { cancelAnimationFrame(frame); frame = 0; } else requestFrame(); },
+    setReducedMotion(value) { reducedMotion = value; if (value && moving) show(current, false); },
+    dispose() {
+      disposed = true; cancelAnimationFrame(frame); observer.disconnect(); document.removeEventListener('visibilitychange', visibility);
+      resources.forEach(resource => resource.dispose()); Object.values(mats).forEach(mat => mat.dispose()); cube.dispose(); mirror.dispose(); env.dispose(); renderer.dispose();
+    }
   };
 }

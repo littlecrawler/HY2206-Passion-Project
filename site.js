@@ -1,5 +1,5 @@
 import { photos } from './exhibit-data.js';
-import { initDeck } from './deck.js?v=20261122-museum';
+import { initDeck } from './deck.js?v=20261122-atrium';
 
 // Keep bookmarks from earlier versions useful.
 if (document.body.dataset.page === 'home') {
@@ -61,5 +61,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261122-museum').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261122-atrium').then(({ initMuseum }) => initMuseum());
 }

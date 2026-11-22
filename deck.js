@@ -296,7 +296,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261122-museum').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261122-atrium').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,reducedMotion:reduce.matches,
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
   })).then(result=>{

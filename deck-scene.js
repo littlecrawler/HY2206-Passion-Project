@@ -4,7 +4,7 @@ import { periods, photos } from './exhibit-data.js';
 
 const ease = t => t * t * (3 - 2 * t);
 const clamp = THREE.MathUtils.clamp;
-const colors = ['#8ed8ca','#b5d1a5','#9acbe0','#e2c28e','#91d7df','#b6c9e6','#bad3bb','#bcb7e6'];
+const colors = Array(8).fill('#bcd6df');
 
 export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip, reducedMotion=false }) {
   const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'low-power'});
@@ -55,7 +55,7 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, onFlip,
   function baseCanvas() { const c=document.createElement('canvas');c.width=small?720:1280;c.height=small?1024:800;return c; }
   function backTexture(index) {
     const c=baseCanvas(),ctx=c.getContext('2d'),w=c.width,h=c.height;
-    ctx.fillStyle=['#183847','#1e314b','#1a3b3e'][index%3];ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#1b3345';ctx.fillRect(0,0,w,h);
     ctx.strokeStyle=colors[index]+'55';ctx.lineWidth=2;ctx.strokeRect(25,25,w-50,h-50);
     for(let i=-h;i<w;i+=42){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+h,h);ctx.strokeStyle=colors[index]+'14';ctx.stroke();}
     ctx.strokeStyle=colors[index];ctx.lineWidth=4;ctx.beginPath();ctx.arc(w/2,h/2,Math.min(w,h)*.19,0,Math.PI*2);ctx.stroke();

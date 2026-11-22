@@ -1,0 +1,63 @@
+/* One palette across the museum, cards, reading pages and dialogs. */
+:root { color-scheme:dark; }
+body[data-page],body[data-page] :is(.deck-face,.photo-dialog,.museum-dialog) {
+  --paper:#0d1823; --ink:#e4ebf0; --green:#bcd6df; --muted:#b4c4cf;
+  --line:#3a4d5b; --wash:#182b3a; --white:#111f2b;
+  color:var(--ink);
+}
+body[data-page] { background:radial-gradient(ellipse at 80% 0%,#23394b,transparent 60%),#0d1823; }
+body[data-page="museum"] { background:#0d1823; }
+body[data-page] .site-header { background:#0d1823f2; border-color:var(--line); backdrop-filter:blur(14px); }
+body[data-page] .header-inner { min-height:76px; }
+body[data-page] .brand { font-size:23px; }
+body[data-page] .brand img { filter:grayscale(1) brightness(2.8); }
+body[data-page] #main-nav { font-size:17px; }
+body[data-page] #main-nav a { padding-block:22px; }
+body[data-page] #main-nav a[aria-current] { border-color:#bcd6df; }
+body[data-page] a:hover { color:#e2f4ff; }
+body[data-page] .menu-toggle { color:var(--ink); border-color:#667d8c; }
+body[data-page] .button { background:#bcd6df; color:#14232c; border-color:#bcd6df; }
+body[data-page] .button:hover:not(:disabled) { background:#e4f0f5; color:#14232c; }
+body[data-page] .button.secondary { background:transparent; color:#d1e4ec; border-color:#66808e; }
+body[data-page] .button.secondary:hover:not(:disabled) { background:#253e50; color:white; }
+body[data-page] :is(.deck-face,.photo-dialog,.museum-dialog) { background:#11212f; border-color:#4a626f; }
+body[data-page] .photo-dialog::backdrop { background:#02070dce; }
+.skip-link:focus { background:#c6dde8; color:#10212c; }
+:focus-visible { outline-color:#d4e9f4; }
+.citation { color:#b9d7e8; }
+blockquote { border-color:#7397ac; }
+.photo-choice { border-color:#627f91; }
+.photo-choice[aria-pressed="true"] { background:#bdd6e1; color:#13252f; border-color:#bdd6e1; }
+.timeline strong,body[data-page="home"] .timeline strong { color:#e1ebf0; }
+.timeline-dot,body[data-page="home"] .timeline-dot { border-color:#b7d2df; }
+.photo-button,.object-photo img { background:#0b151e; }
+body[data-page] .deck-face a:hover { color:#e2f4ff; }
+.deck-face::after { border-color:#7797ab38; }
+.front-object,.front-object .photo-button { background:#132736; }
+.pile-card,.pile-near,.pile-far { background:#1c3547; border-color:#708d9f; }
+.pile-card::before { border-color:#92adbd55; }
+.activity-choices button { background:#182b3a; border-color:#607b8d; color:#e4ebf0; }
+.activity-choices button[aria-pressed="true"] { background:#bdd6e1; color:#14232c; border-color:#bdd6e1; }
+.activity-choices button:hover { box-shadow:0 0 0 2px #9cb8ca55; }
+.activity-result,.payment-model { background:#213a4a; }
+.activity-photo,.object-lens,.image-comparison,.comparison-overlay { background:#0e1c28; }
+.paper-token { background:#d4dce0; color:#1e2e38; border-color:#647c8b; box-shadow:4px 5px 0 #0b121b77; }
+.burden-track { background:#405766; }
+.burden-track > span { background:#bad2df; }
+.system-link,.payment-connector { background:#abc5d5; }
+.yuan-system[data-stage="1"] .institution-node,.payment-model[data-layer="2"] .institution-band { background:#bdd6e1; color:#152630; }
+.yuan-system[data-stage="2"] .institution-node:last-child { background:#263c4b; border-color:#7694a5; }
+.money-pair > .selected-money { border-color:#aecfdf; background:#263f50; }
+.paynow-screen { color:#15242e; border-color:#8ba5b5; }
+.account-route > span:not(.payment-connector) { background:#182b3a; }
+.institution-band { border-color:#7f9bab; }
+.comparison-divider::after { color:#162630; }
+body[data-page] .tour-finish { background:#1a3041; }
+body[data-page] .deck-controls { background:#0d1823ee; }
+.evidence-reading { scrollbar-color:#7d9caf #152936; }
+@media (max-width:1060px) { body[data-page] #main-nav { background:#112331; border-color:#4a626f; } }
+@media (max-width:780px) {
+  body[data-page] .header-inner { min-height:66px; }
+  body[data-page] .brand { font-size:20px; }
+  body[data-page] .brand img { width:31px; height:31px; }
+}
