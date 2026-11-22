@@ -1,6 +1,6 @@
-import { rooms } from './museum-data.js?v=20261122-viewfit';
-import { photos } from './exhibit-data.js?v=20261122-viewfit';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-viewfit';
+import { rooms } from './museum-data.js?v=20261122-museum-directory';
+import { photos } from './exhibit-data.js?v=20261122-museum-directory';
+import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-museum-directory';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
@@ -14,7 +14,7 @@ export function initMuseum() {
   function setDirectory(open,focus=false) {
     directory.hidden=!open;shell.dataset.directory=open?'open':'closed';
     $('#open-room-map').setAttribute('aria-expanded',String(open));
-    if(focus)(open?rail[Math.max(0,current)]:$('#open-room-map')).focus({preventScroll:true});
+    if(focus)(open?$('#directory-close'):$('#open-room-map')).focus({preventScroll:true});
   }
 
   function image(id) {
@@ -42,6 +42,7 @@ export function initMuseum() {
     shell.dataset.location=entered?'gallery':'hall';
     intro.hidden=!entered;
     $('#room-objects').hidden=!entered;
+    $('#exhibit-hotspots').innerHTML=entered?room.photos.map(id=>'<button type="button" class="exhibit-hotspot" data-wall-object="'+id+'" aria-label="'+(states[current].viewPhoto===id?'Explore ':'View front: ')+escape(photos[id].title)+'" hidden>'+(states[current].viewPhoto===id?'Explore':'View front')+'</button>').join(''):'';
     if(entered){
       const focused=states[current].viewPhoto;
       $('#room-objects').innerHTML='<button type="button" data-room-view aria-pressed="'+!focused+'">Room view</button>'+room.photos.map(id=>'<button type="button" data-focus-object="'+id+'" aria-pressed="'+(focused===id)+'">'+text(photos[id].title.split('（')[0].trim())+'</button>').join('');
@@ -50,7 +51,8 @@ export function initMuseum() {
       if(active)$('#room-objects').scrollLeft=active.offsetLeft-($('#room-objects').clientWidth-active.offsetWidth)/2;
     }
     $('#room-date').textContent=room.date;$('#room-title').textContent=room.label;$('#room-question').textContent=room.question;
-    $('#room-count').textContent=entered?'Gallery '+(current+1)+' of 8':'Main hall';
+    $('#room-count').textContent='3D Museum / '+(entered?room.label:'Main hall');
+    $('#directory-location').textContent=entered?'Gallery '+(current+1)+' of 8 · '+room.label:'Main hall';
     $('#previous-room').disabled=current<=0||travelling;
     $('#previous-room').textContent='Previous gallery';
     $('#next-room').textContent=!entered?'Start the visit':current===7?'Finish visit':'Next gallery';
@@ -63,7 +65,7 @@ export function initMuseum() {
     if(travelling&&animate)return;
     current=Math.max(-1,Math.min(7,index));entered=current>=0;
     shell.dataset.photoFocus='false';if(entered)states[current].viewPhoto=null;
-    setDirectory(!entered);$('#gallery-hover').hidden=true;
+    setDirectory(!entered);$('#directory-room-list').open=false;$('#gallery-hover').hidden=true;
     if(push)history.pushState(null,'','#'+(entered?rooms[current].id:'hall'));
     updateRoom();scene?.show(current,animate); if(exhibit.open){if(entered)renderExhibit();else exhibit.close();}
     if(push)shell.scrollIntoView({behavior:'instant',block:'start'});
@@ -71,6 +73,16 @@ export function initMuseum() {
   function openExhibit(photoId) {
     if(!entered||travelling)return;
     renderExhibit(photoId);lastOpener=$('#explore-room');exhibit.showModal();scene?.setPaused(true);
+  }
+  function focusObject(id) {
+    if(travelling||!entered||!rooms[current].photos.includes(id))return;
+    shell.scrollIntoView({behavior:'instant',block:'start'});
+    states[current].viewPhoto=id;states[current].photo=id;shell.dataset.photoFocus='true';
+    updateRoom();scene?.focusPhoto(id);
+  }
+  function selectWallObject(id) {
+    if(states[current]?.viewPhoto===id)openExhibit(id);
+    else focusObject(id);
   }
   function followHash() {
     if(location.hash==='#videos')return;
@@ -92,10 +104,13 @@ export function initMuseum() {
   $('#room-objects').addEventListener('click',event=>{
     const button=event.target.closest('button');if(!button||travelling||!entered)return;
     const id=button.dataset.focusObject;
-    states[current].viewPhoto=id||null;shell.dataset.photoFocus=String(Boolean(id));
-    if(id){states[current].photo=id;scene?.focusPhoto(id);}
-    else scene?.show(current,false);
-    updateRoom();
+    if(id){focusObject(id);return;}
+    states[current].viewPhoto=null;shell.dataset.photoFocus='false';
+    updateRoom();scene?.show(current,false);
+  });
+  $('#exhibit-hotspots').addEventListener('click',event=>{
+    const button=event.target.closest('[data-wall-object]');
+    if(button&&!travelling)selectWallObject(button.dataset.wallObject);
   });
   document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>document.getElementById(button.dataset.close).close()));
   for(const dialog of [exhibit,finish]) {
@@ -133,8 +148,15 @@ export function initMuseum() {
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261122-viewfit').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
-    initialRoom:current,reducedMotion:reduce.matches,onSelect:openExhibit,onRoom:index=>goTo(index),
+  import('./museum-scene.js?v=20261122-museum-directory').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+    initialRoom:current,reducedMotion:reduce.matches,onSelect:selectWallObject,onRoom:index=>goTo(index),
+    onObjectPositions(positions){
+      positions.forEach(({id,x,y,visible})=>{
+        const button=$('#exhibit-hotspots [data-wall-object="'+id+'"]');
+        if(!button)return;
+        button.hidden=!visible;button.style.left=x+'px';button.style.top=y+'px';
+      });
+    },
     onHover(index,x,y){
       const hint=$('#gallery-hover');hint.hidden=index<0||entered||travelling;
       if(!hint.hidden){hint.textContent='Enter '+rooms[index].label;hint.style.left=Math.min(shell.clientWidth-210,Math.max(12,x+18))+'px';hint.style.top=Math.max(12,y-44)+'px';}

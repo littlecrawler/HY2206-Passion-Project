@@ -1,5 +1,5 @@
-import { photos, periods } from './exhibit-data.js?v=20261122-viewfit';
-import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261122-viewfit';
+import { photos, periods } from './exhibit-data.js?v=20261122-museum-directory';
+import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261122-museum-directory';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -298,7 +298,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261122-viewfit').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261122-museum-directory').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,reducedMotion:reduce.matches,
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
   })).then(result=>{

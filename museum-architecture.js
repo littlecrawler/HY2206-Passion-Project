@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Reflector } from './vendor/three/Reflector.js';
-import { rooms } from './museum-data.js?v=20261122-viewfit';
+import { rooms } from './museum-data.js?v=20261122-museum-directory';
 
 // Architectural surfaces only. Every object on display is a credited photograph.
 export function buildArchitecture(scene, { renderer, box, writing, photograph, mats, resources, selectables }) {
@@ -60,18 +60,12 @@ export function buildArchitecture(scene, { renderer, box, writing, photograph, m
     const portal=new THREE.Mesh(new THREE.PlaneGeometry(5.5,6.5),new THREE.MeshBasicMaterial({visible:false,side:THREE.DoubleSide}));portal.position.set(0,3.25,6.4);portal.userData.room=index;group.add(portal);selectables.push(portal);resources.push(portal.geometry,portal.material);
     box(group,6.7,.035,.14,0,8.25,-4.5,mats.white);
     for(const x of [-3.6,3.6])box(group,.03,7,.1,x,4.1,-5.91,mats.metal);
-    photograph(group,room.photos[0],index,.5,3.65,-5.84);
+    if(room.id==='song') photograph(group,'songpaper',index,.5,3.65,-5.84,2.7,4.5);
+    else photograph(group,room.photos[0],index,.5,3.65,-5.84);
     room.photos.slice(1).forEach((id,n)=>{const side=n%2?1:-1;photograph(group,id,index,side*4.04,3.35,-.6,3.5,3.6,-side*Math.PI/2);});
+    const entryPhoto={0:'cowries',3:'tang',6:'ming'}[index];
+    if(entryPhoto) photograph(group,entryPhoto,index,-3.5,2.9,6.34,1.1,entryPhoto==='ming'?1.8:1.1,0,true);
     const lightPool = new THREE.PointLight(0xc7dce9,38,12,2);lightPool.position.set(0,6,-2);group.add(lightPool);
-  });
-
-  // Photographic previews give the atrium a collection, not empty doorways.
-  const previews=[['cowries',0,-5.7,3.4,-3,4.5,3.25,.12],['ming',6,0,4.3,-4.8,3.7,5.3,0],['tang',3,5.7,3.4,-3,4.5,3.25,-.12]];
-  previews.forEach(([id,index,x,y,z,w,h,angle])=>{
-    const stand=new THREE.Group();stand.position.set(x,0,z);stand.rotation.y=angle;hall.add(stand);
-    box(stand,w+.5,.16,1.2,0,.08,0,mats.dark);
-    for(const sign of [-1,1])box(stand,.08,y-h/2,.12,sign*(w/2-.35),(y-h/2)/2,0,mats.metal);
-    photograph(stand,id,index,0,y,0,w,h,0,true);
   });
   for(const side of [-1,1]) {
     const bench=new THREE.Group();bench.position.set(side*11,.0,3);bench.rotation.y=side*-.5;hall.add(bench);

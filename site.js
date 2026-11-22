@@ -1,5 +1,5 @@
-import { photos } from './exhibit-data.js?v=20261122-viewfit';
-import { initDeck } from './deck.js?v=20261122-viewfit';
+import { photos } from './exhibit-data.js?v=20261122-museum-directory';
+import { initDeck } from './deck.js?v=20261122-museum-directory';
 
 // Keep bookmarks from earlier versions useful.
 if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) {
@@ -42,6 +42,32 @@ document.addEventListener('keydown', event => {
 navigation.addEventListener('click', closeMenu);
 window.matchMedia('(min-width: 1061px)').addEventListener('change', closeMenu);
 
+const videosSection = document.querySelector('#videos');
+if (videosSection) {
+  const museumLink = navigation.querySelector('a[href="museum.html"]');
+  const videosLink = navigation.querySelector('a[href="index.html#videos"]');
+  function markVideos(active) {
+    (active ? museumLink : videosLink).removeAttribute('aria-current');
+    (active ? videosLink : museumLink).setAttribute('aria-current', 'page');
+  }
+  function markVisibleSection() {
+    const boundary = Math.max(document.querySelector('.site-header').getBoundingClientRect().bottom + 64, innerHeight * .55);
+    markVideos(videosSection.getBoundingClientRect().top <= boundary);
+  }
+  let navigationFrame = 0;
+  window.addEventListener('scroll', () => {
+    if (navigationFrame) return;
+    navigationFrame = requestAnimationFrame(() => { navigationFrame = 0; markVisibleSection(); });
+  }, { passive: true });
+  window.addEventListener('resize', markVisibleSection);
+  window.addEventListener('hashchange', () => markVideos(location.hash === '#videos'));
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href]');
+    if (link?.hash === '#videos') markVideos(true);
+  });
+  markVideos(location.hash === '#videos');
+}
+
 const dialog = document.querySelector('#photo-dialog');
 let photoOpener;
 document.addEventListener('click', event => {
@@ -61,5 +87,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261122-viewfit').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261122-museum-directory').then(({ initMuseum }) => initMuseum());
 }

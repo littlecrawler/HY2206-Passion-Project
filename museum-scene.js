@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261122-viewfit';
-import { rooms } from './museum-data.js?v=20261122-viewfit';
-import { photos } from './exhibit-data.js?v=20261122-viewfit';
+import { buildArchitecture } from './museum-architecture.js?v=20261122-museum-directory';
+import { rooms, hallViewZ } from './museum-data.js?v=20261122-museum-directory';
+import { photos } from './exhibit-data.js?v=20261122-museum-directory';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * (3 - 2 * t);
 const vector = (...v) => new THREE.Vector3(...v);
 
 // The architecture surrounds documentary photographs; no object replicas are generated.
-export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel, onReady, initialRoom = -1, reducedMotion = false }) {
+export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel, onReady, onObjectPositions, initialRoom = -1, reducedMotion = false }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 781 ? 1.3 : 1.6));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -87,7 +87,7 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
       group.add(photo); selectables.push(photo); requestFrame();
       if(!hallPreview&&roomIndex===current&&focusedPhoto===id)focusPhoto(id,false);
     }));
-    writing(group, photos[id].title, w, .55, 0, -h / 2 - .55, .05, { size: 70 });
+    if(!hallPreview)writing(group, photos[id].title, w, .55, 0, -h / 2 - .55, .05, { size: 70 });
   }
   function localPoint(index, x, y, z) {
     const room = rooms[index];
@@ -103,7 +103,7 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     return {fraction:Math.max(.2,Math.min(.7,(bottom-top)/height)),offsetY:height/2-(top+bottom)/2};
   }
   function destination(index) {
-    if (index < 0) return { position: vector(0,small?5.3:5.4,small?21:15.5), target: vector(0,small?2.3:3.9,-9) };
+    if (index < 0) return { position: vector(0,small?5.3:5.4,hallViewZ), target: vector(0,small?2.3:3.9,-9) };
     if(focusedPhoto){
       const object=photoTargets.get(index+':'+focusedPhoto);
       if(object){
@@ -168,6 +168,18 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     moving={start:performance.now(),duration:800,distances:[0,distance],curve:new THREE.CatmullRomCurve3(points,false,'centripetal'),fromTarget:pose.target.clone(),end};
     onTravel?.(true);requestFrame();
   }
+  function positionObjectButtons() {
+    if(current<0||!onObjectPositions)return;
+    const positions=rooms[current].photos.map(id=>{
+      const object=photoTargets.get(current+':'+id);
+      const anchor=object.group.localToWorld(vector(0,-object.h*.3,.18));
+      const normal=vector(0,0,1).applyQuaternion(object.group.getWorldQuaternion(new THREE.Quaternion()));
+      const facing=normal.dot(camera.position.clone().sub(anchor))>0;
+      const projected=anchor.project(camera),x=(projected.x+1)*width/2,y=(1-projected.y)*height/2;
+      return {id,x,y,visible:!moving&&facing&&projected.z>-1&&projected.z<1&&x>65&&x<width-65&&y>155&&y<height-(small?330:120)};
+    });
+    onObjectPositions(positions);
+  }
   function tick(now) {
     frame = 0; if (paused || disposed || document.hidden) return;
     if (moving) {
@@ -178,7 +190,7 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
       pose.target.lerpVectors(moving.fromTarget, moving.end.target, progress);
       if (t === 1) { pose.position.copy(moving.end.position); pose.target.copy(moving.end.target); moving = null; onTravel?.(false); }
     }
-    cameraUpdate(); renderer.render(scene, camera); if (moving) requestFrame();
+    cameraUpdate(); renderer.render(scene, camera);positionObjectButtons(); if (moving) requestFrame();
   }
   function requestFrame() { if (!frame && !paused && !disposed && !document.hidden) frame = requestAnimationFrame(tick); }
   function setFraming() {

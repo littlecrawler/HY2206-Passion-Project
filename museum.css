@@ -1,7 +1,7 @@
 body[data-page="museum"] { --museum-accent:#b9d4de; overflow-x:clip; }
 body[data-page="museum"] .site-header { position:fixed; top:0; left:0; right:0; }
 body[data-page="museum"] .site-footer { display:none; }
-.museum-shell { height:100svh; min-height:580px; position:relative; isolation:isolate; overflow:hidden; background:#101c28; }
+.museum-shell { height:100svh; min-height:580px; position:relative; isolation:isolate; overflow:hidden; overflow-anchor:none; background:#101c28; }
 .museum-stage, #museum-canvas, .museum-fallback, .museum-shade { position:absolute; inset:0; width:100%; height:100%; }
 #museum-canvas { display:block; touch-action:none; outline-offset:-5px; cursor:grab; opacity:0; transition:opacity .8s ease; }
 body[data-renderer="webgl"] #museum-canvas { opacity:1; }
@@ -39,19 +39,28 @@ body[data-renderer="webgl"] .museum-fallback { display:none; }
 .room-rail button[aria-current] .room-rail-dot { background:#c4dce5; box-shadow:0 0 12px #c4dce588; }
 .room-rail button:hover { color:white; }
 .room-travel { display:flex; gap:10px; }
-.museum-shell[data-location="hall"] .room-travel { display:none; }
+.museum-shell[data-location="hall"] #previous-room { display:none; }
 .museum-shell[data-location="hall"] .museum-bottom { grid-template-columns:155px 1fr; }
 .museum-shell.is-travelling :is(.room-intro,.museum-welcome,.rotate-hint) { opacity:0; }
-.museum-directory { position:absolute; z-index:4; top:112px; left:3%; width:350px; padding:24px; border:1px solid #9cbccd3a; border-radius:14px; background:linear-gradient(145deg,#152939ed,#0a1723e8); box-shadow:0 20px 70px #02081266,inset 0 1px 0 #dfedf115; backdrop-filter:blur(18px); }
+.museum-directory { position:absolute; z-index:4; top:112px; left:3%; width:310px; max-height:calc(100% - 210px); overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; padding:20px; border:1px solid #9cbccd3a; border-radius:14px; background:linear-gradient(145deg,#152939ed,#0a1723e8); box-shadow:0 20px 70px #02081266,inset 0 1px 0 #dfedf115; backdrop-filter:blur(18px); }
 .directory-heading { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:20px; }
-.directory-heading h1 { font-size:27px; font-weight:500; letter-spacing:-.035em; }
+.directory-heading h2 { font-size:24px; font-weight:500; letter-spacing:-.035em; }
 .directory-heading button { border:0; background:none; color:#cfdee6; width:34px; min-height:34px; flex-shrink:0; font:26px/1 var(--heading); }
 .directory-heading button:hover { color:white; background:#ffffff12; border-radius:4px; }
-.directory-galleries { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.directory-galleries button { display:flex; align-items:center; gap:10px; background:#20344385; border:1px solid #7091a133; color:#e7eff3; text-align:left; padding:8px; min-height:70px; border-radius:6px; font:17px/1.25 var(--heading); transition:background .2s,border-color .2s,transform .2s; }
+.directory-site { display:grid; gap:4px; }
+.directory-site > a { padding:10px 12px; border-radius:5px; font:18px/1.35 var(--heading); text-decoration:none; color:#d6e5ed; }
+.directory-site > a:hover { background:#ffffff10; color:white; }
+.directory-museum { padding:13px 12px; margin-bottom:6px; border:1px solid #a2c7d766; border-left:3px solid #c5dfe9; border-radius:5px; background:#29455580; }
+.directory-current { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:7px; color:#edf7fb; text-decoration:none; font:600 19px/1.35 var(--heading); }
+.directory-here { font:14px/1.3 var(--heading); color:#bdd6e2; }
+.directory-location { margin:6px 0 12px; font:17px/1.4 var(--heading); color:#c8dce6; }
+.directory-room-list summary { cursor:pointer; font:16px/1.4 var(--heading); color:#d9e9f0; width:fit-content; }
+.directory-room-list[open] summary { margin-bottom:12px; }
+.directory-galleries { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.directory-galleries button { display:flex; align-items:center; gap:8px; background:#20344385; border:1px solid #7091a133; color:#e7eff3; text-align:left; padding:8px; min-height:52px; border-radius:6px; font:16px/1.25 var(--heading); transition:background .2s,border-color .2s,transform .2s; }
 .directory-galleries button:hover:not(:disabled) { background:#365366; border-color:#b5cbdc; transform:translateY(-2px); }
 .directory-galleries button[aria-current] { background:#34566b; border-color:#c0dce9; }
-.directory-galleries img { width:42px; height:48px; object-fit:contain; background:#071521; border-radius:3px; flex-shrink:0; }
+.directory-galleries img { display:none; }
 .directory-project { display:block; margin-top:22px; padding-top:17px; border-top:1px solid #9cbccd33; font-size:18px; line-height:1.4; color:#d2e2eb; }
 .museum-shell[data-directory="open"] .room-intro { visibility:hidden; }
 .gallery-hover { position:absolute; pointer-events:none; z-index:3; background:#102534e8; color:#e6f2f6; border:1px solid #9cbccd66; padding:9px 14px; border-radius:5px; font:17px/1.3 var(--heading); }
@@ -59,6 +68,10 @@ body[data-renderer="webgl"] .museum-fallback { display:none; }
 .room-objects button { border:1px solid #7795a566; color:#dceaf0; background:#102534ed; border-radius:5px; padding:10px 13px; font:16px/1.3 var(--heading); min-height:42px; }
 .room-objects button[aria-pressed="true"] { background:#bad3df; color:#10232f; border-color:#bad3df; }
 .room-objects button:hover:not(:disabled) { border-color:#d9ecf5; }
+.exhibit-hotspots { position:absolute; inset:0; z-index:2; pointer-events:none; }
+.exhibit-hotspot { position:absolute; transform:translate(-50%,-50%); pointer-events:auto; min-height:44px; padding:10px 16px; border:1px solid #d8edf0a8; border-radius:24px; background:#112330ed; box-shadow:0 3px 18px #0006; color:#eff8fb; font:600 16px/1.3 var(--heading); white-space:nowrap; }
+.exhibit-hotspot:hover { background:#c5dce6; color:#102330; }
+.museum-shell[data-directory="open"] .exhibit-hotspots,.museum-shell.is-travelling .exhibit-hotspots { visibility:hidden; }
 .museum-shell[data-location="gallery"] .rotate-hint { display:none; }
 .museum-shell[data-directory="open"] .room-objects { visibility:hidden; }
 .museum-bottom,.museum-shell[data-location="hall"] .museum-bottom { grid-template-columns:1fr auto; bottom:25px; align-items:center; }
@@ -106,7 +119,7 @@ body[data-page="museum"] .videos-section .actions { gap:32px; }
   .room-rail { grid-column:1 / -1; grid-row:1; }
   .room-status { flex-direction:row; gap:22px; align-items:center; }
   .museum-shell[data-location="hall"] .museum-bottom { grid-template-columns:1fr auto; }
-  .museum-directory { width:330px; left:3%; padding:20px; }
+  .museum-directory { width:295px; left:3%; padding:18px; }
   .directory-galleries button { font-size:16px; padding:7px; gap:8px; }
   .directory-galleries img { width:37px; }
 }
@@ -147,21 +160,27 @@ body[data-page="museum"] .videos-section .actions { gap:32px; }
   .museum-fallback { padding:5% 8% 70%; }
   .museum-finish { padding:23px; }
   .museum-finish h2 { font-size:36px; }
-  .museum-directory { top:auto; left:5%; width:90%; bottom:88px; padding:18px; border-radius:12px; }
+  .museum-directory { top:auto; left:5%; width:90%; bottom:190px; max-height:calc(100% - 270px); padding:18px; border-radius:12px; }
   .directory-heading { margin-bottom:12px; }
-  .directory-heading h1 { font-size:25px; }
+  .directory-heading h2 { font-size:24px; }
+  .directory-site { grid-template-columns:1fr 1fr; gap:4px 8px; }
+  .directory-museum { grid-column:1 / -1; }
+  .directory-site > a { font-size:17px; padding:10px 7px; }
   .directory-galleries { gap:7px; }
   .directory-galleries button { min-height:43px; padding:10px 12px; font-size:17px; }
   .directory-galleries img { display:none; }
   .directory-project { font-size:17px; margin-top:13px; padding-top:12px; }
-  .room-status { flex-direction:row; flex-wrap:wrap; gap:15px; }
-  .room-status #room-count { font-size:16px; padding-left:10px; }
+  .room-status { display:grid; grid-template-columns:1fr auto; gap:10px; }
+  .room-status #room-count { grid-column:1 / -1; font-size:16px; padding-left:10px; }
+  .room-status .museum-button { width:fit-content; }
+  .museum-shell[data-location="hall"] .room-travel { display:flex; }
+  .museum-shell[data-location="hall"] .next-room { width:100%; }
   .museum-shell[data-location="hall"] .room-status { justify-content:space-between; }
   .gallery-hover { display:none; }
   .museum-loading { top:90px; }
-  .room-objects { top:auto; bottom:144px; left:6%; right:6%; max-width:none; flex-wrap:nowrap; justify-content:flex-start; overflow-x:auto; padding-bottom:7px; scrollbar-width:thin; }
+  .room-objects { top:auto; bottom:182px; left:6%; right:6%; max-width:none; flex-wrap:nowrap; justify-content:flex-start; overflow-x:auto; padding-bottom:7px; scrollbar-width:thin; }
   .room-objects button { flex-shrink:0; font-size:16px; }
-  .room-intro { bottom:225px; }
+  .room-intro { bottom:265px; }
   .museum-shell[data-photo-focus="true"] .room-date,.museum-shell[data-photo-focus="true"] .room-question { display:none; }
   .museum-shell[data-photo-focus="true"] .room-intro h1 { font-size:29px; }
   .museum-shell[data-photo-focus="true"] .room-intro .museum-button { margin-top:14px; }
@@ -183,7 +202,7 @@ body[data-page="museum"] .videos-section .actions { gap:32px; }
   .room-rail { display:none; }
   .museum-bottom { grid-template-columns:1fr auto; }
   .museum-directory { top:84px; bottom:84px; width:min(360px,46%); padding:14px; overflow-y:auto; }
-  .directory-heading h1 { font-size:22px; }
+  .directory-heading h2 { font-size:22px; }
   .directory-heading { margin-bottom:10px; }
   .directory-galleries img { display:none; }
   .directory-galleries button { min-height:36px; padding:7px; }
