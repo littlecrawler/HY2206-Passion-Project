@@ -80,3 +80,9 @@ The student then requested “手机既然以paynow为例不妨加上paynow的�
 
 
 The student reported that the text was too small and the side margins too wide, with a screenshot of the published site. The assistant widened the responsive content area, introduced shared reading-size settings, enlarged captions and controls, and checked desktop and narrow layouts while retaining the selected heading font and Times New Roman body text.
+
+## Opening overview and personal-video spaces — 22 November 2026
+
+The student requested fewer small introductory text fragments and two spaces in the first section for personally recorded videos: the website's purpose, and their personal journey and reflection, each up to five minutes. Key prompt: “类似这样的小字太多了…把这些类似的小字删除之后 第一节要有一个整个网页的概览以及放我这两个视频的地方”.
+
+AI assisted with condensing the opening, removing the repeated introductory links and byline, simplifying the chapter guide, and implementing two responsive recording spaces. The existing heading font and Times New Roman reading text were retained. The Ming photograph remains in its historical chapter with its credit; the historical texts, course analysis and written reflection remain available. No personal recording was provided or generated. The visible spaces are explicitly marked as forthcoming, with native playback prepared for the student's future files.

@@ -1,6 +1,23 @@
 (() => {
   'use strict';
 
+  // Empty paths leave an honest placeholder without requesting a missing video.
+  document.querySelectorAll('[data-recording]').forEach(recording => {
+    const video = recording.querySelector('video');
+    const src = video.dataset.src.trim();
+    if (!src) return;
+    const placeholder = recording.querySelector('.recording-placeholder');
+    video.addEventListener('error', () => {
+      video.hidden = true;
+      placeholder.hidden = false;
+      placeholder.querySelector('.recording-status').textContent = 'Recording unavailable';
+      placeholder.querySelector('p:last-child').textContent = 'Please try again later.';
+    });
+    video.src = src;
+    video.hidden = false;
+    placeholder.hidden = true;
+  });
+
   const photos = {
     ming: {
       title: 'A Ming paper note, with coins in its design',

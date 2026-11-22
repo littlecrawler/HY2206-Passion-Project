@@ -4,7 +4,7 @@ An interactive history exhibit created for NUS HY2206. It asks why monetary form
 
 Revised 21 November 2026 following professor feedback. The intended audience is university students, especially non-history majors who use digital payments but are new to imperial Chinese history. The structure follows **audience → message → form**.
 
-The new opening explains why the subject matters and what visitors should learn. Two course-linked analyses develop state standardisation and institutional dependence. A personal journey and reflection connect the project to documented decisions and course experiences. The visual treatment references the student's HAWKY GPT Sites portfolio; the existing GitHub website remains the project home.
+The opening combines a short website overview, two personal-video spaces and a compact chapter guide. The planned recordings cover the website's purpose and the student's journey and reflection, each up to five minutes. Two course-linked analyses develop state standardisation and institutional dependence. The visual treatment references the student's HAWKY GPT Sites portfolio; the existing GitHub website remains the project home.
 
 ## The historical route
 
@@ -32,7 +32,7 @@ The site uses local styles, scripts, photographs and illustrations. External res
 
 ## Included interactions
 
-- A clickable chronological route with three core chapters.
+- Two clearly labelled recording spaces at the start, followed by a clickable guide to the five historical stops.
 - A coin workbench with shape, inscription, and issuing-rule explanations.
 - Two credited CC0 museum photographs with an enlarged view, Escape-to-close and focus return.
 - One illustrated Song market, one goal (buy a roll of cloth), and immediate outcomes: coins accepted, paper accepted after checking, or an unchecked note refused by this fictional trader.
@@ -57,6 +57,17 @@ The chapter summary by Richard von Glahn was consulted, not the full scholarly c
 The *History of the Song* is a Yuan compilation. The Kaifeng memoir and Hangzhou lyric offer comparative cultural perspectives, not direct evidence of Sichuan jiaozi use. English excerpts are AI-assisted working translations made for the exhibit, not quotations from a published English translator.
 
 The Ming object and Qing transaction patterns are separate examples. Local practices varied. PayNow is a transfer service, not the same kind of instrument as jiaozi, and the exhibit does not assert a direct line from jiaozi to digital payment services.
+
+## Adding the two personal recordings
+
+Both spaces currently say **Recording coming soon**. No recording or simulated playback has been added.
+
+1. **Why use this website?** Introduce the audience, purpose and how to explore; planned length up to five minutes.
+2. **My journey & reflection.** Explain how the idea became a website, the course connections and personal learning; planned length up to five minutes.
+
+Once the recordings are ready, place the compressed MP4 files in `assets/videos/` (for example, `website-introduction.mp4` and `journey-reflection.mp4`). In `index.html`, set the matching video's empty `data-src` attribute to its relative file path. `journal.js` replaces that space with a native player, including playback controls and fullscreen support. Empty paths make no media requests; a failed recording displays an unavailable message. No video autoplays.
+
+English WebVTT captions can be added as a `<track kind="captions" srclang="en" label="English" src="assets/videos/filename.vtt" default>` child of the corresponding `<video>`. Review the recordings and captions before publishing them. Keep each file below GitHub's repository file-size limit; use a separately hosted video if a compressed recording is still too large.
 
 ## Files
 

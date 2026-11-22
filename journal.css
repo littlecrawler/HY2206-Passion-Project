@@ -40,6 +40,29 @@ h3 { font-size: 27px; line-height: 1.25; }
 .site-header nav a { padding: 9px 14px; border-radius: 30px; font-weight: 650; }
 .site-header nav a:hover { background: #e8efdf; color: var(--green); }
 .header-note { font-size: var(--text-small); padding: 8px 15px; }
+.site-introduction { padding-block: clamp(36px,4vw,72px) 48px; }
+.introduction-overview { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); align-items: center; gap: clamp(32px,5vw,96px); }
+.introduction-overview h1 { font-size: clamp(44px,4.3vw,80px); font-weight: 800; line-height: 1.06; letter-spacing: -.055em; }
+.introduction-overview h1 em { font-style: normal; color: var(--green-light); }
+.overview-copy { font-size: clamp(1.375rem,1.3vw,1.625rem); line-height: 1.6; max-width: 57ch; }
+.overview-copy p:first-child { color: var(--green); font-size: clamp(1.5rem,1.6vw,2rem); line-height: 1.4; margin-bottom: 16px; }
+.introduction-videos { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(24px,3vw,56px); margin-top: 48px; }
+.recording { min-width: 0; display: flex; flex-direction: column; }
+.recording h2 { font-size: clamp(1.625rem,2vw,2.25rem); letter-spacing: -.035em; line-height: 1.2; }
+.recording-summary { font-size: var(--text-body); line-height: 1.5; margin-block: 12px 20px; }
+.recording-screen { aspect-ratio: 16/9; width: 100%; margin-top: auto; border-radius: 14px; overflow: hidden; background: #234a36; color: #fff; display: grid; }
+.recording-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; font-size: var(--text-body); line-height: 1.5; }
+.recording-placeholder svg { width: 52px; height: 40px; margin-bottom: 18px; opacity: .8; }
+.recording-placeholder .recording-status { font-family: var(--serif); font-size: clamp(1.25rem,1.5vw,1.75rem); font-weight: 700; margin-bottom: 8px; }
+.recording-screen video { display: block; width: 100%; height: 100%; min-width: 0; aspect-ratio: 16/9; object-fit: contain; background: #142c20; }
+.recording-screen [hidden] { display: none; }
+.overview-route { border-block: 1px solid var(--line); padding-block: 28px 20px; margin-top: 44px; }
+.overview-route h2 { font-size: 1.75rem; }
+.chapter-links { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 12px; margin-top: 18px; }
+.chapter-links a { display: flex; flex-direction: column; justify-content: center; padding: 14px 16px; border-radius: 10px; line-height: 1.45; }
+.chapter-links a:hover { background: #e8efdf; }
+.chapter-links strong { font-size: var(--text-body); color: var(--green); }
+.chapter-links span { font: var(--text-body)/1.5 var(--body); margin-top: 4px; }
 .hero { grid-template-columns: minmax(0,1.12fr) minmax(0,1fr); gap: clamp(32px,4vw,80px); padding-block: 60px 48px; min-height: 0; }
 .hero-copy { padding-block: 15px; min-width: 0; max-width: none; }
 .hero h1 { font-size: clamp(48px,4.3vw,80px); font-weight: 800; line-height: 1.04; letter-spacing: -.055em; }
@@ -275,6 +298,10 @@ h3 { font-size: 27px; line-height: 1.25; }
   .sources { gap: 35px; }
 }
 @media (max-width: 800px) {
+  .introduction-overview { grid-template-columns: 1fr; gap: 24px; }
+  .overview-copy { max-width: 65ch; }
+  .introduction-videos { grid-template-columns: 1fr; gap: 36px; margin-top: 36px; }
+  .chapter-links { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .site-header { flex-wrap: wrap; gap: 5px 20px; padding-block: 10px 8px; }
   .site-header nav { order: 3; width: 100%; overflow-x: auto; justify-content: space-between; white-space: nowrap; }
   .header-note { margin-left: auto; }
@@ -309,6 +336,15 @@ h3 { font-size: 27px; line-height: 1.25; }
   .method-details { grid-column: 1; }
 }
 @media (max-width: 600px) {
+  .site-introduction { padding-block: 32px 20px; }
+  .introduction-overview h1 { font-size: clamp(40px,10.3vw,60px); }
+  .overview-copy { font-size: 1.25rem; }
+  .recording-placeholder { padding: 20px 12px; font-size: 1.125rem; }
+  .recording-placeholder svg { width: 40px; height: 30px; margin-bottom: 10px; }
+  .recording-placeholder .recording-status { font-size: 1.25rem; margin-bottom: 4px; }
+  .overview-route { margin-top: 32px; padding-top: 24px; }
+  .chapter-links { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+  .chapter-links a { padding: 12px 8px; }
   html { scroll-padding-top: 125px; }
   :root { --page-gutter: 20px; --text-body: 1.1875rem; --text-small: 1rem; --text-ui: 1rem; }
   body.research-journal { font-size: var(--text-body); }
