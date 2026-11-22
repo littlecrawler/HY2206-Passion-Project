@@ -150,7 +150,6 @@ blockquote cite { display: block; font-size: 18px; margin-top: 10px; font-style:
 .project-writing section + section { margin-top: 45px; }
 .project-writing h2 { font-size: 34px; margin-bottom: 20px; }
 .project-writing h3 { font-size: 25px; line-height: 1.3; margin: 24px 0 10px; }
-.assistance-note { border-top: 1px solid var(--line); padding-top: 24px; margin-top: 42px; font-size: 19px; }
 .reference-list { padding-left: 32px; max-width: 1250px; margin: 0 0 60px; }
 .reference-list li { padding: 20px 0 20px 12px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
 .reference-list li:target { background: var(--wash); }
