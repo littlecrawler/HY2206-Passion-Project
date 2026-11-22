@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { periods, photos } from './exhibit-data.js?v=20261122-museum-guide';
+import { periods, photos } from './exhibit-data.js?v=20261122-smooth-entry';
 
 const ease = t => t * t * (3 - 2 * t);
 const clamp = THREE.MathUtils.clamp;

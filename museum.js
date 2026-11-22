@@ -1,6 +1,6 @@
-import { rooms } from './museum-data.js?v=20261122-museum-guide';
-import { photos } from './exhibit-data.js?v=20261122-museum-guide';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-museum-guide';
+import { rooms } from './museum-data.js?v=20261122-smooth-entry';
+import { photos } from './exhibit-data.js?v=20261122-smooth-entry';
+import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-smooth-entry';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
@@ -43,7 +43,8 @@ export function initMuseum() {
     shell.dataset.location=entered?'gallery':'hall';
     intro.hidden=!entered;
     $('#room-objects').hidden=!entered;
-    $('#exhibit-hotspots').innerHTML=entered?room.photos.map(id=>'<button type="button" class="exhibit-hotspot" data-wall-object="'+id+'" aria-label="'+(states[current].viewPhoto===id?'Explore ':'View front: ')+escape(photos[id].title)+'" hidden>'+(states[current].viewPhoto===id?'Explore':'View front')+'</button>').join(''):'';
+    const focused=entered?states[current].viewPhoto:null;
+    $('#exhibit-hotspots').innerHTML=focused?'<button type="button" class="exhibit-hotspot" data-wall-object="'+focused+'" aria-label="Explore '+escape(photos[focused].title)+'" hidden>Explore</button>':'';
     if(entered){
       const focused=states[current].viewPhoto;
       $('#room-objects').innerHTML='<button type="button" data-room-view aria-pressed="'+!focused+'">Room view</button>'+room.photos.map(id=>'<button type="button" data-focus-object="'+id+'" aria-pressed="'+(focused===id)+'">'+text(photos[id].title.split('（')[0].trim())+'</button>').join('');
@@ -77,13 +78,15 @@ export function initMuseum() {
   }
   function focusObject(id) {
     if(travelling||!entered||!rooms[current].photos.includes(id))return;
+    if(states[current].viewPhoto===id)return;
     shell.scrollIntoView({behavior:'instant',block:'start'});
     states[current].viewPhoto=id;states[current].photo=id;shell.dataset.photoFocus='true';
     updateRoom();scene?.focusPhoto(id);
   }
-  function selectWallObject(id) {
-    if(states[current]?.viewPhoto===id)openExhibit(id);
-    else focusObject(id);
+  function leaveObject() {
+    if(travelling||!entered||!states[current].viewPhoto)return;
+    states[current].viewPhoto=null;shell.dataset.photoFocus='false';
+    updateRoom();scene?.show(current,true);
   }
   function followHash() {
     if(location.hash==='#videos')return;
@@ -106,12 +109,11 @@ export function initMuseum() {
     const button=event.target.closest('button');if(!button||travelling||!entered)return;
     const id=button.dataset.focusObject;
     if(id){focusObject(id);return;}
-    states[current].viewPhoto=null;shell.dataset.photoFocus='false';
-    updateRoom();scene?.show(current,false);
+    leaveObject();
   });
   $('#exhibit-hotspots').addEventListener('click',event=>{
     const button=event.target.closest('[data-wall-object]');
-    if(button&&!travelling)selectWallObject(button.dataset.wallObject);
+    if(button&&!travelling)openExhibit(button.dataset.wallObject);
   });
   document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>document.getElementById(button.dataset.close).close()));
   for(const dialog of [exhibit,finish]) {
@@ -143,14 +145,15 @@ export function initMuseum() {
     if(input.dataset.action==='compare') {state.compare=Number(input.value);$('.image-comparison').style.setProperty('--reveal',state.compare+'%');input.setAttribute('aria-valuetext',state.compare+' percent spade photograph');}
   });
   $('#museum-canvas').addEventListener('keydown',event=>{
+    if(event.key==='Escape'){event.preventDefault();leaveObject();}
     if(event.key==='ArrowRight'){event.preventDefault();goTo(entered?Math.min(7,current+1):0);}
     if(event.key==='ArrowLeft'){event.preventDefault();goTo(Math.max(-1,current-1));}
     if(event.key==='Enter'){event.preventDefault();if(entered)openExhibit();else goTo(0);}
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261122-museum-guide').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
-    initialRoom:current,reducedMotion:reduce.matches,onSelect:selectWallObject,onRoom:index=>goTo(index),
+  import('./museum-scene.js?v=20261122-smooth-entry').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+    initialRoom:current,reducedMotion:reduce.matches,onSelect:focusObject,onLeaveObject:leaveObject,onRoom:index=>goTo(index),
     onObjectPositions(positions){
       positions.forEach(({id,x,y,visible})=>{
         const button=$('#exhibit-hotspots [data-wall-object="'+id+'"]');

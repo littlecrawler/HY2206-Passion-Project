@@ -1,16 +1,16 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261122-museum-guide';
-import { rooms, hallViewZ } from './museum-data.js?v=20261122-museum-guide';
-import { roomPoint, travelPath } from './museum-navigation.js?v=20261122-museum-guide';
-import { photos } from './exhibit-data.js?v=20261122-museum-guide';
+import { buildArchitecture } from './museum-architecture.js?v=20261122-smooth-entry';
+import { rooms, hallViewZ } from './museum-data.js?v=20261122-smooth-entry';
+import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261122-smooth-entry';
+import { photos } from './exhibit-data.js?v=20261122-smooth-entry';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * (3 - 2 * t);
 const vector = (...v) => new THREE.Vector3(...v);
 
 // The architecture surrounds documentary photographs; no object replicas are generated.
-export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel, onReady, onObjectPositions, initialRoom = -1, reducedMotion = false }) {
+export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, onHover, onTravel, onReady, onObjectPositions, initialRoom = -1, reducedMotion = false }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 781 ? 1.3 : 1.6));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -155,8 +155,9 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
   }
   function beginMove(curve,end,fromProjection,travel) {
     const toProjection=projection();
-    moving={start:performance.now(),duration:travel?clamp(950+curve.getLength()*40,1400,3600):800,
-      curve,end,fromProjection,toProjection,fromRotation:camera.quaternion.clone(),toRotation:orientation(end.position,end.target)};
+    const motion=travel?travelMotion(curve):null,fromRotation=camera.quaternion.clone(),toRotation=orientation(end.position,end.target);
+    moving={start:performance.now(),duration:motion?.duration||Math.max(800,fromRotation.angleTo(toRotation)*600),
+      curve,motion,end,fromProjection,toProjection,fromRotation,toRotation};
     applyProjection(fromProjection,toProjection,0);
     onTravel?.(true);requestFrame();
   }
@@ -165,10 +166,12 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     const previous = current; current = index; yaw = pitch = 0; focusedPhoto=null;
     camera.fov=small?68:(index<0?58:50);setFraming();camera.updateProjectionMatrix();
     const end = destination(index); setLight(index);
-    if (!animate || reducedMotion || previous === index) {
+    if (!animate || reducedMotion) {
       moving = null; pose.position.copy(end.position); pose.target.copy(end.target); onTravel?.(false); requestFrame(); return;
     }
-    beginMove(travelPath(pose.position,previous,index,end.position),end,fromProjection,true);
+    const travel=previous!==index;
+    const path=travel?travelPath(pose.position,previous,index,end.position):new THREE.LineCurve3(pose.position.clone(),end.position);
+    beginMove(path,end,fromProjection,travel);
   }
   function focusPhoto(id,animate=true) {
     if(current<0||!photoTargets.has(current+':'+id))return;
@@ -201,11 +204,12 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
   function tick(now) {
     frame = 0; if (paused || disposed || document.hidden) return;
     if (moving) {
-      const t = clamp((now - moving.start) / moving.duration, 0, 1), progress = ease(t);
-      pose.position.copy(moving.curve.getPointAt(progress));
+      const elapsed=now-moving.start,t=clamp(elapsed/moving.duration,0,1),progress=ease(t);
+      pose.position.copy(moving.motion?moving.motion.sample(elapsed).position:moving.curve.getPointAt(progress));
       // Keep a steady exhibit-facing view instead of snapping to the path's
       // tangent at each corner (or spinning around when backing out of a room).
-      const rotation=moving.fromRotation.clone().slerp(moving.toRotation,progress);
+      const turn=moving.motion?ease(clamp(t/.65,0,1)):progress;
+      const rotation=moving.fromRotation.clone().slerp(moving.toRotation,turn);
       pose.target.copy(pose.position).add(vector(0,0,-10).applyQuaternion(rotation));
       applyProjection(moving.fromProjection,moving.toProjection,progress);
       if (t === 1) { pose.position.copy(moving.end.position); pose.target.copy(moving.end.target); moving = null; onTravel?.(false); }
@@ -244,7 +248,8 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
   });
   canvas.addEventListener('pointerup', event => {
     if (!pointer) return; const clicked = !pointer.moved; pointer = null; canvas.style.cursor = 'grab';
-    if (!clicked || moving) return; const result = hit(event); if (!result) return;
+    if (!clicked || moving) return; const result = hit(event);
+    if (!result) { if(current>=0&&focusedPhoto)onLeaveObject?.(); return; }
     if (current < 0) onRoom?.(result.object.userData.room); else onSelect?.(result.object.userData.photo);
   });
   canvas.addEventListener('pointercancel', () => { pointer = null; });
