@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261122-smooth-entry';
+import { periods } from './exhibit-data.js?v=20261122-museum-title';
 
 export const hallViewZ = 18;
 

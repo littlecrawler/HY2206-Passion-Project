@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261122-smooth-entry';
-import { rooms, hallViewZ } from './museum-data.js?v=20261122-smooth-entry';
-import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261122-smooth-entry';
-import { photos } from './exhibit-data.js?v=20261122-smooth-entry';
+import { buildArchitecture } from './museum-architecture.js?v=20261122-museum-title';
+import { rooms, hallViewZ } from './museum-data.js?v=20261122-museum-title';
+import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261122-museum-title';
+import { photos } from './exhibit-data.js?v=20261122-museum-title';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * (3 - 2 * t);
@@ -225,6 +225,7 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect(); if (!rect.width || !rect.height) return;
     width = rect.width; height = rect.height; small = width <= 780;
+    architecture.title.scale.setScalar(small?.48:1);
     renderer.setSize(width, height, false); camera.aspect = width / height; camera.fov = small ? 68 : (current<0?58:50);setFraming(); camera.updateProjectionMatrix();
     const end = destination(current); moving = null; pose.position.copy(end.position); pose.target.copy(end.target); onTravel?.(false); requestFrame();
   }
