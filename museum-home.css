@@ -1,0 +1,25 @@
+body[data-page="home"] { --paper:#080f1b; --ink:#e3edf2; --green:#b8dade; --muted:#a9becc; --line:#2a3d4c; --wash:#112030; --white:#102333; background:radial-gradient(ellipse at 78% 13%,#1d3446 0,transparent 44%),#080f1b; }
+body[data-page="home"] .site-header { background:#080f1be8; backdrop-filter:blur(16px); }
+body[data-page="home"] .brand img { filter:grayscale(1) brightness(2.8); }
+body[data-page="home"] .button { color:#0a1c24; }
+body[data-page="home"] .button:hover { background:#e6f4f5; color:#0a1c24; }
+body[data-page="home"] .button.secondary { color:#d7e8ee; }
+body[data-page="home"] .button.secondary:hover { background:#243f50; color:white; }
+body[data-page="home"] a:hover { color:#b6e8ed; }
+body[data-page="home"] .hero-copy h1 { font-weight:500; letter-spacing:-.065em; }
+body[data-page="home"] .hero-copy .lead { color:#d2e2e9; }
+body[data-page="home"] .hero-copy > p:not(.lead) { color:#abc1ce; }
+body[data-page="home"] .hero-object { border-color:#5e82924d; box-shadow:0 22px 45px #01070e70; }
+body[data-page="home"] .hero-object > span { color:#ddebf0; }
+body[data-page="home"] .video-screen { box-shadow:inset 0 0 70px #1b40513b; }
+body[data-page="home"] .timeline-dot { border-color:#81c7d8; }
+body[data-page="home"] .timeline strong { color:#d9e8ef; }
+body[data-page="home"] .photo-dialog { color:#20392b; background:#f8faf5; --green:#244f38; --line:#cbd5c7; }
+body[data-page="home"] .photo-dialog .button { color:#244f38; }
+body[data-page="home"] .photo-dialog .button:hover { color:#244f38; }
+.visit-modes { display:grid; gap:0; margin-top:24px; border-top:1px solid var(--line); }
+.visit-modes > a { display:block; padding:16px 3px; text-decoration:none; border-bottom:1px solid var(--line); }
+.visit-modes strong { display:flex; justify-content:space-between; font:600 23px/1.3 var(--heading); }
+.visit-modes strong > span { color:#83c9d7; font-weight:400; }
+.visit-modes > a > span { display:block; margin-top:5px; font:20px/1.4 "Times New Roman",serif; color:var(--muted); }
+.visit-modes > a:hover { background:#122b3b; }

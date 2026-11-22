@@ -1,7 +1,7 @@
 import { photos } from './exhibit-data.js';
-import { initDeck } from './deck.js?v=20261122-deck';
+import { initDeck } from './deck.js?v=20261122-museum';
 
-// Old bookmarks remain useful after the long page is split into two modes.
+// Keep bookmarks from earlier versions useful.
 if (document.body.dataset.page === 'home') {
   const aliases = {
     experience: 'cards.html#song', story: 'read.html#song', metal: 'read.html#qin-han',
@@ -40,7 +40,7 @@ document.addEventListener('keydown', event => {
   }
 });
 navigation.addEventListener('click', closeMenu);
-window.matchMedia('(min-width: 781px)').addEventListener('change', closeMenu);
+window.matchMedia('(min-width: 1061px)').addEventListener('change', closeMenu);
 
 const dialog = document.querySelector('#photo-dialog');
 let photoOpener;
@@ -60,3 +60,6 @@ document.querySelector('[data-close-photo]').addEventListener('click', () => dia
 dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
+if (document.body.dataset.page === 'museum') {
+  import('./museum.js?v=20261122-museum').then(({ initMuseum }) => initMuseum());
+}

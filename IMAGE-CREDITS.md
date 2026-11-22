@@ -25,7 +25,7 @@ These are documentary photographs by other photographers, not photographs from a
 - This is BabelStone's CC0 photograph, **not** the copyrighted museum photograph on Google Arts & Culture. The bibliography now matches the pictured registration number, replacing the earlier link to a different note.
 - Used to examine denomination, coin imagery and printed rules. It is not a Song jiaozi photograph, and the printed denomination does not establish a constant market or redemption value.
 
-Records and licences checked 21 November 2026. For the separate AI-generated Song scenes and original schematic SVGs, see `ASSET-PROMPTS.md`.
+Records and licences checked 21 November 2026.
 
 ## PayNow logo
 

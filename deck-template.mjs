@@ -1,8 +1,8 @@
 export function deckPage(timeline) {
   return '<section class="flashcards-page deck-page wrap">' +
-    '<div class="page-heading compact"><div><h1>Explore the flashcards</h1><p>Turn a card, explore its objects, then deal the next.</p></div><a class="text-link" href="index.html#videos">Project videos</a></div>' + timeline +
+    '<div class="page-heading compact"><div><h1>Explore the flashcards</h1><p>Eight periods. One card at a time.</p></div><a class="text-link" href="index.html#videos">Project videos</a></div>' + timeline +
     '<div id="card-experience" hidden><div class="deck-status"><p id="card-count" role="status" aria-live="polite" aria-atomic="true">Card 1 of 8</p><a class="text-link" id="read-current" href="read.html#early-money">Read this period</a></div>' +
-    '<div class="deck-stage" id="deck-stage" tabindex="0" role="region" aria-label="Historical flashcard deck">' +
+    '<div class="deck-stage" id="deck-stage" tabindex="0" role="region" aria-label="Historical flashcard deck"><canvas id="deck-canvas" class="deck-canvas" aria-hidden="true" hidden></canvas>' +
     '<div class="pile-card pile-far" aria-hidden="true"><span class="pile-name" id="pile-far-label"></span><img src="assets/coin-mark.svg" alt=""></div>' +
     '<div class="pile-card pile-near" aria-hidden="true"><span class="pile-name" id="pile-near-label"></span><img src="assets/coin-mark.svg" alt=""></div>' +
     '<div class="deck-motion" id="deck-motion"><div class="deck-flipper" id="deck-flipper">' +
@@ -13,7 +13,7 @@ export function deckPage(timeline) {
     '<div class="back-layout"><div class="back-story"><h3 id="answer-title"></h3><p id="card-story"></p></div><div class="back-discovery">' +
     '<div class="discovery-tabs" role="group" aria-label="Explore this period"><button type="button" data-pane="activity" aria-pressed="true">Try it</button><button type="button" data-pane="story" class="mobile-story-tab" aria-pressed="false">Story</button><button type="button" data-pane="sources" aria-pressed="false">Evidence</button></div>' +
     '<div id="discovery-panel"></div></div></div></article></div></div></div>' +
-    '<div class="deck-controls"><button class="button secondary" type="button" id="previous-card">Previous</button><button class="button" type="button" id="flip-card" aria-pressed="false" aria-controls="card-front card-back">Turn card</button><button class="button secondary" type="button" id="next-card">Next card</button></div></div>' +
+    '<div class="deck-photo-tools" id="deck-photo-tools" hidden><div id="deck-photo-options" class="photo-choices" aria-label="Choose the card photograph"></div><button class="text-button" id="deck-photo-action" type="button">Enlarge photograph</button></div><div class="deck-controls"><button class="button secondary" type="button" id="previous-card">Previous</button><button class="button" type="button" id="flip-card" aria-pressed="false" aria-controls="card-front card-back">Turn card</button><button class="button secondary" type="button" id="next-card">Next card</button></div></div>' +
     '<section class="tour-finish" id="tour-finish" aria-labelledby="finish-title" hidden><div class="finish-mark" aria-hidden="true"><img src="assets/coin-mark.svg" width="88" height="88" alt=""></div><h2 id="finish-title" tabindex="-1">You’ve reached today.</h2><p>Different materials. Different institutions.<br>More than one way to make a payment work.</p><div class="actions"><button class="button" type="button" id="restart-cards">Shuffle back to the start</button><a class="button secondary" href="index.html#videos">Watch the project videos</a><a class="button secondary" href="read.html">Read the history</a></div></section>' +
     '<noscript><p class="notice">The interactive cards need JavaScript. <a href="read.html">Read the complete history here</a>.</p></noscript></section>';
 }

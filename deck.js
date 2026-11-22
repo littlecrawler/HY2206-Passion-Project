@@ -27,10 +27,13 @@ export function initDeck() {
   let initialized = false;
   let pointerStart = null;
   let suppressClick = false;
+  let deckScene;
+  let engineReady = false;
 
   function fitCard() {
     if (finished) return;
-    const height = Math.ceil((flipped ? back : front).offsetHeight);
+    const frontHeight=Math.max(340,Math.min(650,innerHeight-document.querySelector('.site-header').offsetHeight-timeline[0].parentElement.offsetHeight-document.querySelector('.deck-status').offsetHeight-document.querySelector('.deck-controls').offsetHeight-document.querySelector('#deck-photo-tools').offsetHeight-42));
+    const height = engineReady ? (flipped ? Math.max(back.offsetHeight,frontHeight) : frontHeight) : Math.ceil((flipped ? back : front).offsetHeight);
     if (height) flipper.style.height = height + 'px';
   }
   const sizeObserver = new ResizeObserver(fitCard);
@@ -44,6 +47,7 @@ export function initDeck() {
     flip.disabled = busy || turning;
     stage.setAttribute('aria-busy', String(busy || turning));
     next.textContent = current === periods.length - 1 ? 'Finish' : 'Next card';
+    stage.classList.toggle('is-turning', busy || turning);
   }
   function showSide(answer, immediate = false) {
     if ((busy || turning) && !immediate) return;
@@ -51,17 +55,20 @@ export function initDeck() {
     flipped = answer;
     turning = !immediate && !reduce.matches;
     if (immediate) flipper.classList.add('no-transition');
-    front.inert = answer || turning;
+    front.inert = engineReady || answer || turning;
     back.inert = !answer || turning;
-    front.setAttribute('aria-hidden', String(answer));
+    front.setAttribute('aria-hidden', String(engineReady || answer));
     back.setAttribute('aria-hidden', String(!answer));
     flipper.classList.toggle('is-flipped', answer);
+    stage.classList.toggle('is-reading', engineReady && answer && !turning);
+    deckScene?.flip(answer, immediate || reduce.matches);
     flip.setAttribute('aria-pressed', String(answer));
     flip.textContent = answer ? 'View object' : 'Turn card';
     document.querySelector('#card-count').textContent = 'Card ' + (current + 1) + ' of ' + periods.length;
     fitCard();
     syncControls();
     if (turning) flipTimer = setTimeout(settleFlip, 850);
+    else deckScene?.setPaused(answer);
     if (immediate) {
       void flipper.offsetHeight;
       flipper.classList.remove('no-transition');
@@ -70,8 +77,10 @@ export function initDeck() {
   function settleFlip() {
     clearTimeout(flipTimer);
     turning = false;
-    front.inert = flipped;
+    front.inert = engineReady || flipped;
     back.inert = !flipped;
+    stage.classList.toggle('is-reading', engineReady && flipped);
+    deckScene?.setPaused(flipped);
     syncControls();
   }
   flipper.addEventListener('transitionend', event => {
@@ -82,6 +91,9 @@ export function initDeck() {
     states[current].photo = id;
     document.querySelector('#card-photo').innerHTML = '<figure class="object-photo"><button class="photo-button" type="button" data-photo="' + id + '" aria-label="Enlarge ' + escape(p.title) + '"><img src="' + p.src + '" alt="' + escape(p.alt) + '"><span class="enlarge-icon" aria-hidden="true">⤢</span></button><figcaption>' + text(p.title) + '<span>' + text(p.place) + '</span></figcaption></figure>';
     document.querySelectorAll('[data-object]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.object === id)));
+    document.querySelector('#deck-photo-action').dataset.photo = id;
+    document.querySelectorAll('[data-deck-photo]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.deckPhoto === id)));
+    deckScene?.setPhoto(id);
     fitCard();
   }
   function renderPanel() {
@@ -106,8 +118,10 @@ export function initDeck() {
     document.querySelector('#card-story').innerHTML = text(p.story) + ' ' + cite(p.sources);
     document.querySelectorAll('.deck-number').forEach(node => { node.textContent = String(current + 1).padStart(2, '0'); });
     document.querySelector('#read-current').href = 'read.html#' + p.id;
-    stage.setAttribute('aria-label', p.label + ' interactive flashcard. Enter turns the card; left and right keys change periods.');
+    stage.setAttribute('aria-label', p.label + '. ' + p.date + '. ' + p.question + ' Enter turns the card; left and right keys change periods.');
     document.querySelector('#photo-choices').innerHTML = p.photos.length > 1 ? p.photos.map(id => '<button class="photo-choice" type="button" data-object="' + id + '" aria-pressed="false">' + text(photos[id].title.split('（')[0].trim()) + '</button>').join('') : '';
+    document.querySelector('#deck-photo-options').innerHTML = p.photos.length > 1 ? p.photos.map(id => '<button class="photo-choice" type="button" data-deck-photo="' + id + '" aria-pressed="false">' + text(photos[id].title.split('（')[0].trim()) + '</button>').join('') : '';
+    deckScene?.show(current,states[current].photo||p.photos[0]);
     showPhoto(states[current].photo || p.photos[0]);
     renderPanel();
     showSide(false, true);
@@ -127,6 +141,7 @@ export function initDeck() {
     finished = true;
     experience.hidden = true;
     finish.hidden = false;
+    deckScene?.setPaused(true);
     document.querySelector('#finish-title').focus({ preventScroll: true });
     finish.scrollIntoView({ behavior: reduce.matches ? 'instant' : 'smooth', block: 'center' });
     document.title = 'Journey complete · Money in China';
@@ -145,7 +160,8 @@ export function initDeck() {
     syncControls();
     if (push) history.pushState(null, '', '#' + (index === periods.length ? 'complete' : periods[index].id));
     if (animate && !finished) {
-      await play([{ transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 }, { transform: 'translate3d(' + direction * 19 + '%, -12px, 60px) rotate(' + direction * 7 + 'deg)', opacity: 0 }], 180);
+      if(deckScene) {stage.classList.remove('is-reading');await deckScene.dealOut(direction);}
+      else await play([{ transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 }, { transform: 'translate3d(' + direction * 19 + '%, -12px, 60px) rotate(' + direction * 7 + 'deg)', opacity: 0 }], 180);
     }
     if (request !== serial) return;
     if (index === periods.length) {
@@ -154,7 +170,10 @@ export function initDeck() {
       return;
     }
     renderCard(index);
-    if (animate) await play([{ transform: 'translate3d(' + -direction * 10 + '%, 20px, -50px) rotate(' + -direction * 4 + 'deg)', opacity: .3 }, { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 }], 320);
+    if (animate) {
+      if(deckScene)await deckScene.dealIn(direction);
+      else await play([{ transform: 'translate3d(' + -direction * 10 + '%, 20px, -50px) rotate(' + -direction * 4 + 'deg)', opacity: .3 }, { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 }], 320);
+    }
     if (request !== serial) return;
     busy = false;
     syncControls();
@@ -167,6 +186,7 @@ export function initDeck() {
     if (initialized && ['top','main'].includes(hash)) return;
     serial++;
     motion.getAnimations().forEach(animation => animation.cancel());
+    deckScene?.cancel();
     busy = false;
     if (hash === 'complete') { initialized = true; finishTour(); return; }
     const index = periods.findIndex(p => p.id === hash);
@@ -192,6 +212,10 @@ export function initDeck() {
   document.querySelector('#photo-choices').addEventListener('click', event => {
     const button = event.target.closest('[data-object]');
     if (button && periods[current].photos.includes(button.dataset.object)) showPhoto(button.dataset.object);
+  });
+  document.querySelector('#deck-photo-options').addEventListener('click', event => {
+    const button=event.target.closest('[data-deck-photo]');
+    if(button&&periods[current].photos.includes(button.dataset.deckPhoto))showPhoto(button.dataset.deckPhoto);
   });
   document.querySelector('.discovery-tabs').addEventListener('click', event => {
     const button = event.target.closest('[data-pane]');
@@ -271,4 +295,15 @@ export function initDeck() {
     fitCard();
   });
   followHash();
+  const canvas=document.querySelector('#deck-canvas');
+  import('./deck-scene.js?v=20261122-museum').then(({createDeckScene})=>createDeckScene(canvas,{
+    initialIndex:current,photoId:states[current].photo,reducedMotion:reduce.matches,
+    onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
+  })).then(result=>{
+    deckScene=result;engineReady=true;document.body.dataset.deckRenderer='webgl';canvas.hidden=false;
+    document.querySelector('#deck-photo-tools').hidden=false;
+    if(finished){deckScene.setPaused(true);return;}
+    deckScene.show(current,states[current].photo);showSide(flipped,true);fitCard();
+    reduce.addEventListener('change',event=>deckScene.setReducedMotion(event.matches));
+  }).catch(error=>{console.warn('Flashcards are using the CSS view.',error.message);});
 }
