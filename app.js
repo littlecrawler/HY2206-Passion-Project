@@ -28,36 +28,33 @@
   };
   const states = {
     choose: {
-      progress: 'Your task · Buy one roll of cloth', title: 'How will you pay?',
+      title: 'How will you pay?',
       dialogue: 'Welcome to my stall. How would you like to pay for the cloth?',
       status: 'Cloth: still at the stall', actions: ['coins', 'paper']
     },
     paper: {
-      progress: 'One more choice · Check the promise', title: 'Will the trader accept your note?',
+      title: 'Will the trader accept your note?',
       dialogue: 'Before I take this paper, who issued it? Can they repay what it promises?',
       status: 'Cloth: waiting for payment', icon: 'note', actions: ['check', 'offer']
     },
     declined: {
-      progress: 'Trade paused', title: 'The cloth stays with the trader.',
+      title: 'The cloth stays with the trader.',
       dialogue: 'I do not yet know who will repay this note. I will not accept it as it stands.',
       status: 'Cloth: still at the stall', icon: 'note',
-      lessonTitle: 'Light to carry is not enough.',
       lesson: 'The paper saved weight, but this trader has not accepted its promise. Check the issuer, or try coins.',
       source: 'passage-issuer', sourceLabel: 'Read about repayment problems', actions: ['check', 'compareCoins']
     },
     coins: {
-      progress: 'Trade complete', title: 'You bought the cloth.',
+      title: 'You bought the cloth.',
       dialogue: 'I accept these iron coins. Here is your cloth.',
       status: 'Cloth: now in your bag', icon: 'cloth',
-      lessonTitle: 'The payment worked. You carried the weight.',
       lesson: 'Coins worked in this trade, but moving heavy iron cash was inconvenient. Jiaozi offered a lighter way to carry value.',
       source: 'passage-weight', sourceLabel: 'Read why iron cash was inconvenient', actions: ['comparePaper']
     },
     accepted: {
-      progress: 'Trade complete', title: 'You bought the cloth.',
+      title: 'You bought the cloth.',
       dialogue: 'Now that we have checked: I recognise this issuer and expect them to repay the note. I will accept it. Here is your cloth.',
       status: 'Cloth: now in your bag', icon: 'cloth',
-      lessonTitle: 'Less weight. A promise to rely on.',
       lesson: 'The note was easy to carry. It worked here because the trader expected its issuer to repay it. That expectation could still prove wrong.',
       source: 'passage-issuer', sourceLabel: 'Read about repayment problems', actions: ['compareCoins']
     }
@@ -73,7 +70,6 @@
   function renderTrade(name, moveFocus = true) {
     const state = states[name];
     market.dataset.state = name;
-    document.getElementById('market-progress').textContent = state.progress;
     prompt.textContent = state.title;
     dialogue.textContent = state.dialogue;
     document.getElementById('trade-status').textContent = state.status;
@@ -82,12 +78,10 @@
     lesson.replaceChildren();
     lesson.hidden = !state.lesson;
     if (state.lesson) {
-      const heading = document.createElement('h4');
-      heading.textContent = state.lessonTitle;
       const link = document.createElement('a');
       link.href = '#' + state.source;
       link.textContent = state.sourceLabel;
-      lesson.append(heading, paragraph('', state.lesson), link);
+      lesson.append(paragraph('', state.lesson), link);
     }
     choices.replaceChildren();
     state.actions.forEach(key => {

@@ -86,3 +86,9 @@ The student reported that the text was too small and the side margins too wide, 
 The student requested fewer small introductory text fragments and two spaces in the first section for personally recorded videos: the website's purpose, and their personal journey and reflection, each up to five minutes. Key prompt: “类似这样的小字太多了…把这些类似的小字删除之后 第一节要有一个整个网页的概览以及放我这两个视频的地方”.
 
 AI assisted with condensing the opening, removing the repeated introductory links and byline, simplifying the chapter guide, and implementing two responsive recording spaces. The existing heading font and Times New Roman reading text were retained. The Ming photograph remains in its historical chapter with its credit; the historical texts, course analysis and written reflection remain available. No personal recording was provided or generated. The visible spaces are explicitly marked as forthcoming, with native playback prepared for the student's future files.
+
+## Reducing reading overhead and revising the identity — 22 November 2026
+
+The student identified repeated labels, slogans, revision metadata and detailed photo-production notes as excessive: “类似这样的小标语太多了”, “类似这些小标题实在太多了”, and “每一个阅读都会消耗观众的精力”. The student also requested a new footer and logo and questioned the meaning of “Selected turning points”.
+
+AI assisted with removing decorative heading labels and repeated instructions across the main exhibit and project brief, putting dynastic context into direct chapter headings, shortening visible captions, and placing the bibliography, image credits and production disclosures in expandable groups. Historical excerpts, interpretations, citations, museum-photo provenance and essential interaction feedback remain. The square-hole coin logo is an original SVG brand symbol, not a historical reconstruction. The short site name is now “Money in China”; the footer contains only the identity, author/course and a return-to-top link.

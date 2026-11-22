@@ -6,6 +6,8 @@ Revised 21 November 2026 following professor feedback. The intended audience is 
 
 The opening combines a short website overview, two personal-video spaces and a compact chapter guide. The planned recordings cover the website's purpose and the student's journey and reflection, each up to five minutes. Two course-linked analyses develop state standardisation and institutional dependence. The visual treatment references the student's HAWKY GPT Sites portfolio; the existing GitHub website remains the project home.
 
+The site uses the short name **Money in China** with an original square-hole coin mark. Following the student's request to respect readers' attention, the pages omit decorative labels, revision metadata, repeated prompts and production footnotes. Chapter headings identify their subject directly. Bibliography, photo credits and project notes are collapsed until requested; citation links open the relevant group. Essential tasks, historical excerpts, interpretations and course connections stay in the reading flow.
+
 ## The historical route
 
 1. **Short prologue:** shells and shaped money before imperial unification.
@@ -41,7 +43,7 @@ The site uses local styles, scripts, photographs and illustrations. External res
 - Links from merchant decisions to relevant passages, plus a three-question evidence exercise.
 - Qing transaction choices that illustrate copper and silver's different uses.
 - Three selectable layers of a modern payment illustration.
-- Twelve linked bibliography entries, two course references, image credits, research limitations and an English project brief.
+- Twelve linked bibliography entries, two course references and concise image credits in expandable source groups, plus an English project brief.
 - Responsive layouts, keyboard-operable controls, visible focus, and reduced-motion support.
 
 The website is in English, with necessary Chinese terms in traditional characters inside parentheses. Original photographed museum labels remain unchanged. No personal video or personal museum photos have been supplied; the credited photographs are by others. Personal reflection is an AI-assisted draft grounded in the student's decisions and course reflection, for author review.
