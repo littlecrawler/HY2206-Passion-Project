@@ -109,9 +109,6 @@ button img { pointer-events: none; }
 .period-date { font-size: 18px; letter-spacing: .015em; color: var(--muted); margin-bottom: 10px; }
 .card-copy h2 { font-size: clamp(28px, 2.5vw, 42px); }
 .card-question { margin-top: 28px; font-size: clamp(29px, 3vw, 44px); line-height: 1.25; }
-#card-back { margin-top: 24px; }
-#card-back h3 { font-size: 28px; line-height: 1.25; margin-bottom: 15px; }
-#card-story { font-size: 22px; line-height: 1.5; }
 .citation { font-size: 17px; white-space: nowrap; color: #53643f; }
 blockquote { border-left: 3px solid #6e8659; padding: 5px 0 5px 20px; margin-top: 25px; }
 blockquote p { font-size: 22px; }
@@ -173,8 +170,6 @@ body[data-page="cards"] #main-nav a { padding-block: 20px; }
 @media (min-width: 1600px) {
   body { font-size: 23px; }
   .card-visual .photo-button img { height: 400px; }
-  #card-story { font-size: 26px; }
-  #card-back h3 { font-size: 32px; }
 }
 @media (max-width: 1100px) {
   .header-inner { gap: 18px; }
@@ -186,7 +181,6 @@ body[data-page="cards"] #main-nav a { padding-block: 20px; }
   .card-copy { padding: 25px; }
   .card-visual { padding: 16px; }
   .card-visual .photo-button img { height: 255px; }
-  #card-story { font-size: 21px; }
   .history-period { gap: 5%; }
 }
 @media (max-width: 780px) {
@@ -226,8 +220,6 @@ body[data-page="cards"] #main-nav a { padding-block: 20px; }
   .card-copy { padding: 22px; order: -1; }
   .flashcard[data-flipped="true"] .card-visual { display: none; }
   .card-question { font-size: 31px; margin-top: 20px; }
-  #card-back h3 { font-size: 26px; }
-  #card-story { font-size: 21px; }
   .card-controls { position: sticky; bottom: 0; z-index: 10; background: var(--paper); padding: 12px 0; margin-top: 12px; gap: 8px; }
   .card-controls .button { font-size: 17px; padding: 12px 8px; min-height: 52px; }
   .history-period { grid-template-columns: 1fr; gap: 28px; padding-block: 35px; }

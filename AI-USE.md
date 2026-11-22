@@ -1,5 +1,15 @@
 # AI assistance record
 
+## Interactive 3D deck — 22 November 2026
+
+The student said the first flashcard version had lost too much interaction and content. They explicitly requested preservation of the two personal video spaces, 3D turning effects and cards overlapping like a playing-card deck.
+
+AI assisted with a two-sided CSS 3D card, layered card backs, animated dealing, swipe and keyboard navigation, and an interactive back for each period. Restored content includes coin shape/inscription/rules, the Song relationship between carrying costs and issuer acceptance, Qing copper/silver transaction patterns, PayNow layers, and the three historical/literary source views. Longer readings were restored to the reading version as well.
+
+The Tang coin turn shows the two halves of the existing documentary photograph, not an invented reverse. The Song paper token is a schematic interface symbol, not a claimed surviving jiaozi specimen; carrying-cost bars are qualitative illustrations, not measured weights. The scenario outcomes are explanations of historical trade-offs, not reconstructions of identified transactions. Yuan and modern-payment diagrams likewise support the reading without introducing numerical historical simulations.
+
+Both recording entries and their video locations remain intact. No personal video file has been supplied in this checkout. No new AI-generated image, voice or student recording was introduced.
+
 ## Flashcard redesign — 22 November 2026
 
 The student said the website was difficult to read and requested two modes: a chronological, one-period-at-a-time experience and a separate reading version. The student then clarified the desired format: “我想说的是那个闪卡形式”. This superseded the earlier merchant-game design.

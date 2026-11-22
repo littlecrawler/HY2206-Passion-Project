@@ -7,7 +7,7 @@ Live site: https://littlecrawler.github.io/HY2206-Passion-Project/
 ## Visitor experience
 
 - **Home:** a short overview, three real monetary-object photographs, a timeline, and spaces for two personal videos.
-- **Flashcards:** eight periods, one visible at a time. An object and a question on the front; a short explanation on the back. Visitors can flip, move backwards/forwards, jump on the timeline, or switch to the matching reading section. No quiz, score, locked stage, or purchase simulation.
+- **Flashcards:** eight periods in an overlapping deck, with a genuine 3D front/back turn and an animated deal between cards. Each back includes a short explanation, an activity and an evidence view. Visitors can move backwards/forwards, swipe across a card, use the keyboard, jump on the timeline, or open the matching reading section.
 - **Read the history:** the same chronology with additional context and primary-source excerpts.
 - **My project:** audience, message, personal journey, reflection, and two course connections.
 - **References:** one numbered list covering historical texts, scholarship, course materials, and photographs.
@@ -27,11 +27,14 @@ Then open http://127.0.0.1:8769/
 - **build.mjs** generates index.html, cards.html, read.html, project.html, references.html, and the compatibility page consultation.html.
 - **site.css** contains the current responsive layout and typography.
 - **site.js** handles flashcards, image enlargement, navigation, and old bookmark redirects.
+- **deck-template.mjs**, **deck.js**, **deck-content.js** and **deck.css** contain the deck markup, interaction state, period-specific activities and 3D styling. The deck uses native browser animation and CSS, with a reduced-motion alternative.
 - Generated HTML is committed so GitHub Pages can serve the repository root directly, without a build service.
 
 After changing content or the page templates, run the build command above. Avoid editing generated HTML directly.
 
-The older app.js, currency.js, evidence.js, journal.js, brief.js and related styles remain as prototype history; the current pages do not load them.
+The older app.js, currency.js, evidence.js, journal.js, brief.js and related styles remain as prototype history; the current pages do not load them. Their useful coin, transaction and source interactions have been adapted into the deck.
+
+The activities include a shell magnifier, a spade/knife comparison slider, coin-inscription exploration, the two photographed faces of a Tang coin, a Song carrying-cost/issuer comparison, stages of the Yuan paper system, Qing copper/silver transaction choices and PayNow payment layers. Song evidence includes the official history, the Kaifeng memoir and Liu Yong’s poem. These are explorations, without scores or locked progress.
 
 ## Personal videos
 
