@@ -1,5 +1,17 @@
 # AI assistance record
 
+## Flashcard redesign — 22 November 2026
+
+The student said the website was difficult to read and requested two modes: a chronological, one-period-at-a-time experience and a separate reading version. The student then clarified the desired format: “我想说的是那个闪卡形式”. This superseded the earlier merchant-game design.
+
+AI assisted with implementing eight image flashcards, short question-and-explanation pairs, an interactive timeline, a compact reading version, a separate personal-reflection page and a single numbered Reference list. The old purchase simulation and evidence quiz are no longer in the visitor flow. Primary-source excerpts remain in the reading version. The reflection draft incorporates the student's stated design choices and feedback; it does not claim a museum visit or completed visitor study.
+
+AI located and checked eight additional CC0 documentary photographs, including actual shells, shaped coins, Tang and Song coins, Yuan paper currency, and Qing copper and silver. Source and licence records are in IMAGE-CREDITS.md. No new AI-generated historical imagery was used. New historical context was checked against Shanghai Museum material and accessible Cambridge chapter summaries. The full scholarly chapters have not been read for this demo.
+
+The two personal videos remain unrecorded placeholders, with no synthetic voice or invented student recording. Current copy and metadata live in exhibit-data.js; generated HTML is committed for the existing GitHub Pages hosting.
+
+Earlier entries below document the development process and may describe features superseded by this version.
+
 Working record for the consultation demo, 1–2 November 2026. This is not a substitute for the final assignment's AI-use statement.
 
 ## Assistance used

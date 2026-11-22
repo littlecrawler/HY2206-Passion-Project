@@ -21,7 +21,7 @@ These are documentary photographs by other photographers, not photographs from a
 - [Photograph and licence](https://commons.wikimedia.org/wiki/File:British_Museum_Ming_banknote.jpg).
 - [Matching museum record](https://artsandculture.google.com/asset/great-ming-circulating-treasure-note/iAFKr9bi4LqIRA).
 - Licence: [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
-- Wikimedia 960-pixel thumbnail, no retouching. CSS rotates the intact opening photograph; the enlarged view is unrotated.
+- Wikimedia 960-pixel thumbnail, no retouching. The current flashcard, reading view and enlarged view preserve the complete photograph.
 - This is BabelStone's CC0 photograph, **not** the copyrighted museum photograph on Google Arts & Culture. The bibliography now matches the pictured registration number, replacing the earlier link to a different note.
 - Used to examine denomination, coin imagery and printed rules. It is not a Song jiaozi photograph, and the printed denomination does not establish a constant market or redemption value.
 
@@ -31,5 +31,22 @@ Records and licences checked 21 November 2026. For the separate AI-generated Son
 
 - File: `assets/paynow-logo.jpg`, 640 × 400 pixels.
 - Source: [official ABS PayNow page](https://www.abs.org.sg/e-payments/pay-now), which supplies this [logo image](https://abs.org.sg/images/default-album/paynow1.jpg) as its social-preview image. Retrieved 22 November 2026.
-- The original file is unchanged. CSS removes surplus white space from the displayed frame while preserving the complete mark, its proportions and original colours.
-- Official brand artwork used to identify the payment service in the educational phone illustration; not covered by the museum photographs' CC0 licences. Brand rights remain with their respective owner.
+- The original file is unchanged and displayed with its original proportions and colours.
+- Official brand artwork identifies the payment service in the modern comparison; it is not covered by the museum photographs' CC0 licences. Brand rights remain with their respective owner.
+
+## Additional photographs for the flashcards — 22 November 2026
+
+All eight files below are Gary Lee Todd photographs, released under **CC0 1.0** according to their Wikimedia Commons file metadata, checked before download. Local files are unretouched 1280-pixel Wikimedia thumbnails. Complete photographs, including museum labels, remain available in the enlargement view. The website's added Chinese annotations use Traditional Chinese.
+
+| Local file in assets/museum/ | Subject and collection | Original photograph |
+| --- | --- | --- |
+| cowries.jpg | Natural cowrie shells used as currency, Shanghai Museum | [Source and licence](https://commons.wikimedia.org/wiki/File:Cowrie_Shells_Used_as_Currency.jpg) |
+| spade-money.jpg | Warring States spade coins, Shanghai Museum | [Source and licence](https://commons.wikimedia.org/wiki/File:Spade_Coins,_Warring_States.jpg) |
+| knife-money.jpg | Warring States knife coins, Shanghai Museum | [Source and licence](https://commons.wikimedia.org/wiki/File:Knife_Coins,_Warring_States_03.jpg) |
+| tang-coin.jpg | Kaiyuan tongbao, Gary Lee Todd personal collection (not a museum object) | [Source and licence](https://commons.wikimedia.org/wiki/File:103_S-312_Tang_Kaiyuan,_Gaozu,_618-626_ff,_24.5mm.jpg) |
+| song-iron.jpg | Northern Song Yuanyou tongbao iron coin, Handan Museum | [Source and licence](https://commons.wikimedia.org/wiki/File:Northern_Song_Ancient_Chinese_Iron_Coin_(15872889818).jpg) |
+| yuan-note.jpg | Yuan Zhiyuan paper currency display, National Museum of China | [Source and licence](https://commons.wikimedia.org/wiki/File:Yuan_Paper_Currency.jpg) |
+| qing-coins.jpg | Qianlong cash coins, Handan Museum | [Source and licence](https://commons.wikimedia.org/wiki/File:Qing_Qianlong_Chinese_Coins_(16058576611).jpg) |
+| qing-silver.jpg | Qing silver ingot, Shanghai Museum | [Source and licence](https://commons.wikimedia.org/wiki/File:Silver_Ingots_of_the_Qing_Dynasty.jpg) |
+
+The Northern Song iron coin is an illustration of the material, not an identified early Sichuan specimen. The Yuan image is identified as a museum display; the photograph alone is not an independent authentication of the object. The PayNow logo is official artwork, not an artefact photograph.
