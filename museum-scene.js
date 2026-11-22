@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261122-museum-directory';
-import { rooms, hallViewZ } from './museum-data.js?v=20261122-museum-directory';
-import { photos } from './exhibit-data.js?v=20261122-museum-directory';
+import { buildArchitecture } from './museum-architecture.js?v=20261122-museum-guide';
+import { rooms, hallViewZ } from './museum-data.js?v=20261122-museum-guide';
+import { roomPoint, travelPath } from './museum-navigation.js?v=20261122-museum-guide';
+import { photos } from './exhibit-data.js?v=20261122-museum-guide';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * (3 - 2 * t);
@@ -36,15 +37,15 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     warm: new THREE.MeshBasicMaterial({ color: '#c4d8dc', toneMapped: false }),
     white: new THREE.MeshBasicMaterial({ color: '#c4d4dc', toneMapped: false })
   };
-  const cube = new THREE.BoxGeometry(1, 1, 1), resources = [], selectables = [];
+  const cube = new THREE.BoxGeometry(1, 1, 1), resources = [], selectables = [], solids = [];
   const textures = new Map(), photoTargets = new Map(), photoTasks = [], loader = new THREE.TextureLoader();
   let current = initialRoom, paused = false, disposed = false, frame = 0, moving = null;
   let small = false, width = 1, height = 1, yaw = 0, pitch = 0, pointer = null, focusedPhoto = null;
   const pose = { position: vector(), target: vector() };
-  const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  const raycaster = new THREE.Raycaster(), visibilityRay = new THREE.Raycaster(), ndc = new THREE.Vector2();
 
   function box(parent, w, h, d, x, y, z, material = mats.wall) {
-    const mesh = new THREE.Mesh(cube, material); mesh.scale.set(w, h, d); mesh.position.set(x, y, z);mesh.castShadow=true;mesh.receiveShadow=true; parent.add(mesh); return mesh;
+    const mesh = new THREE.Mesh(cube, material); mesh.scale.set(w, h, d); mesh.position.set(x, y, z);mesh.castShadow=true;mesh.receiveShadow=true; parent.add(mesh); solids.push(mesh); return mesh;
   }
   function writing(parent, lines, w, h, x, y, z, { color = '#e0e8eb', size = 70 } = {}) {
     const c = document.createElement('canvas'); c.width = 1536; c.height = Math.round(1536 * h / w);
@@ -89,21 +90,29 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     }));
     if(!hallPreview)writing(group, photos[id].title, w, .55, 0, -h / 2 - .55, .05, { size: 70 });
   }
-  function localPoint(index, x, y, z) {
-    const room = rooms[index];
-    return vector(x, y, z).applyAxisAngle(vector(0, 1, 0), room.angle).add(vector(room.x, 0, room.z));
-  }
+  const localPoint = roomPoint;
 
   const architecture = buildArchitecture(scene, { renderer, box, writing, photograph, mats, resources, selectables });
 
   function objectViewport() {
-    if(small)return {fraction:.42,offsetY:height*.17};
+    if(small)return {fraction:.42,offsetY:height*.2};
     const nav=document.getElementById('room-objects');
     const top=Math.max(145,(nav?.getBoundingClientRect().bottom||125)-canvas.getBoundingClientRect().top+22),bottom=height-112;
     return {fraction:Math.max(.2,Math.min(.7,(bottom-top)/height)),offsetY:height/2-(top+bottom)/2};
   }
   function destination(index) {
-    if (index < 0) return { position: vector(0,small?5.3:5.4,hallViewZ), target: vector(0,small?2.3:3.9,-9) };
+    if (index < 0) {
+      let distance=hallViewZ;
+      if(!small){
+        const usableHalf=(width-Math.min(350,width*.25))/2-28;
+        const focal=height/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)));
+        for(const room of rooms)for(const side of [-1,1]){
+          const edge=localPoint(room.index,side*3.25,3.6,6.4);
+          distance=Math.max(distance,edge.z+Math.abs(edge.x)*focal/usableHalf);
+        }
+      }
+      return {position:vector(0,small?4.4:3.6,distance),target:vector(0,small?2.3:3.7,-12)};
+    }
     if(focusedPhoto){
       const object=photoTargets.get(index+':'+focusedPhoto);
       if(object){
@@ -118,10 +127,9 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
         return {target,position:target.clone().addScaledVector(normal,distance)};
       }
     }
-    const distance=8.5, framingX=.5-.3*distance*Math.tan(THREE.MathUtils.degToRad(25))*camera.aspect;
     return {
-      position: localPoint(index, small ? .5 : framingX, small ? 3.5 : 3.6, small ? 5.4 : 2.65),
-      target: localPoint(index, small ? .5 : framingX, small ? .8 : 3.5, -5.85)
+      position: localPoint(index, .5, 3.6, small ? 5.4 : 2.65),
+      target: localPoint(index, .5, 3.5, -5.85)
     };
   }
   function cameraUpdate() {
@@ -134,60 +142,72 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
     galleryLight.intensity = index < 0 ? 0 : 100;
     if (index >= 0) galleryLight.position.copy(localPoint(index, 0, 7, 1));
   }
+  function projection() {
+    return {fov:camera.fov,x:camera.view?.enabled?camera.view.offsetX:0,y:camera.view?.enabled?camera.view.offsetY:0};
+  }
+  function applyProjection(from,to,t) {
+    camera.fov=THREE.MathUtils.lerp(from.fov,to.fov,t);
+    camera.setViewOffset(width,height,THREE.MathUtils.lerp(from.x,to.x,t),THREE.MathUtils.lerp(from.y,to.y,t),width,height);
+    camera.updateProjectionMatrix();
+  }
+  function orientation(position,target) {
+    return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(position,target,camera.up));
+  }
+  function beginMove(curve,end,fromProjection,travel) {
+    const toProjection=projection();
+    moving={start:performance.now(),duration:travel?clamp(950+curve.getLength()*40,1400,3600):800,
+      curve,end,fromProjection,toProjection,fromRotation:camera.quaternion.clone(),toRotation:orientation(end.position,end.target)};
+    applyProjection(fromProjection,toProjection,0);
+    onTravel?.(true);requestFrame();
+  }
   function show(index, animate = true) {
+    const fromProjection=projection();
     const previous = current; current = index; yaw = pitch = 0; focusedPhoto=null;
-    camera.fov=small?(index<0?68:68):(index<0?63:50);setFraming();camera.updateProjectionMatrix();
+    camera.fov=small?68:(index<0?58:50);setFraming();camera.updateProjectionMatrix();
     const end = destination(index); setLight(index);
     if (!animate || reducedMotion || previous === index) {
       moving = null; pose.position.copy(end.position); pose.target.copy(end.target); onTravel?.(false); requestFrame(); return;
     }
-    // The route goes through the doorways, never directly through a gallery wall.
-    const points = [pose.position.clone()];
-    if (previous >= 0) {
-      points.push(localPoint(previous, 0, 3.7, 4.8), localPoint(previous, 0, 3.9, 7.3));
-      points.push(vector(Math.sin(rooms[previous].theta)*11,4.1,-Math.cos(rooms[previous].theta)*11));
-    }
-    if (index >= 0) {
-      if(previous>=0){const from=rooms[previous].theta,to=rooms[index].theta,steps=Math.ceil(Math.abs(to-from)/.18);for(let i=1;i<steps;i++){const a=THREE.MathUtils.lerp(from,to,i/steps);points.push(vector(Math.sin(a)*11,4.1,-Math.cos(a)*11));}}
-      else {const side=rooms[index].theta<0?-1:1;points.push(vector(side*10,4.8,4));}
-      points.push(vector(Math.sin(rooms[index].theta)*11,4.1,-Math.cos(rooms[index].theta)*11));
-      points.push(localPoint(index, 0, 3.9, 7.3), localPoint(index, 0, 3.7, 4.8));
-    }
-    points.push(end.position);
-    const compact = points.filter((point, i) => !i || point.distanceTo(points[i - 1]) > .1);
-    const distances = [0]; for (let i = 1; i < compact.length; i++) distances.push(distances.at(-1) + compact[i].distanceTo(compact[i - 1]));
-    moving = { start: performance.now(), duration: Math.min(2800, 1200 + distances.at(-1) * 28), points: compact, distances, curve:new THREE.CatmullRomCurve3(compact,false,'centripetal'), fromTarget: pose.target.clone(), end };
-    onTravel?.(true); requestFrame();
+    beginMove(travelPath(pose.position,previous,index,end.position),end,fromProjection,true);
   }
   function focusPhoto(id,animate=true) {
     if(current<0||!photoTargets.has(current+':'+id))return;
+    const fromProjection=projection();
     focusedPhoto=id;yaw=pitch=0;setFraming();
     const end=destination(current);
     if(!animate||reducedMotion||pose.position.distanceTo(end.position)<.01){moving=null;pose.position.copy(end.position);pose.target.copy(end.target);onTravel?.(false);requestFrame();return;}
-    const points=[pose.position.clone(),end.position],distance=points[0].distanceTo(points[1]);
-    moving={start:performance.now(),duration:800,distances:[0,distance],curve:new THREE.CatmullRomCurve3(points,false,'centripetal'),fromTarget:pose.target.clone(),end};
-    onTravel?.(true);requestFrame();
+    beginMove(new THREE.LineCurve3(pose.position.clone(),end.position),end,fromProjection,false);
+  }
+  function unobstructed(point) {
+    const direction=point.clone().sub(camera.position);
+    visibilityRay.set(camera.position,direction.clone().normalize());
+    visibilityRay.far=Math.max(0,direction.length()-.03);
+    return !visibilityRay.intersectObjects(solids,false).length;
   }
   function positionObjectButtons() {
     if(current<0||!onObjectPositions)return;
+    const introTop=document.getElementById('room-intro').getBoundingClientRect().top-canvas.getBoundingClientRect().top;
+    const bottom=small?Math.min(height-330,introTop-28):height-120;
     const positions=rooms[current].photos.map(id=>{
       const object=photoTargets.get(current+':'+id);
-      const anchor=object.group.localToWorld(vector(0,-object.h*.3,.18));
+      const anchor=object.group.localToWorld(vector(0,-object.h/2-.2,.18));
       const normal=vector(0,0,1).applyQuaternion(object.group.getWorldQuaternion(new THREE.Quaternion()));
       const facing=normal.dot(camera.position.clone().sub(anchor))>0;
-      const projected=anchor.project(camera),x=(projected.x+1)*width/2,y=(1-projected.y)*height/2;
-      return {id,x,y,visible:!moving&&facing&&projected.z>-1&&projected.z<1&&x>65&&x<width-65&&y>155&&y<height-(small?330:120)};
+      const projected=anchor.clone().project(camera),x=(projected.x+1)*width/2,y=(1-projected.y)*height/2;
+      return {id,x,y,visible:!moving&&facing&&projected.z>-1&&projected.z<1&&x>65&&x<width-65&&y>155&&y<bottom&&unobstructed(anchor)};
     });
     onObjectPositions(positions);
   }
   function tick(now) {
     frame = 0; if (paused || disposed || document.hidden) return;
     if (moving) {
-      const t = clamp((now - moving.start) / moving.duration, 0, 1), progress = ease(t), travelled = progress * moving.distances.at(-1);
-      let segment = 1; while (segment < moving.distances.length - 1 && moving.distances[segment] < travelled) segment++;
-      const start = moving.distances[segment - 1], span = moving.distances[segment] - start;
+      const t = clamp((now - moving.start) / moving.duration, 0, 1), progress = ease(t);
       pose.position.copy(moving.curve.getPointAt(progress));
-      pose.target.lerpVectors(moving.fromTarget, moving.end.target, progress);
+      // Keep a steady exhibit-facing view instead of snapping to the path's
+      // tangent at each corner (or spinning around when backing out of a room).
+      const rotation=moving.fromRotation.clone().slerp(moving.toRotation,progress);
+      pose.target.copy(pose.position).add(vector(0,0,-10).applyQuaternion(rotation));
+      applyProjection(moving.fromProjection,moving.toProjection,progress);
       if (t === 1) { pose.position.copy(moving.end.position); pose.target.copy(moving.end.target); moving = null; onTravel?.(false); }
     }
     cameraUpdate(); renderer.render(scene, camera);positionObjectButtons(); if (moving) requestFrame();
@@ -195,19 +215,19 @@ export async function createMuseum(canvas, { onSelect, onRoom, onHover, onTravel
   function requestFrame() { if (!frame && !paused && !disposed && !document.hidden) frame = requestAnimationFrame(tick); }
   function setFraming() {
     if(current<0&&!small)camera.setViewOffset(width,height,-Math.min(350,width*.25)/2,0,width,height);
-    else if(focusedPhoto)camera.setViewOffset(width,height,small?0:-width*.14,objectViewport().offsetY,width,height);
+    else if(current>=0)camera.setViewOffset(width,height,small?0:-width*.14,focusedPhoto?objectViewport().offsetY:small?height*.25:0,width,height);
     else camera.clearViewOffset();
   }
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect(); if (!rect.width || !rect.height) return;
     width = rect.width; height = rect.height; small = width <= 780;
-    renderer.setSize(width, height, false); camera.aspect = width / height; camera.fov = small ? 68 : (current<0?63:50);setFraming(); camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false); camera.aspect = width / height; camera.fov = small ? 68 : (current<0?58:50);setFraming(); camera.updateProjectionMatrix();
     const end = destination(current); moving = null; pose.position.copy(end.position); pose.target.copy(end.target); onTravel?.(false); requestFrame();
   }
   function hit(event) {
     const rect = canvas.getBoundingClientRect(); ndc.set((event.clientX - rect.left) / width * 2 - 1, -(event.clientY - rect.top) / height * 2 + 1);
     raycaster.setFromCamera(ndc, camera);
-    return raycaster.intersectObjects(selectables).find(result => current < 0 ? (!result.object.userData.photo||result.object.userData.hallPreview) : (result.object.userData.photo && result.object.userData.room === current));
+    return raycaster.intersectObjects(selectables).find(result => (current < 0 ? (!result.object.userData.photo||result.object.userData.hallPreview) : (result.object.userData.photo && result.object.userData.room === current))&&unobstructed(result.point));
   }
   canvas.addEventListener('pointerdown', event => {
     if (event.button !== 0 || moving) return;

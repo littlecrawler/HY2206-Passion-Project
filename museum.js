@@ -1,6 +1,6 @@
-import { rooms } from './museum-data.js?v=20261122-museum-directory';
-import { photos } from './exhibit-data.js?v=20261122-museum-directory';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-museum-directory';
+import { rooms } from './museum-data.js?v=20261122-museum-guide';
+import { photos } from './exhibit-data.js?v=20261122-museum-guide';
+import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261122-museum-guide';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
@@ -14,6 +14,7 @@ export function initMuseum() {
   function setDirectory(open,focus=false) {
     directory.hidden=!open;shell.dataset.directory=open?'open':'closed';
     $('#open-room-map').setAttribute('aria-expanded',String(open));
+    if(open&&focus)shell.scrollIntoView({behavior:'instant',block:'start'});
     if(focus)(open?$('#directory-close'):$('#open-room-map')).focus({preventScroll:true});
   }
 
@@ -65,7 +66,7 @@ export function initMuseum() {
     if(travelling&&animate)return;
     current=Math.max(-1,Math.min(7,index));entered=current>=0;
     shell.dataset.photoFocus='false';if(entered)states[current].viewPhoto=null;
-    setDirectory(!entered);$('#directory-room-list').open=false;$('#gallery-hover').hidden=true;
+    setDirectory(!entered);$('#gallery-hover').hidden=true;
     if(push)history.pushState(null,'','#'+(entered?rooms[current].id:'hall'));
     updateRoom();scene?.show(current,animate); if(exhibit.open){if(entered)renderExhibit();else exhibit.close();}
     if(push)shell.scrollIntoView({behavior:'instant',block:'start'});
@@ -148,7 +149,7 @@ export function initMuseum() {
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261122-museum-directory').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+  import('./museum-scene.js?v=20261122-museum-guide').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
     initialRoom:current,reducedMotion:reduce.matches,onSelect:selectWallObject,onRoom:index=>goTo(index),
     onObjectPositions(positions){
       positions.forEach(({id,x,y,visible})=>{
