@@ -4,10 +4,14 @@ import { deckPage } from './deck-template.mjs';
 import { readingAdditions } from './deck-content.js';
 import { museumPage } from './museum-template.mjs';
 
-const version = '20261123-recorded-videos';
+const version = '20261123-english-player';
 await mkdir(new URL('vendor/three/', import.meta.url), { recursive: true });
 for (const [source, target] of [['build/three.module.min.js','three.module.min.js'],['build/three.core.min.js','three.core.min.js'],['examples/jsm/environments/RoomEnvironment.js','RoomEnvironment.js'],['examples/jsm/objects/Reflector.js','Reflector.js'],['examples/jsm/renderers/CSS3DRenderer.js','CSS3DRenderer.js'],['LICENSE','LICENSE']]) {
   await copyFile(new URL('node_modules/three/' + source, import.meta.url), new URL('vendor/three/' + target, import.meta.url));
+}
+await mkdir(new URL('vendor/plyr/', import.meta.url), { recursive: true });
+for (const [source, target] of [['dist/plyr.min.mjs', 'plyr.esm.js'], ['dist/plyr.min.mjs.map', 'plyr.min.mjs.map'], ['dist/plyr.css', 'plyr.css'], ['dist/plyr.svg', 'plyr.svg'], ['LICENSE.md', 'LICENSE.md']]) {
+  await copyFile(new URL('node_modules/plyr/' + source, import.meta.url), new URL('vendor/plyr/' + target, import.meta.url));
 }
 const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
@@ -17,10 +21,11 @@ const brand = '<a class="brand" href="index.html" aria-label="Money in China hom
 const navItems = [['museum', '3D Museum', 'museum.html'], ['cards', 'Flashcards', 'cards.html'], ['read', 'Read the history', 'read.html'], ['videos', 'Videos', 'index.html#videos'], ['project', 'My Journey &amp; Reflections', 'project.html'], ['references', 'References', 'references.html']];
 
 function layout(title, page, body) {
+  const videoAssets = body.includes('<video ') ? '<link rel="stylesheet" href="vendor/plyr/plyr.css?v=3.8.5"><script type="module" src="video-player.js?v=' + version + '"></script>' : '';
   const nav = navItems.map(([id, label, href]) => '<a href="' + href + '"' + (page === id ? ' aria-current="page"' : '') + '>' + labelText(label) + '</a>').join('');
   const engineMap = ['museum', 'cards'].includes(page) ? '<script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script>' : '';
   const museumAssets = engineMap + (page === 'museum' ? '<link rel="stylesheet" href="deck.css?v=' + version + '"><link rel="stylesheet" href="museum.css?v=' + version + '">' : page === 'cards' ? '<link rel="stylesheet" href="deck-3d.css?v=' + version + '">' : page === 'home' ? '<link rel="stylesheet" href="museum-home.css?v=' + version + '">' : '');
-  return '<!doctype html>\n<html lang="en"><head><script>document.documentElement.classList.add("js-menu")</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1823"><meta name="description" content="Explore eight 3D museum rooms about money in China, with real objects, historical texts and interactive exhibits."><title>' + title + ' · Money in China</title><link rel="icon" href="assets/coin-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="site.css?v=' + version + '">' + (page === 'cards' ? '<link rel="stylesheet" href="deck.css?v=' + version + '">' : '') + museumAssets + '<link rel="stylesheet" href="exhibition-theme.css?v=' + version + '"><script type="module" src="site.js?v=' + version + '"></script></head>\n' +
+  return '<!doctype html>\n<html lang="en"><head><script>document.documentElement.classList.add("js-menu")</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1823"><meta name="description" content="Explore eight 3D museum rooms about money in China, with real objects, historical texts and interactive exhibits."><title>' + title + ' · Money in China</title><link rel="icon" href="assets/coin-mark.svg" type="image/svg+xml">' + videoAssets + '<link rel="stylesheet" href="site.css?v=' + version + '">' + (page === 'cards' ? '<link rel="stylesheet" href="deck.css?v=' + version + '">' : '') + museumAssets + '<link rel="stylesheet" href="exhibition-theme.css?v=' + version + '"><script type="module" src="site.js?v=' + version + '"></script></head>\n' +
     '<body data-page="' + page + '"' + (page === 'cards' ? ' data-deck-renderer="loading"' : '') + ' id="top"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="header-inner">' + brand + '<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" hidden>Menu</button><nav id="main-nav" aria-label="Main navigation">' + nav + '</nav></div></header>\n' +
     '<main id="main">' + body + '</main>\n<footer class="site-footer wrap">' + brand + '<div><span>Cao Jingyuan · HY2206</span><a href="#top">Back to top</a></div></footer>' +
     '<dialog class="photo-dialog" id="photo-dialog" aria-labelledby="photo-dialog-title"><div class="dialog-heading"><h2 id="photo-dialog-title">Photograph</h2><button class="button secondary" type="button" data-close-photo autofocus>Close</button></div><img class="dialog-photo" id="dialog-photo" alt=""><p id="dialog-caption"></p><a id="dialog-source" target="_blank" rel="noopener noreferrer">Original photograph and credit</a></dialog>\n</body></html>\n';
