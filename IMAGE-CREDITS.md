@@ -57,4 +57,11 @@ The Northern Song iron coin is an illustration of the material, not an identifie
 
 ## Banliang close-up
 
-`assets/museum/han-banliang-closeup.jpg`: Fred Cherrygarden, *Ban Liang (Western Han)*, 5 June 2020. [Source](https://commons.wikimedia.org/wiki/File:Ban_Liang_(Western_Han).jpg), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Unretouched Wikimedia 1280-pixel version. The activity frames the obverse with CSS; the complete image remains available on enlargement. This detail presentation retains CC BY-SA 4.0. The photographed coin is not asserted to weigh four zhu.
+`assets/museum/han-banliang-closeup.jpg`: Fred Cherrygarden, *Ban Liang (Western Han)*, 5 June 2020. [Source](https://commons.wikimedia.org/wiki/File:Ban_Liang_(Western_Han).jpg), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Unretouched Wikimedia 1280-pixel version. The complete image is available on enlargement. The photographed coin is not asserted to weigh four zhu.
+
+## Chinese mobile-payment logos
+
+- `assets/wechatpay-logo.svg`: unchanged [official WeChat Pay logo](https://gtimg.wechatpay-global.com/pay_en/img/common/logo.svg), linked from [WeChat Pay](https://pay.weixin.qq.com/index.php/public/wechatpay_en). Tencent / Tenpay brand artwork.
+- `assets/alipay-logo.png`: unchanged [official Alipay logo](https://t.alipayobjects.com/images/T11rdgXbFkXXXXXXXX.png), linked from [Alipay](https://www.alipay.cn/). Alipay brand artwork.
+
+Retrieved 23 November 2026. Logos identify the services discussed; displayed against white backgrounds.

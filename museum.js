@@ -1,13 +1,14 @@
-import { rooms } from './museum-data.js?v=20261123-reflection';
-import { photos } from './exhibit-data.js?v=20261123-reflection';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261123-reflection';
+import { rooms } from './museum-data.js?v=20261123-mode-roles';
+import { photos } from './exhibit-data.js?v=20261123-mode-roles';
+import { text, escape, cite } from './deck-content.js?v=20261123-mode-roles';
+import { objectNotes } from './mode-content.js?v=20261123-mode-roles';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
   const shell=$('.museum-shell'), intro=$('#room-intro'), directory=$('#museum-directory');
   const exhibit=$('#exhibit-dialog'), finish=$('#museum-finish'), panel=$('#exhibit-panel');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)');
-  const states=rooms.map(()=>({...defaults(),pane:'story'}));
+  const states=rooms.map(()=>({photo:null,viewPhoto:null}));
   const rail=[...document.querySelectorAll('[data-room]')];
   let current=-1, entered=false, scene, lastOpener=null, travelling=false;
 
@@ -20,25 +21,21 @@ export function initMuseum() {
 
   function image(id) {
     const photo=photos[id];
-    return '<figure class="object-photo"><button class="photo-button" type="button" data-photo="'+id+'" aria-label="Enlarge '+escape(photo.title)+'"><img src="'+photo.src+'" alt="'+escape(photo.alt)+'"><span class="enlarge-icon" aria-hidden="true">⤢</span></button><figcaption>'+text(photo.title)+'<span>'+text(photo.place)+'</span></figcaption></figure>';
+    return '<figure class="object-photo"><button class="photo-button" type="button" data-photo="'+id+'" aria-label="Enlarge '+escape(photo.title)+'"><img src="'+photo.src+'" alt="'+escape(photo.alt)+'"><span class="enlarge-icon" aria-hidden="true">⤢</span></button><figcaption>'+text(photo.place)+'</figcaption></figure>';
   }
   function selectPhoto(id) {
     if(!rooms[current].photos.includes(id))return;
     states[current].photo=id;$('#exhibit-photograph').innerHTML=image(id);
+    $('#exhibit-title').innerHTML=text(photos[id].title);
+    const object=objectNotes[id];
+    panel.innerHTML='<p>'+text(object.note)+' '+cite(object.sources)+'</p>';
     document.querySelectorAll('[data-exhibit-photo]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.exhibitPhoto===id)));
   }
-  function renderPanel() {
-    const room=rooms[current],state=states[current];
-    $('[data-exhibit-pane="activity"]').hidden=room.hasActivity===false;
-    if(room.hasActivity===false&&state.pane==='activity')state.pane='story';
-    document.querySelectorAll('[data-exhibit-pane]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.exhibitPane===state.pane)));
-    panel.innerHTML=state.pane==='story'?'<div class="exhibit-story"><h3>'+text(room.answerTitle)+'</h3><p>'+text(room.story)+' '+cite(room.sources)+'</p></div>':state.pane==='sources'?evidence(room,state):activity(room,state);
-  }
   function renderExhibit(photoId) {
-    const room=rooms[current];$('#exhibit-date').textContent=room.date;$('#exhibit-title').textContent=room.label;
+    const room=rooms[current];$('#exhibit-date').textContent=room.label+' · '+room.date;
     $('#exhibit-reading').href='read.html#'+room.id;
     $('#exhibit-photos').innerHTML=room.photos.length>1?room.photos.map(id=>'<button class="photo-choice" type="button" data-exhibit-photo="'+id+'" aria-pressed="false">'+text(photos[id].title.split('（')[0].trim())+'</button>').join(''):'';
-    selectPhoto(room.photos.includes(photoId)?photoId:states[current].photo||room.photos[0]);renderPanel();
+    selectPhoto(room.photos.includes(photoId)?photoId:states[current].photo||room.photos[0]);
   }
   function updateRoom() {
     const room=rooms[Math.max(0,current)];
@@ -124,27 +121,6 @@ export function initMuseum() {
   }
   $('#restart-museum').addEventListener('click',()=>{finish.close();goTo(-1);});
   $('#exhibit-photos').addEventListener('click',event=>{const b=event.target.closest('[data-exhibit-photo]');if(b)selectPhoto(b.dataset.exhibitPhoto);});
-  $('.exhibit-discovery .discovery-tabs').addEventListener('click',event=>{
-    const button=event.target.closest('[data-exhibit-pane]');if(!button)return;
-    states[current].pane=button.dataset.exhibitPane;renderPanel();
-  });
-  const keys={detail:'detail',money:'money',issuer:'issuer',yuan:'yuanStage',transaction:'transaction',payment:'paymentLayer',document:'document'};
-  panel.addEventListener('click',event=>{
-    const button=event.target.closest('[data-action]');if(!button||button.tagName!=='BUTTON')return;
-    const state=states[current],action=button.dataset.action;
-    if(action==='coin') {
-      state.coinBack=!state.coinBack;$('#coin-flipper').classList.toggle('is-reverse',state.coinBack);
-      $('.coin-obverse').setAttribute('aria-hidden',String(state.coinBack));$('.coin-reverse').setAttribute('aria-hidden',String(!state.coinBack));
-      button.setAttribute('aria-pressed',String(state.coinBack));$('#coin-side').textContent=state.coinBack?'Reverse · the other face':'Obverse · the inscription';return;
-    }
-    if(!keys[action])return;const value=button.dataset.value;
-    state[keys[action]]=['yuan','payment'].includes(action)?Number(value):value;renderPanel();
-    panel.querySelectorAll('[data-action]').forEach(b=>{if(b.dataset.action===action&&b.dataset.value===value)b.focus({preventScroll:true});});
-  });
-  panel.addEventListener('input',event=>{
-    const input=event.target,state=states[current];
-    if(input.dataset.action==='zoom') {state.zoom=Number(input.value);$('#lens-photo').style.transform='scale('+state.zoom+')';$('#zoom-value').textContent=state.zoom.toFixed(1)+'×';input.setAttribute('aria-valuetext',state.zoom.toFixed(1)+' times');}
-  });
   $('#museum-canvas').addEventListener('keydown',event=>{
     if(event.key==='Escape'){event.preventDefault();leaveObject();}
     if(event.key==='ArrowRight'){event.preventDefault();goTo(entered?Math.min(7,current+1):0);}
@@ -153,7 +129,7 @@ export function initMuseum() {
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261123-reflection').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+  import('./museum-scene.js?v=20261123-mode-roles').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
     initialRoom:current,reducedMotion:reduce.matches,onSelect:focusObject,onLeaveObject:leaveObject,onRoom:index=>goTo(index),
     onObjectPositions(positions){
       positions.forEach(({id,x,y,visible})=>{

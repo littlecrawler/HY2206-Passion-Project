@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
 import { CSS3DObject, CSS3DRenderer } from './vendor/three/CSS3DRenderer.js';
-import { periods, photos } from './exhibit-data.js?v=20261123-reflection';
+import { periods, photos } from './exhibit-data.js?v=20261123-mode-roles';
 
 const ease = t => t * t * (3 - 2 * t);
 const settleEase = t => t * t * t * (t * (t * 6 - 15) + 10);
@@ -72,8 +72,8 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, backEle
     const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#1b3549');bg.addColorStop(1,'#0b1828');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
     ctx.strokeStyle=colors[index]+'99';ctx.lineWidth=2;ctx.strokeRect(20,20,w-40,h-40);
     const x=portrait?42:48,y=portrait?230:130,boxW=portrait?w-84:590,boxH=portrait?440:530;
-    ctx.fillStyle='#0c1821';ctx.fillRect(x,y,boxW,boxH);
-    if(img){const ratio=Math.min(boxW/img.width,boxH/img.height);ctx.drawImage(img,x+(boxW-img.width*ratio)/2,y+(boxH-img.height*ratio)/2,img.width*ratio,img.height*ratio);}
+    ctx.fillStyle=photos[id].background||'#0c1821';ctx.fillRect(x,y,boxW,boxH);
+    if(img){const padding=photos[id].background ? .82 : 1,ratio=Math.min(boxW/img.width,boxH/img.height)*padding;ctx.drawImage(img,x+(boxW-img.width*ratio)/2,y+(boxH-img.height*ratio)/2,img.width*ratio,img.height*ratio);}
     ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle=colors[index];ctx.font='500 '+(portrait?30:30)+'px "Trebuchet MS",sans-serif';
     ctx.fillText(String(index+1).padStart(2,'0')+' / 08',portrait?46:50,portrait?70:72);
     ctx.fillStyle='#f0f4f1';ctx.font='500 '+(portrait?72:82)+'px "Trebuchet MS",sans-serif';

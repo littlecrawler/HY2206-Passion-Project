@@ -43,16 +43,10 @@ body[data-page="cards"] { background: #eef2e8; overflow-x: clip; }
 .back-heading h2 { font-size: 34px; }
 .back-heading .deck-number { font-size: 48px; opacity: .35; }
 .back-layout { display:block; }
-.back-story { display:none; }
-.back-story h3 { font-size: clamp(25px,2.1vw,34px); line-height: 1.2; margin-bottom: 20px; }
-.back-story > p { font-size: 22px; line-height: 1.55; }
 .back-discovery { min-width: 0; }
 .discovery-tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
 .discovery-tabs > button { border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--muted); padding: 4px 0 10px; font: 19px/1.4 var(--heading); }
 .discovery-tabs > button[aria-pressed="true"] { color: var(--green); border-color: var(--green); font-weight: 700; }
-.discovery-tabs .mobile-story-tab { display:inline-block; }
-.mobile-story p { font-size: 21px; line-height: 1.55; }
-.mobile-story > .text-link { margin-top: 20px; }
 .activity-title { font-size: 25px; margin-bottom: 18px; line-height: 1.2; }
 .activity-choices { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .activity-choices button { border: 1px solid #a6b698; padding: 9px 13px; min-height: 44px; border-radius: 6px; color: var(--ink); background: #f9faef; font: 17px/1.35 var(--heading); }
@@ -114,8 +108,8 @@ body[data-page="cards"] { background: #eef2e8; overflow-x: clip; }
 .money-pair .activity-photo img { height: 155px; }
 .money-pair > div > span { display: block; text-align: center; margin-top: 10px; font-size: 19px; line-height: 1.4; }
 .payment-model { padding: 15px; background: #edf1e5; border-radius: 9px; }
-.paynow-screen { width: 170px; border: 3px solid #66776a; border-radius: 18px; background: white; margin: 0 auto 18px; padding: 10px 15px 13px; text-align: center; font: 17px/1.4 var(--heading); }
-.paynow-screen img { width: 100%; height: 65px; object-fit: cover; }
+.payment-screen { width:min(210px,100%); border: 3px solid #66776a; border-radius: 18px; background: white; margin: 0 auto 18px; padding: 14px 20px; text-align: center; font: 18px/1.4 var(--heading); }
+.payment-screen img { width: 100%; height: 48px; object-fit: contain; margin-bottom:12px; }
 .account-route { display: grid; grid-template-columns: 1fr 75px 1fr; align-items: center; opacity: .4; transition: opacity .3s; }
 .account-route > span:not(.payment-connector) { text-align: center; padding: 9px; border: 1px solid var(--line); border-radius: 5px; background: white; font: 17px/1.4 var(--heading); }
 .payment-connector { height: 2px; background: #849e75; position: relative; }
@@ -137,7 +131,6 @@ body[data-page="cards"] { background: #eef2e8; overflow-x: clip; }
 .note-reading + p { font-size: 20px; line-height: 1.45; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 @media (min-width: 1600px) {
-  .back-story > p { font-size: 25px; }
   .activity-result, .activity-caption { font-size: 23px; }
   .activity-title { font-size: 28px; }
   .front-object .photo-button img { height: 365px; }
@@ -150,7 +143,6 @@ body[data-page="cards"] { background: #eef2e8; overflow-x: clip; }
   .front-object .photo-button img { height: 265px; }
   .deck-back { padding: 25px; }
   .back-layout { grid-template-columns: .8fr 1.2fr; gap: 25px; }
-  .back-story > p { font-size: 21px; }
   .activity-title { font-size: 23px; }
   .activity-choices button { font-size: 16px; padding-inline: 10px; }
   .activity-result { font-size: 20px; }
@@ -190,10 +182,6 @@ body[data-page="cards"] { background: #eef2e8; overflow-x: clip; }
   .back-heading h2 { font-size: 30px; }
   .back-heading .deck-number { font-size: 37px; }
   .back-layout { grid-template-columns: 1fr; gap: 25px; }
-  .back-story { display: none; }
-  .discovery-tabs .mobile-story-tab { display: inline-block; }
-  .back-story h3 { font-size: 26px; margin-bottom: 15px; }
-  .back-story > p { font-size: 20px; line-height: 1.5; }
   .discovery-tabs { gap: 20px; }
   .discovery-tabs > button { font-size: 18px; }
   .activity-title { font-size: 24px; }
@@ -238,7 +226,6 @@ body[data-page="cards"] { background: #eef2e8; overflow-x: clip; }
   .front-copy h2 { font-size: 32px; }
   .deck-question { font-size: 26px; }
   .deck-controls .button { font-size: 16px; }
-  .back-story > p { font-size: 19px; }
   .discovery-tabs { gap: 15px; }
   .discovery-tabs > button { font-size: 17px; }
   .activity-choices button { padding: 8px; }

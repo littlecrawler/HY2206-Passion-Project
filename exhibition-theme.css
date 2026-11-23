@@ -52,7 +52,11 @@ body[data-page] .deck-face a:hover { color:#e2f4ff; }
 .yuan-system[data-stage="1"] .institution-node,.payment-model[data-layer="2"] .institution-band { background:#bdd6e1; color:#152630; }
 .yuan-system[data-stage="2"] .institution-node:last-child { background:#263c4b; border-color:#7694a5; }
 .money-pair > .selected-money { border-color:#aecfdf; background:#263f50; }
-.paynow-screen { color:#15242e; border-color:#8ba5b5; }
+.payment-screen { color:#15242e; border-color:#8ba5b5; }
+body[data-page] [data-photo="wechatpay"] img,
+body[data-page] [data-photo="alipay"] img,
+#dialog-photo[src$="wechatpay-logo.svg"],
+#dialog-photo[src$="alipay-logo.png"] { background:white; padding:28px; }
 .account-route > span:not(.payment-connector) { background:#182b3a; }
 .institution-band { border-color:#7f9bab; }
 .comparison-divider::after { color:#162630; }

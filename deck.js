@@ -1,5 +1,6 @@
-import { photos, periods } from './exhibit-data.js?v=20261123-reflection';
-import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261123-reflection';
+import { photos, periods } from './exhibit-data.js?v=20261123-mode-roles';
+import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-mode-roles';
+import { flashcardContent } from './mode-content.js?v=20261123-mode-roles';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -16,7 +17,7 @@ export function initDeck() {
   const finish = document.querySelector('#tour-finish');
   const timeline = [...document.querySelectorAll('[data-period]')];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const states = periods.map(()=>({...defaults(),pane:'story'}));
+  const states = periods.map(()=>({...defaults(),pane:'answer'}));
   let current = 0;
   let flipped = false;
   let finished = false;
@@ -29,14 +30,13 @@ export function initDeck() {
   let suppressClick = false;
   let deckScene;
   let engineReady = false;
+  let loading = true;
 
   function fitCard() {
     if (finished) return;
-    // Reserve the same space for photo choices on every card. Measuring the
-    // current choices resized the camera when a period had more photographs.
-    const photoToolsHeight=innerWidth>780?64:128;
-    const frontHeight=Math.max(innerWidth>780?520:400,Math.min(960,innerHeight-document.querySelector('.site-header').offsetHeight-timeline[0].parentElement.offsetHeight-document.querySelector('.deck-status').offsetHeight-document.querySelector('.deck-controls').offsetHeight-photoToolsHeight-42));
-    const height = engineReady ? frontHeight : Math.ceil((flipped ? back : front).offsetHeight);
+    // Enhanced view has its final dimensions in CSS, even before JS or WebGL.
+    if (loading || engineReady) { flipper.style.height = ''; return; }
+    const height = Math.ceil((flipped ? back : front).offsetHeight);
     if (height) flipper.style.height = height + 'px';
   }
   const sizeObserver = new ResizeObserver(fitCard);
@@ -46,15 +46,15 @@ export function initDeck() {
   window.addEventListener('resize',fitCard);
 
   function syncControls() {
-    previous.disabled = busy || turning || current === 0;
-    next.disabled = busy || turning;
-    flip.disabled = busy || turning;
-    stage.setAttribute('aria-busy', String(busy || turning));
+    previous.disabled = loading || busy || turning || current === 0;
+    next.disabled = loading || busy || turning;
+    flip.disabled = loading || busy || turning;
+    stage.setAttribute('aria-busy', String(loading || busy || turning));
     next.textContent = current === periods.length - 1 ? 'Finish' : 'Next card';
     stage.classList.toggle('is-turning', busy || turning);
   }
   function showSide(answer, immediate = false) {
-    if ((busy || turning) && !immediate) return;
+    if ((loading || busy || turning) && !immediate) return;
     clearTimeout(flipTimer);
     flipped = answer;
     if(answer)back.scrollTop=0;
@@ -104,10 +104,12 @@ export function initDeck() {
   function renderPanel() {
     const p = periods[current];
     const state = states[current];
-    document.querySelector('[data-pane="activity"]').hidden=p.hasActivity===false;
-    if(p.hasActivity===false&&state.pane==='activity')state.pane='story';
+    const content = flashcardContent[p.id];
+    document.querySelector('.discovery-tabs').hidden = !content.interactive;
+    if (!content.interactive) state.pane = 'answer';
     document.querySelectorAll('[data-pane]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pane === state.pane)));
-    panel.innerHTML = state.pane === 'story' ? '<div class="mobile-story"><h3 class="activity-title">' + text(p.answerTitle) + '</h3><p>' + text(p.story) + ' ' + cite(p.sources) + '</p><a class="text-link" href="read.html#' + p.id + '">Read more</a></div>' : state.pane === 'sources' ? evidence(p, state) : activity(p, state);
+    panel.innerHTML = state.pane === 'activity' ? activity(p, state) : '<div class="card-answer"><h3 class="activity-title">' + text(p.answerTitle) + '</h3><p>' + text(content.answer) + ' ' + cite(content.sources) + '</p></div>';
+    document.querySelector('#card-reading').href = 'read.html#' + p.id;
     fitCard();
   }
   function renderCard(index, enter = false) {
@@ -121,8 +123,6 @@ export function initDeck() {
     document.querySelector('#card-title').textContent = p.label;
     document.querySelector('#back-title').textContent = p.label;
     document.querySelector('#card-question').textContent = p.question;
-    document.querySelector('#answer-title').textContent = p.answerTitle;
-    document.querySelector('#card-story').innerHTML = text(p.story) + ' ' + cite(p.sources);
     document.querySelectorAll('.deck-number').forEach(node => { node.textContent = String(current + 1).padStart(2, '0'); });
     document.querySelector('#read-current').href = 'read.html#' + p.id;
     stage.setAttribute('aria-label', p.label + '. ' + p.date + '. ' + p.question + ' Enter turns the card; left and right keys change periods.');
@@ -165,7 +165,7 @@ export function initDeck() {
     } catch { /* A history navigation can cancel an unfinished deal. */ }
   }
   async function navigate(index, { push = true, animate = true } = {}) {
-    if (index < 0 || index > periods.length || ((busy || turning) && push)) return;
+    if (loading || index < 0 || index > periods.length || ((busy || turning) && push)) return;
     const request = ++serial;
     const direction = index >= current ? -1 : 1;
     busy = true;
@@ -207,7 +207,7 @@ export function initDeck() {
   timeline.forEach((link, index) => link.addEventListener('click', event => {
     if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    if (!busy && !turning) navigate(index);
+    if (!loading && !busy && !turning) navigate(index);
   }));
   flip.addEventListener('click', () => showSide(!flipped));
   document.querySelector('[data-flip]').addEventListener('click', () => {
@@ -235,37 +235,19 @@ export function initDeck() {
     states[current].pane = button.dataset.pane;
     renderPanel();
   });
-  const actionKeys = { detail: 'detail', money: 'money', issuer: 'issuer', yuan: 'yuanStage', transaction: 'transaction', payment: 'paymentLayer', document: 'document' };
+  const actionKeys = { money: 'money', issuer: 'issuer', transaction: 'transaction', payment: 'paymentLayer' };
   panel.addEventListener('click', event => {
     const button = event.target.closest('button[data-action]');
     if (!button) return;
     const state = states[current];
     const action = button.dataset.action;
-    if (action === 'coin') {
-      state.coinBack = !state.coinBack;
-      document.querySelector('#coin-flipper').classList.toggle('is-reverse', state.coinBack);
-      document.querySelector('.coin-obverse').setAttribute('aria-hidden', String(state.coinBack));
-      document.querySelector('.coin-reverse').setAttribute('aria-hidden', String(!state.coinBack));
-      button.setAttribute('aria-pressed', String(state.coinBack));
-      document.querySelector('#coin-side').textContent = state.coinBack ? 'Reverse · the other face' : 'Obverse · the inscription';
-      return;
-    }
     if (!actionKeys[action]) return;
-    state[actionKeys[action]] = ['yuan','payment'].includes(action) ? Number(button.dataset.value) : button.dataset.value;
+    state[actionKeys[action]] = action === 'payment' ? Number(button.dataset.value) : button.dataset.value;
     const value = button.dataset.value;
     renderPanel();
     panel.querySelectorAll('button[data-action]').forEach(candidate => {
       if (candidate.dataset.action === action && candidate.dataset.value === value) candidate.focus({ preventScroll: true });
     });
-  });
-  panel.addEventListener('input', event => {
-    if (event.target.dataset.action === 'zoom') {
-      const zoom = Math.min(2.5, Math.max(1, Number(event.target.value)));
-      states[current].zoom = zoom;
-      document.querySelector('#lens-photo').style.transform = 'scale(' + zoom + ')';
-      document.querySelector('#zoom-value').textContent = zoom.toFixed(1) + '×';
-      event.target.setAttribute('aria-valuetext', zoom.toFixed(1) + ' times');
-    }
   });
   stage.addEventListener('keydown', event => {
     if (event.target !== stage) return;
@@ -298,15 +280,32 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261123-reflection').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261123-mode-roles').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
     onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
-  })).then(result=>{
-    deckScene=result;engineReady=true;document.body.dataset.deckRenderer='webgl';canvas.hidden=false;
-    document.querySelector('#deck-photo-tools').hidden=false;
-    if(finished){deckScene.setPaused(true);return;}
-    deckScene.show(current,states[current].photo);showSide(flipped,true);fitCard();
+  })).then(async result=>{
+    deckScene=result;
+    // A hash may have changed while the first photograph was loading.
+    while (true) {
+      const index=current, photo=states[index].photo||periods[index].photos[0];
+      await deckScene.prepare(index,photo);
+      if(index===current && photo===(states[current].photo||periods[current].photos[0])) break;
+    }
+    deckScene.show(current,states[current].photo);
+    engineReady=true;loading=false;document.body.dataset.deckRenderer='webgl';canvas.hidden=false;
+    document.querySelector('#deck-loading').hidden=true;
+    showSide(flipped,true);fitCard();
+    if(finished)deckScene.setPaused(true);
     reduce.addEventListener('change',event=>deckScene.setReducedMotion(event.matches));
-  }).catch(error=>{console.warn('Flashcards are using the CSS view.',error.message);});
+  }).catch(error=>{
+    deckScene?.dispose();deckScene=null;engineReady=false;loading=false;
+    flipper.appendChild(back);back.removeAttribute('style');
+    stage.querySelector('.deck-text-layer')?.remove();
+    document.body.dataset.deckRenderer='css';canvas.hidden=true;
+    document.querySelector('#deck-photo-tools').hidden=true;
+    document.querySelector('#deck-loading').hidden=true;
+    showSide(false,true);
+    console.warn('Flashcards are using the CSS view.',error.message);
+  });
 }

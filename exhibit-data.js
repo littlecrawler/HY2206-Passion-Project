@@ -1,6 +1,8 @@
 // Shared by the static reading pages and the flashcards.
 // Historical photographs are documented in IMAGE-CREDITS.md.
 export const photos = {
+  wechatpay: { src: 'assets/wechatpay-logo.svg', title: 'WeChat Pay（微信支付）', place: 'China · Tencent', credit: 'Official WeChat Pay artwork · Tencent / Tenpay', url: 'https://pay.weixin.qq.com/index.php/public/wechatpay_en', alt: 'Official WeChat Pay logo identifying the mobile payment service.', background: '#ffffff' },
+  alipay: { src: 'assets/alipay-logo.png', title: 'Alipay（支付寶）', place: 'China · Alipay', credit: 'Official Alipay artwork', url: 'https://www.alipay.cn/', alt: 'Official Alipay logo, with its Chinese and English name.', background: '#ffffff' },
   banliangDetail: { src: 'assets/museum/han-banliang-closeup.jpg', title: 'Western Han banliang（半兩錢）', place: 'Cherrygarden collection · Obverse and reverse', credit: 'Fred Cherrygarden · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Ban_Liang_(Western_Han).jpg', alt: 'Close-up photographs of a Western Han bronze banliang coin: the inscription 半兩 is read from right to left around a square opening; the reverse has no inscription.' },
   songpaper: { src: 'assets/museum/song-paper-reproduction.jpg', title: 'Paper-note reproduction（紙幣復刻圖）', place: 'Reproduced image commonly associated with jiaozi', credit: 'Scan from 社會歷史博物館 · Wikimedia Commons · Public domain', url: 'https://commons.wikimedia.org/wiki/File:Jiao_zi.jpg', alt: 'A reproduced paper-money image with rows of coin symbols and an illustrated scene, commonly used to illustrate jiaozi; not a surviving original note.' },
   cowries: { src: 'assets/museum/cowries.jpg', title: 'Cowrie money（貝幣）', place: 'Shanghai Museum', credit: 'Gary Lee Todd · CC0', url: 'https://commons.wikimedia.org/wiki/File:Cowrie_Shells_Used_as_Currency.jpg', alt: 'A display of natural cowrie shells used as currency in the Shanghai Museum.' },
@@ -27,7 +29,6 @@ export const periods = [
   },
   {
     id: 'warring-states', label: 'Eastern Zhou', date: '770–221 BCE', era: 'Spring and Autumn · Warring States',
-    hasActivity: false,
     question: 'Why did money come in so many shapes?',
     answerTitle: 'Different states, different money.',
     story: 'Spade money（布幣）, knife money（刀幣）and round coins circulated in different regions. These forms belonged to a politically divided world. Before imperial unification, there was no single coin standard across all the states.',
@@ -78,11 +79,11 @@ export const periods = [
     more: 'The Ming note pictures strings of coins: one monetary form represented value through another. In the Qing economy, changing between silver and copper mattered because their exchange rate was not fixed everywhere or for all time.'
   },
   {
-    id: 'today', label: 'Today', date: '20th–21st centuries', era: 'Modern money and payments',
-    question: 'When we tap a screen, what actually moves?',
-    answerTitle: 'A payment moves money through a system.',
-    story: 'Modern money includes cash and bank deposits. PayNow, a familiar Singapore example, transfers funds between participating bank or e-wallet accounts. The phone is a way to make a payment; acceptance, institutions and reliable records still matter.',
-    sources: [3, 4], photos: ['paynow'],
+    id: 'today', label: 'Today', date: '20th–21st centuries', era: 'Mobile payments in contemporary China',
+    question: 'What happens when we scan to pay?',
+    answerTitle: 'A scan starts a payment.',
+    story: 'In contemporary China, people can pay with WeChat Pay（微信支付）and Alipay（支付寶）by scanning a merchant’s code or showing their own payment code. These services change how a payment begins. The money still comes from a funding source: Alipay, for example, offers payment from a wallet balance or linked bank card.',
+    sources: [22, 23], photos: ['wechatpay', 'alipay', 'paynow'],
     more: 'Between the imperial period and today, China moved through silver-based monetary arrangements towards modern fiat currency.',
     moreSources: [15]
   }
@@ -109,7 +110,10 @@ export const references = [
   { id: 18, html: 'Todd, Gary Lee. Photographs of Chinese monetary objects. Wikimedia Commons, CC0. ' + ['cowries','spades','knives','banliang','tang','iron','yuan','copper','silver'].map(id => '<a href="' + photos[id].url + '">' + photos[id].title + '</a>').join('; ') + '.' },
   { id: 19, html: 'BabelStone. <a href="' + photos.ming.url + '">British Museum Ming banknote</a>. Photograph, 2010. Wikimedia Commons, CC0.' },
   { id: 20, html: '<a href="https://commons.wikimedia.org/wiki/File:Jiao_zi.jpg">Paper-money reproduction</a>. Scan from <cite>社會歷史博物館</cite>, ISBN 7-5347-1397-8; Wikimedia Commons, public domain. Used as an illustrative reproduction. On the absence of surviving original jiaozi notes, see <a href="https://dawb.xmu.edu.cn/wbglzx/dawbts/wbzc/sdbz/14.htm">Xiamen University, “策展人說：世界上最早的紙幣——交子”</a>, 17 January 2025.' },
-  { id: 21, html: 'Cherrygarden, Fred. <a href="' + photos.banliangDetail.url + '">Ban Liang (Western Han)</a>. Photograph, 5 June 2020. Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. Displayed at reduced resolution; the activity shows an obverse detail. No retouching.' }
+  { id: 21, html: 'Cherrygarden, Fred. <a href="' + photos.banliangDetail.url + '">Ban Liang (Western Han)</a>. Photograph, 5 June 2020. Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. Displayed at reduced resolution. No retouching.' },
+  { id: 22, html: 'Shanghai Municipal Government. <a href="https://english.shanghai.gov.cn/en-Individuals-BankingandPayments-Payments/20260920/4fc94c2f0e6b47e7939969415e5feb04.html">“How to Use Mobile Payments in Shanghai.”</a> International Services Shanghai. Accessed 23 November 2026.' },
+  { id: 23, html: 'Shanghai Municipal Government. <a href="https://english.shanghai.gov.cn/en-UsefulApps/20240312/f2968c5dcb2d41c895643afa9219ce89.html">“How to Use Alipay.”</a> International Services Shanghai. Updated 21 July 2026.' },
+  { id: 24, html: 'Brand artwork: <a href="' + photos.wechatpay.url + '">WeChat Pay / Tencent</a>; <a href="' + photos.alipay.url + '">Alipay</a>. Official website logos, accessed 23 November 2026.' }
 ];
 
 // Fill in these local file paths after recording. Do not publish mock recordings.

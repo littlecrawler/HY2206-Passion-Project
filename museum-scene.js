@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261123-reflection';
-import { rooms, hallViewZ } from './museum-data.js?v=20261123-reflection';
-import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-reflection';
-import { photos } from './exhibit-data.js?v=20261123-reflection';
+import { buildArchitecture } from './museum-architecture.js?v=20261123-mode-roles';
+import { rooms, hallViewZ } from './museum-data.js?v=20261123-mode-roles';
+import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-mode-roles';
+import { photos } from './exhibit-data.js?v=20261123-mode-roles';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
@@ -63,6 +63,14 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   function loadPhoto(id) {
     if (!textures.has(id)) textures.set(id, new Promise(resolve => {
       loader.load(photos[id].src, map => {
+        if(photos[id].background) {
+          const surface=document.createElement('canvas');surface.width=1000;surface.height=640;
+          const context=surface.getContext('2d'),image=map.image;
+          context.fillStyle=photos[id].background;context.fillRect(0,0,1000,640);
+          const scale=Math.min(820/image.width,460/image.height);
+          context.drawImage(image,(1000-image.width*scale)/2,(640-image.height*scale)/2,image.width*scale,image.height*scale);
+          map.dispose();map=new THREE.CanvasTexture(surface);
+        }
         map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
         if (disposed) { map.dispose(); resolve(null); return; }
         resources.push(map); resolve(map); requestFrame();
