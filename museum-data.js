@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261123-card-activities';
+import { periods } from './exhibit-data.js?v=20261123-iron-weight';
 
 export const hallViewZ = 18;
 

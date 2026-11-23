@@ -1,6 +1,6 @@
-import { photos, periods } from './exhibit-data.js?v=20261123-card-activities';
-import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-card-activities';
-import { flashcardContent } from './mode-content.js?v=20261123-card-activities';
+import { photos, periods } from './exhibit-data.js?v=20261123-iron-weight';
+import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-iron-weight';
+import { flashcardContent } from './mode-content.js?v=20261123-iron-weight';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -287,7 +287,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261123-card-activities').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261123-iron-weight').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
     onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}

@@ -67,7 +67,7 @@ export const objectNotes = {
   banliangDetail: { note: 'Read the two characters from right to left around the square opening: ban liang（半兩）. The reverse has no inscription. The close-up lets you inspect both faces.', sources: [21] },
   banliang: { note: 'Compare the coins’ sizes. They share a round outline and square opening, but the name “banliang” did not always mean the same prescribed weight.', sources: [11] },
   tang: { note: 'Find the four characters Kaiyuan tongbao（開元通寶）around the square hole. The photograph shows the inscribed face beside the reverse.', sources: [13] },
-  iron: { note: 'This Northern Song iron coin has the familiar round form and square opening. Its material connects it with the carrying problem described in the Song account.', sources: [6] },
+  iron: { note: 'This Northern Song iron coin has a round shape and a square opening. The problem was weight: paying for goods meant carrying heavy loads of iron coins, making trade inconvenient.', sources: [6] },
   songpaper: { note: 'A printing-plate image used to illustrate jiaozi（交子）. No original jiaozi note is known to survive, and this design’s identification is debated.', sources: [20, 25] },
   yuan: { note: 'Notice the printed text, border and coin imagery on this Zhiyuan note. A paper surface could carry both a denomination and the language of issuing authority.', sources: [14, 18] },
   ming: { note: 'Find one guan（一貫）and the ten groups of coins beneath it. The note pictures 1,000 cash coins, expressing paper’s value through a familiar form of money.', sources: [5] },
