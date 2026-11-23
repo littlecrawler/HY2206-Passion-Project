@@ -10,10 +10,12 @@ export async function buildVideoPosters() {
   <defs>
     <linearGradient id="shade"><stop stop-color="#07131e"/><stop offset=".46" stop-color="#07131e" stop-opacity=".94"/><stop offset="1" stop-color="#07131e" stop-opacity=".18"/></linearGradient>
     <linearGradient id="base" x2="0" y2="1"><stop stop-color="#07131e" stop-opacity="0"/><stop offset="1" stop-color="#07131e" stop-opacity=".85"/></linearGradient>
+    <linearGradient id="top" x2="0" y2="1"><stop offset=".55" stop-color="#07131e"/><stop offset="1" stop-color="#07131e" stop-opacity="0"/></linearGradient>
   </defs>
   <rect width="1280" height="720" fill="#0d1823"/>
   <image href="${museum}" x="0" y="-15" width="1400" height="735" preserveAspectRatio="xMidYMid slice"/>
   <rect width="1280" height="720" fill="url(#shade)"/>
+  <rect width="1280" height="120" fill="url(#top)"/>
   <rect y="490" width="1280" height="230" fill="url(#base)"/>
   <path d="M76 145h68" stroke="#bad7e2" stroke-width="5"/>
   <g ${common} fill="#edf4f6">
