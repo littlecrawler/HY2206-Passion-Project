@@ -1,5 +1,5 @@
 import { photos } from './exhibit-data.js?v=20261123-smooth-navigation';
-import { initDeck } from './deck.js?v=20261123-smooth-navigation';
+import { initDeck } from './deck.js?v=20261123-card-settle';
 
 // Keep bookmarks from earlier versions useful.
 if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) {

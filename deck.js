@@ -32,7 +32,10 @@ export function initDeck() {
 
   function fitCard() {
     if (finished) return;
-    const frontHeight=Math.max(innerWidth>780?520:400,Math.min(960,innerHeight-document.querySelector('.site-header').offsetHeight-timeline[0].parentElement.offsetHeight-document.querySelector('.deck-status').offsetHeight-document.querySelector('.deck-controls').offsetHeight-document.querySelector('#deck-photo-tools').offsetHeight-42));
+    // Reserve the same space for photo choices on every card. Measuring the
+    // current choices resized the camera when a period had more photographs.
+    const photoToolsHeight=innerWidth>780?64:128;
+    const frontHeight=Math.max(innerWidth>780?520:400,Math.min(960,innerHeight-document.querySelector('.site-header').offsetHeight-timeline[0].parentElement.offsetHeight-document.querySelector('.deck-status').offsetHeight-document.querySelector('.deck-controls').offsetHeight-photoToolsHeight-42));
     const height = engineReady ? frontHeight : Math.ceil((flipped ? back : front).offsetHeight);
     if (height) flipper.style.height = height + 'px';
   }
@@ -107,7 +110,7 @@ export function initDeck() {
     panel.innerHTML = state.pane === 'story' ? '<div class="mobile-story"><h3 class="activity-title">' + text(p.answerTitle) + '</h3><p>' + text(p.story) + ' ' + cite(p.sources) + '</p><a class="text-link" href="read.html#' + p.id + '">Read more</a></div>' : state.pane === 'sources' ? evidence(p, state) : activity(p, state);
     fitCard();
   }
-  function renderCard(index) {
+  function renderCard(index, enter = false) {
     current = index;
     finished = false;
     experience.hidden = false;
@@ -125,7 +128,7 @@ export function initDeck() {
     stage.setAttribute('aria-label', p.label + '. ' + p.date + '. ' + p.question + ' Enter turns the card; left and right keys change periods.');
     document.querySelector('#photo-choices').innerHTML = p.photos.length > 1 ? p.photos.map(id => '<button class="photo-choice" type="button" data-object="' + id + '" aria-pressed="false">' + text(photos[id].title.split('（')[0].trim()) + '</button>').join('') : '';
     document.querySelector('#deck-photo-options').innerHTML = p.photos.length > 1 ? p.photos.map(id => '<button class="photo-choice" type="button" data-deck-photo="' + id + '" aria-pressed="false">' + text(photos[id].title.split('（')[0].trim()) + '</button>').join('') : '';
-    deckScene?.show(current,states[current].photo||p.photos[0]);
+    deckScene?.show(current,states[current].photo||p.photos[0],enter);
     showPhoto(states[current].photo || p.photos[0]);
     renderPanel();
     showSide(false, true);
@@ -157,7 +160,8 @@ export function initDeck() {
   async function play(frames, duration) {
     if (reduce.matches) return;
     try {
-      await motion.animate(frames, { duration, easing: 'cubic-bezier(.22,.75,.3,1)', fill: 'none' }).finished;
+      const animation=motion.animate(frames, { duration, easing: 'cubic-bezier(.45,0,.55,1)', fill: 'forwards' });
+      await animation.finished;
     } catch { /* A history navigation can cancel an unfinished deal. */ }
   }
   async function navigate(index, { push = true, animate = true } = {}) {
@@ -166,28 +170,28 @@ export function initDeck() {
     const direction = index >= current ? -1 : 1;
     busy = true;
     syncControls();
+    const ready=deckScene&&index<periods.length?deckScene.prepare(index,states[index].photo||periods[index].photos[0]):Promise.resolve();
     if (push) history.pushState(null, '', '#' + (index === periods.length ? 'complete' : periods[index].id));
     if (animate && !finished) {
       if(deckScene) {stage.classList.remove('is-reading');await deckScene.dealOut(direction);}
-      else await play([{ transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 }, { transform: 'translate3d(' + direction * 19 + '%, -12px, 60px) rotate(' + direction * 7 + 'deg)', opacity: 0 }], 180);
+      else await play([{ transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 }, { transform: 'translate3d(' + direction * 19 + '%, -12px, 60px) rotate(' + direction * 7 + 'deg)', opacity: 0 }], 480);
     }
+    await ready;
     if (request !== serial) return;
     if (index === periods.length) {
       busy = false;
       finishTour();
       return;
     }
-    renderCard(index);
+    renderCard(index,animate);
     if (animate) {
       if(deckScene)await deckScene.dealIn(direction);
-      else await play([{ transform: 'translate3d(' + -direction * 10 + '%, 20px, -50px) rotate(' + -direction * 4 + 'deg)', opacity: .3 }, { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 }], 320);
+      else await play([{ transform: 'translate3d(' + -direction * 10 + '%, 20px, -50px) rotate(' + -direction * 4 + 'deg)', opacity: .3 }, { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 }], 520);
     }
     if (request !== serial) return;
     busy = false;
+    motion.getAnimations().forEach(animation => animation.cancel());
     syncControls();
-    if (innerWidth <= 780 && animate) {
-      document.querySelector('.deck-status').scrollIntoView({ behavior: reduce.matches ? 'instant' : 'smooth', block: 'start' });
-    }
   }
   function followHash() {
     const hash = location.hash.slice(1);
@@ -294,7 +298,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261123-smooth-navigation').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261123-card-settle').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
     onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
