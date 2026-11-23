@@ -63,13 +63,13 @@ body[data-page="cards"] { background: #eef2e8; overflow-x: clip; }
 .card-photo-study.paired { grid-template-columns:repeat(2,minmax(0,1fr)); }
 .card-photo-study figure { margin:0; min-width:0; }
 .card-photo-study figcaption { margin-top:12px; text-align:center; line-height:1.35; }
-.card-photo-study .activity-photo { position:relative; cursor:zoom-in; }
-.card-photo-study .activity-photo img { height:clamp(200px,26svh,300px); }
-.photo-enlarge-label { position:absolute; right:12px; bottom:12px; display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:6px; background:var(--ink); color:var(--paper); font:600 18px/1.2 var(--heading); }
-.photo-enlarge-label > span { font-size:25px; }
+.card-photo-study .object-lens { height:clamp(180px,23svh,260px); border-radius:7px; }
+.card-photo-study .range-label { gap:12px; margin-top:0; }
+.card-photo-study .activity-range { margin-bottom:8px; }
+.card-photo-study output { font-variant-numeric:tabular-nums; }
 @media (max-width:780px) {
   .card-photo-study.paired { grid-template-columns:1fr; }
-  .card-photo-study .activity-photo img { height:230px; }
+  .card-photo-study .object-lens { height:200px; }
 }
 .object-lens { height: 235px; background: #e1e7d7; border-radius: 8px; overflow: hidden; }
 .object-lens img { width: 100%; height: 100%; object-fit: contain; transform-origin: 50% 75%; transition: transform .16s ease-out; }

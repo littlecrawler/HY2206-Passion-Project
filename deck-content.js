@@ -1,16 +1,22 @@
-import { photos } from './exhibit-data.js?v=20261123-photo-study';
+import { photos } from './exhibit-data.js?v=20261123-magnification';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
 export const cite = ids => ids.map(id => '<a class="citation" href="references.html#source-' + id + '" aria-label="Reference ' + id + '">[' + id + ']</a>').join(' ');
-export const defaults = () => ({ money: 'iron', issuer: 'repaid', transaction: 'market', paymentLayer: 0 });
+export const defaults = () => ({ money: 'iron', issuer: 'repaid', transaction: 'market', paymentLayer: 0, zoom: {} });
 
 function choices(action, options, selected, label) {
   return '<div class="activity-choices" role="group" aria-label="' + label + '">' + options.map(([value, label]) => '<button type="button" data-action="' + action + '" data-value="' + value + '" aria-pressed="' + (String(selected) === String(value)) + '">' + label + '</button>').join('') + '</div>';
 }
-function picture(id, className = '', enlargeLabel = false) {
+function picture(id, className = '') {
   const p = photos[id];
-  return '<button type="button" class="activity-photo ' + className + '" data-photo="' + id + '" aria-label="Enlarge ' + escape(p.title) + '"><img src="' + p.src + '" alt="' + escape(p.alt) + '">' + (enlargeLabel ? '<span class="photo-enlarge-label"><span aria-hidden="true">⤢</span> Enlarge</span>' : '') + '</button>';
+  return '<button type="button" class="activity-photo ' + className + '" data-photo="' + id + '" aria-label="Enlarge ' + escape(p.title) + '"><img src="' + p.src + '" alt="' + escape(p.alt) + '"></button>';
+}
+function magnifier(id, zoom) {
+  const photo = photos[id], inputId = 'object-zoom-' + id;
+  return '<figure><label class="range-label" for="' + inputId + '">Magnification <output id="zoom-value-' + id + '" for="' + inputId + '">' + zoom.toFixed(1) + '×</output></label>' +
+    '<input class="activity-range" id="' + inputId + '" data-action="zoom" data-zoom-photo="' + id + '" type="range" min="1" max="2.5" step="0.1" value="' + zoom + '" aria-label="Magnification: ' + escape(photo.title) + '" aria-valuetext="' + zoom.toFixed(1) + ' times">' +
+    '<div class="object-lens"><img id="lens-photo-' + id + '" src="' + photo.src + '" alt="' + escape(photo.alt) + '" style="transform:scale(' + zoom + ');transform-origin:50% ' + (id === 'cowries' ? '75%' : '50%') + '"></div><figcaption>' + text(photo.title) + '</figcaption></figure>';
 }
 function feedback(title, body, sources = []) {
   return '<div class="activity-result" role="status"><h4>' + title + '</h4><p>' + body + ' ' + cite(sources) + '</p></div>';
@@ -65,6 +71,6 @@ export function activity(period, state) {
     }
     default:
       return '<div class="card-photo-study' + (period.photos.length > 1 ? ' paired' : '') + '">' +
-        period.photos.map(id => '<figure>' + picture(id, '', true) + '<figcaption>' + text(photos[id].title) + '</figcaption></figure>').join('') + '</div>';
+        period.photos.map(id => magnifier(id, state.zoom[id] || 1)).join('') + '</div>';
   }
 }

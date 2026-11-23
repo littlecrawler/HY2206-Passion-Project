@@ -1,6 +1,6 @@
-import { photos, periods } from './exhibit-data.js?v=20261123-photo-study';
-import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-photo-study';
-import { flashcardContent } from './mode-content.js?v=20261123-photo-study';
+import { photos, periods } from './exhibit-data.js?v=20261123-magnification';
+import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-magnification';
+import { flashcardContent } from './mode-content.js?v=20261123-magnification';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -250,6 +250,17 @@ export function initDeck() {
       if (candidate.dataset.action === action && candidate.dataset.value === value) candidate.focus({ preventScroll: true });
     });
   });
+  panel.addEventListener('input', event => {
+    const input = event.target;
+    if (input.dataset.action !== 'zoom') return;
+    const id = input.dataset.zoomPhoto;
+    if (!periods[current].photos.includes(id)) return;
+    const zoom = Math.min(2.5, Math.max(1, Number(input.value)));
+    states[current].zoom[id] = zoom;
+    panel.querySelector('#lens-photo-' + id).style.transform = 'scale(' + zoom + ')';
+    panel.querySelector('#zoom-value-' + id).textContent = zoom.toFixed(1) + '×';
+    input.setAttribute('aria-valuetext', zoom.toFixed(1) + ' times');
+  });
   stage.addEventListener('keydown', event => {
     if (event.target !== stage) return;
     if (['ArrowRight','ArrowLeft','Enter',' '].includes(event.key)) event.preventDefault();
@@ -281,7 +292,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261123-photo-study').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261123-magnification').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
     onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
