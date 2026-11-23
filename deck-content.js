@@ -1,5 +1,5 @@
-import { photos } from './exhibit-data.js?v=20261123-iron-weight';
-import { cardChallenges } from './mode-content.js?v=20261123-iron-weight';
+import { photos } from './exhibit-data.js?v=20261123-object-copy';
+import { cardChallenges } from './mode-content.js?v=20261123-object-copy';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');

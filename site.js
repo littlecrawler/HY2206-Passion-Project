@@ -1,5 +1,5 @@
-import { photos } from './exhibit-data.js?v=20261123-iron-weight';
-import { initDeck } from './deck.js?v=20261123-iron-weight';
+import { photos } from './exhibit-data.js?v=20261123-object-copy';
+import { initDeck } from './deck.js?v=20261123-object-copy';
 
 // Keep bookmarks from earlier versions useful.
 if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) {
@@ -87,5 +87,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261123-iron-weight').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261123-object-copy').then(({ initMuseum }) => initMuseum());
 }

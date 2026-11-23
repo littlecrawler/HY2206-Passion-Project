@@ -59,8 +59,8 @@ export const cardChallenges = {
 };
 
 export const objectNotes = {
-  wechatpay: { note: 'The WeChat Pay mark identifies a payment service used in China. Customers can scan a merchant’s code or show their own payment code for the merchant to scan.', sources: [22] },
-  alipay: { note: 'Alipay’s logo appears at the point of payment and in the app. A payment can draw on a wallet balance or a linked card; the app brings these options to the screen.', sources: [23] },
+  wechatpay: { note: 'Customers can scan a merchant’s code or show their own payment code for the merchant to scan.', sources: [22] },
+  alipay: { note: 'A payment can draw on a wallet balance or a linked card.', sources: [23] },
   cowries: { note: 'Look at the openings and curved backs of these natural shells. Their recognisable form was also copied in bronze when shells were used as money.', sources: [10] },
   spades: { note: 'The broad shoulders and two feet give these bronze coins their spade-like outline. Compare them with the longer knife money displayed in this gallery.', sources: [9, 10] },
   knives: { note: 'Follow the long blade-like body down to the ring at the handle. This form makes regional differences in pre-imperial money visible.', sources: [9, 10] },
@@ -73,5 +73,5 @@ export const objectNotes = {
   ming: { note: 'Find one guan（一貫）and the ten groups of coins beneath it. The note pictures 1,000 cash coins, expressing paper’s value through a familiar form of money.', sources: [5] },
   copper: { note: 'These Qing cash coins retain the round shape and square opening. Compare their small, cast form with the silver ingot elsewhere in this gallery.', sources: [12] },
   silver: { note: 'Notice the ingot’s boat-like shape. Silver was assessed by weight and purity; an ingot did not function like a coin with one fixed face value.', sources: [12] },
-  paynow: { note: 'This logo identifies a payment service. PayNow transfers Singapore-dollar funds between participating accounts; the logo and phone interface are what users see of that process.', sources: [3] }
+  paynow: { note: 'PayNow transfers Singapore-dollar funds between participating accounts.', sources: [3] }
 };
