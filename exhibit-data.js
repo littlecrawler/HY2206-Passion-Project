@@ -120,5 +120,5 @@ export const references = [
 
 export const recordings = [
   { id: 'purpose', title: 'How to use the website', description: 'Who it is for, what it explores, and how to begin.', src: 'assets/videos/website-introduction.mp4', captions: 'assets/videos/website-introduction.en.vtt', poster: 'assets/videos/website-introduction.jpg' },
-  { id: 'journey', title: 'My Journey &amp; Reflections', description: 'How the idea took shape and what I learned.', src: 'assets/videos/journey-and-reflections.mp4', captions: 'assets/videos/journey-and-reflections.en.vtt', poster: 'assets/videos/journey-and-reflections.jpg' }
+  { id: 'journey', title: 'My Journey &amp; Reflections', description: 'How the idea took shape and what I learned.', src: 'assets/videos/journey-and-reflections.mp4?v=20261123-historian', captions: 'assets/videos/journey-and-reflections.en.vtt', poster: 'assets/videos/journey-and-reflections.jpg' }
 ];
