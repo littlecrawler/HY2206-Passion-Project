@@ -114,7 +114,8 @@ export const references = [
   { id: 22, html: 'Shanghai Municipal Government. <a href="https://english.shanghai.gov.cn/en-Individuals-BankingandPayments-Payments/20260920/4fc94c2f0e6b47e7939969415e5feb04.html">“How to Use Mobile Payments in Shanghai.”</a> International Services Shanghai. Accessed 23 November 2026.' },
   { id: 23, html: 'Shanghai Municipal Government. <a href="https://english.shanghai.gov.cn/en-UsefulApps/20240312/f2968c5dcb2d41c895643afa9219ce89.html">“How to Use Alipay.”</a> International Services Shanghai. Updated 21 July 2026.' },
   { id: 24, html: 'Brand artwork: <a href="' + photos.wechatpay.url + '">WeChat Pay / Tencent</a>; <a href="' + photos.alipay.url + '">Alipay</a>. Official website logos, accessed 23 November 2026.' },
-  { id: 25, html: 'Xie Yuanlu（謝元魯）. <a href="https://www.sicnu.edu.cn/info/1121/32821.htm">“交子為何出於成都.”</a> Interview by Wu Yizheng, <cite>Chengdu Daily</cite>, 10 March 2019; republished by Sichuan Normal University, 15 March 2019. Discusses the disputed identification of the commonly reproduced printing-plate design.' }
+  { id: 25, html: 'Xie Yuanlu（謝元魯）. <a href="https://www.sicnu.edu.cn/info/1121/32821.htm">“交子為何出於成都.”</a> Interview by Wu Yizheng, <cite>Chengdu Daily</cite>, 10 March 2019; republished by Sichuan Normal University, 15 March 2019. Discusses the disputed identification of the commonly reproduced printing-plate design.' },
+  { id: 26, html: 'Shao, Zhen, Lin Zhang, Xiaotong Li, and Yue Guo. “Antecedents of Trust and Continuance Intention in Mobile Payment Platforms: The Moderating Effect of Gender.” <cite>Electronic Commerce Research and Applications</cite> 33 (2019): 100823. <a href="https://doi.org/10.1016/j.elerap.2018.100823">DOI</a>. <a href="https://kclpure.kcl.ac.uk/portal/en/publications/antecedents-of-trust-and-continuance-intention-in-mobile-payment-/">Abstract</a>.' }
 ];
 
 // Fill in these local file paths after recording. Do not publish mock recordings.
