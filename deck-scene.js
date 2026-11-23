@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
 import { CSS3DObject, CSS3DRenderer } from './vendor/three/CSS3DRenderer.js';
-import { periods, photos } from './exhibit-data.js?v=20261123-continuous-flip';
+import { periods, photos } from './exhibit-data.js?v=20261123-smooth-navigation';
 
 const ease = t => t * t * (3 - 2 * t);
 const clamp = THREE.MathUtils.clamp;

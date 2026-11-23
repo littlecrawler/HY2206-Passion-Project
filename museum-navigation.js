@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { rooms } from './museum-data.js?v=20261123-continuous-flip';
+import { rooms } from './museum-data.js?v=20261123-smooth-navigation';
 
 export function roomPoint(index, x, y, z) {
   const room = rooms[index];
@@ -8,13 +8,20 @@ export function roomPoint(index, x, y, z) {
     .add(new THREE.Vector3(room.x, 0, room.z));
 }
 
-// A quintic bend has zero curvature at both ends, so joining it to a straight
-// aisle does not introduce the sudden steering of a short quadratic fillet.
-class AisleBend extends THREE.Curve {
-  constructor(before, corner, after) {
+// One continuous arc replaces the chain of short aisle and doorway turns.
+// Collinear end controls keep the camera aligned while crossing each doorway.
+class GalleryRoute extends THREE.Curve {
+  constructor(start, previous, index, end) {
     super();
-    this.controls = [before, before.clone().lerp(corner,.4), before.clone().lerp(corner,.8),
-      after.clone().lerp(corner,.8), after.clone().lerp(corner,.4), after];
+    const reach = THREE.MathUtils.clamp(start.distanceTo(end) * .4, 6, 15);
+    const exit = previous < 0 ? end.clone().sub(start).normalize()
+      : roomPoint(previous, .5, 3.6, 7.5).sub(start).normalize();
+    const entry = index < 0 ? start.clone().sub(end).normalize()
+      : roomPoint(index, 0, 0, 1).sub(roomPoint(index, 0, 0, 0));
+    this.controls = [start.clone(), start.clone().addScaledVector(exit, reach),
+      start.clone().addScaledVector(exit, reach * 2), end.clone().addScaledVector(entry, reach * 2),
+      end.clone().addScaledVector(entry, reach), end.clone()];
+    this.arcLengthDivisions = 600;
   }
   getPoint(t,target=new THREE.Vector3()) {
     target.set(0,0,0);
@@ -24,56 +31,16 @@ class AisleBend extends THREE.Curve {
   }
 }
 
-function roundedPath(points) {
-  const path = new THREE.CurvePath();
-  const distinct = points.filter((point, i) => !i || point.position.distanceTo(points[i - 1].position) > .01);
-  let last = distinct[0].position;
-  for (let i = 1; i < distinct.length - 1; i++) {
-    const corner = distinct[i].position, previous=distinct[i-1].position, next=distinct[i+1].position;
-    const radius = Math.min(distinct[i].radius, corner.distanceTo(previous)*.42, corner.distanceTo(next)*.42);
-    const before = corner.clone().addScaledVector(previous.clone().sub(corner).normalize(), radius);
-    const after = corner.clone().addScaledVector(next.clone().sub(corner).normalize(), radius);
-    path.add(new THREE.LineCurve3(last, before));
-    path.add(new AisleBend(before, corner, after));
-    last = after;
-  }
-  path.add(new THREE.LineCurve3(last, distinct.at(-1).position));
-  return path;
-}
-
 export function travelPath(start, previous, index, end) {
-  const waypoint = (position,radius=5.5) => ({position,radius});
-  const points = [waypoint(start.clone())];
-  const hallRadius = 18;
-  const approach = (room,x=0) => roomPoint(room, x, 3.6, 9.5);
-  const bearing = room => {
-    const door = approach(room);
-    return Math.atan2(door.x, -door.z);
-  };
-  const aisle = angle => new THREE.Vector3(Math.sin(angle) * hallRadius, 3.6, -Math.cos(angle) * hallRadius);
-  if (previous >= 0) {
-    points.push(waypoint(approach(previous),2.3),waypoint(aisle(bearing(previous))));
-  }
-  if (index >= 0) {
-    if (previous >= 0) {
-      const from = bearing(previous), to = bearing(index), steps = Math.ceil(Math.abs(to - from) / .18);
-      for (let i = 1; i < steps; i++) points.push(waypoint(aisle(THREE.MathUtils.lerp(from, to, i / steps))));
-    }
-    // Align with the final viewing position before the doorway. In particular,
-    // do not overshoot the mobile viewpoint and reverse inside the gallery.
-    const localEnd=end.clone().sub(new THREE.Vector3(rooms[index].x,0,rooms[index].z))
-      .applyAxisAngle(new THREE.Vector3(0,1,0),-rooms[index].angle);
-    points.push(waypoint(aisle(bearing(index))),waypoint(approach(index,localEnd.x),2.3));
-  }
-  points.push(waypoint(end.clone()));
-  return roundedPath(points);
+  return new GalleryRoute(start, previous, index, end);
 }
 
 // Schedule by curvature and acceleration, rather than forcing every bend
 // through at the same speed. The camera slows before a turn, then accelerates.
 export function travelMotion(path) {
-  const count=Math.max(300,Math.ceil(path.getLength()*20));
-  // CurvePath.getPoint already measures progress by distance along its curves.
+  const length=path.getLength(),count=Math.max(300,Math.ceil(length*20));
+  const duration=THREE.MathUtils.clamp(2100+length*16,2700,3500);
+  // Measure each interval: a Bezier parameter is not distance along the route.
   const points=Array.from({length:count+1},(_,i)=>path.getPoint(i/count));
   const lengths=points.map((point,i)=>i?point.distanceTo(points[i-1]):0);
   const speeds=points.map((point,i)=>{
@@ -88,9 +55,9 @@ export function travelMotion(path) {
   const times=[0];
   for(let i=1;i<=count;i++)times.push(times[i-1]+2*lengths[i]/Math.max(.0001,speeds[i-1]+speeds[i]));
   return {
-    duration:times[count]*1000,
+    duration,
     sample(elapsed){
-      const seconds=THREE.MathUtils.clamp(elapsed/1000,0,times[count]);
+      const seconds=THREE.MathUtils.clamp(elapsed/duration,0,1)*times[count];
       let lo=0,hi=count;
       while(hi-lo>1){const middle=(lo+hi)>>1;if(times[middle]<=seconds)lo=middle;else hi=middle;}
       const dt=seconds-times[lo],span=times[hi]-times[lo];

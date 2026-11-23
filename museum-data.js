@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261123-continuous-flip';
+import { periods } from './exhibit-data.js?v=20261123-smooth-navigation';
 
 export const hallViewZ = 18;
 

@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261123-continuous-flip';
-import { rooms, hallViewZ } from './museum-data.js?v=20261123-continuous-flip';
-import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-continuous-flip';
-import { photos } from './exhibit-data.js?v=20261123-continuous-flip';
+import { buildArchitecture } from './museum-architecture.js?v=20261123-smooth-navigation';
+import { rooms, hallViewZ } from './museum-data.js?v=20261123-smooth-navigation';
+import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-smooth-navigation';
+import { photos } from './exhibit-data.js?v=20261123-smooth-navigation';
 
 const clamp = THREE.MathUtils.clamp;
-const ease = t => t * t * (3 - 2 * t);
+const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
 const vector = (...v) => new THREE.Vector3(...v);
 
 // The architecture surrounds documentary photographs; no object replicas are generated.
@@ -156,7 +156,7 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   function beginMove(curve,end,fromProjection,travel) {
     const toProjection=projection();
     const motion=travel?travelMotion(curve):null,fromRotation=camera.quaternion.clone(),toRotation=orientation(end.position,end.target);
-    const duration=travel?clamp(1800+curve.getLength()*14,2400,3200):clamp(350+fromRotation.angleTo(toRotation)*220,450,650);
+    const duration=motion?.duration??clamp(350+fromRotation.angleTo(toRotation)*220,450,650);
     moving={start:performance.now(),duration,
       curve,motion,end,fromProjection,toProjection,fromRotation,toRotation};
     applyProjection(fromProjection,toProjection,0);
@@ -206,11 +206,10 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
     frame = 0; if (paused || disposed || document.hidden) return;
     if (moving) {
       const elapsed=now-moving.start,t=clamp(elapsed/moving.duration,0,1),progress=ease(t);
-      pose.position.copy(moving.motion?moving.motion.sample(t*moving.motion.duration).position:moving.curve.getPointAt(progress));
-      // Keep a steady exhibit-facing view instead of snapping to the path's
-      // tangent at each corner (or spinning around when backing out of a room).
-      const turn=moving.motion?ease(clamp(t/.65,0,1)):progress;
-      const rotation=moving.fromRotation.clone().slerp(moving.toRotation,turn);
+      pose.position.copy(moving.motion?moving.motion.sample(elapsed).position:moving.curve.getPointAt(progress));
+      // Spread the turn across the whole journey, with zero angular velocity
+      // and acceleration at both ends, instead of finishing the turn early.
+      const rotation=moving.fromRotation.clone().slerp(moving.toRotation,progress);
       pose.target.copy(pose.position).add(vector(0,0,-10).applyQuaternion(rotation));
       applyProjection(moving.fromProjection,moving.toProjection,progress);
       if (t === 1) { pose.position.copy(moving.end.position); pose.target.copy(moving.end.target); moving = null; onTravel?.(false); }

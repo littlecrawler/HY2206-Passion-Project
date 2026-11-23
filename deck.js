@@ -1,5 +1,5 @@
-import { photos, periods } from './exhibit-data.js?v=20261123-continuous-flip';
-import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261123-continuous-flip';
+import { photos, periods } from './exhibit-data.js?v=20261123-smooth-navigation';
+import { activity, evidence, defaults, escape, text, cite } from './deck-content.js?v=20261123-smooth-navigation';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -294,7 +294,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261123-continuous-flip').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261123-smooth-navigation').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
     onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}
