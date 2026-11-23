@@ -138,6 +138,8 @@ blockquote cite { display: block; font-size: 18px; margin-top: 10px; font-style:
 .context { border-top: 1px solid var(--line); margin-top: 26px; padding-top: 16px; }
 .context summary { cursor: pointer; font-size: 21px; }
 .context[open] summary { margin-bottom: 20px; }
+.context-photos { max-width:340px; margin-top:24px; }
+.context-photos .photo-button img { height:190px; }
 .text-evidence { margin-top: 26px; }
 .text-evidence > p { margin-top: 20px; }
 .reading-end { padding: 40px 0 60px; display: flex; align-items: center; justify-content: space-between; gap: 50px; }

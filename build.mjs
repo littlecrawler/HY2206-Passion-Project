@@ -4,7 +4,7 @@ import { deckPage } from './deck-template.mjs';
 import { readingAdditions } from './deck-content.js';
 import { museumPage } from './museum-template.mjs';
 
-const version = '20261123-pan-dismiss';
+const version = '20261123-reflection-context';
 await mkdir(new URL('vendor/three/', import.meta.url), { recursive: true });
 for (const [source, target] of [['build/three.module.min.js','three.module.min.js'],['build/three.core.min.js','three.core.min.js'],['examples/jsm/environments/RoomEnvironment.js','RoomEnvironment.js'],['examples/jsm/objects/Reflector.js','Reflector.js'],['examples/jsm/renderers/CSS3DRenderer.js','CSS3DRenderer.js'],['LICENSE','LICENSE']]) {
   await copyFile(new URL('node_modules/three/' + source, import.meta.url), new URL('vendor/three/' + target, import.meta.url));
@@ -13,7 +13,7 @@ const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '
 const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
 const cite = ids => ids.map(id => '<a class="citation" href="references.html#source-' + id + '" aria-label="Reference ' + id + '">[' + id + ']</a>').join(' ');
 const brand = '<a class="brand" href="index.html" aria-label="Money in China home"><img src="assets/coin-mark.svg" width="38" height="38" alt=""><span>Money in China</span></a>';
-const navItems = [['museum', '3D Museum', 'museum.html'], ['cards', 'Flashcards', 'cards.html'], ['read', 'Read the history', 'read.html'], ['videos', 'Videos', 'index.html#videos'], ['project', 'My project', 'project.html'], ['references', 'References', 'references.html']];
+const navItems = [['museum', '3D Museum', 'museum.html'], ['cards', 'Flashcards', 'cards.html'], ['read', 'Read the history', 'read.html'], ['videos', 'Videos', 'index.html#videos'], ['project', 'My reflection', 'project.html'], ['references', 'References', 'references.html']];
 
 function layout(title, page, body) {
   const nav = navItems.map(([id, label, href]) => '<a href="' + href + '"' + (page === id ? ' aria-current="page"' : '') + '>' + label + '</a>').join('');
@@ -39,6 +39,15 @@ function quote(q) {
   return '<blockquote><p>“' + text(q.english) + '”</p><p lang="zh-Hant">（' + text(q.chinese) + '）</p><cite>' + text(q.attribution) + ' ' + cite([q.source]) + '</cite></blockquote>';
 }
 
+function historyPeriod(period) {
+  const comparisonPhotos = period.id === 'today' ? ['paynow'] : [];
+  const mainPhotos = period.photos.filter(id => !comparisonPhotos.includes(id));
+  return '<article class="history-period" id="' + period.id + '"><div class="history-copy"><p class="period-date">' + text(period.date) + '</p><h2>' + text(period.era) + '</h2><h3>' + text(period.answerTitle) + '</h3><p>' + text(period.story) + ' ' + cite(period.sources) + '</p>' + quote(period.quote) +
+    '<details class="context"><summary>' + (period.extra ? 'More context and historical writing' : 'More context') + '</summary><p>' + text(period.more) + (period.moreSources ? ' ' + cite(period.moreSources) : '') + '</p>' + (readingAdditions[period.id] || '') + (period.extra || '') +
+    (comparisonPhotos.length ? '<div class="context-photos">' + comparisonPhotos.map(id => photo(id)).join('') + '</div>' : '') + '</details></div>' +
+    '<div class="history-photos' + (mainPhotos.length > 1 ? ' multiple' : '') + '">' + mainPhotos.map(id => photo(id)).join('') + '</div></article>';
+}
+
 function recording(video) {
   const track = video.captions ? '<track kind="captions" src="' + escape(video.captions) + '" srclang="en" label="English" default>' : '';
   const screen = video.src
@@ -48,19 +57,19 @@ function recording(video) {
 }
 
 const home = museumPage() +
-  '<section class="videos-section wrap" id="videos"><h2>About this project</h2><div class="video-grid">' + recordings.map(recording).join('') + '</div><div class="actions"><a class="text-link" href="project.html">Read my journey and reflection</a><a class="text-link" href="#hall">Return to the museum</a></div></section>';
+  '<section class="videos-section wrap" id="videos"><h2>About this project</h2><div class="video-grid">' + recordings.map(recording).join('') + '</div><div class="actions"><a class="text-link" href="project.html">Read my reflection</a><a class="text-link" href="#hall">Return to the museum</a></div></section>';
 const cards = deckPage(timeline('cards.html'));
 
 const read = '<div class="wrap"><header class="page-heading"><h1>Read the history</h1><p class="lead">From early shells to modern payments, with historical texts and analysis.</p><a class="text-link" href="museum.html">Visit the museum</a></header>' + timeline('read.html') +
-  periods.map(p => '<article class="history-period" id="' + p.id + '"><div class="history-copy"><p class="period-date">' + text(p.date) + '</p><h2>' + text(p.era) + '</h2><h3>' + text(p.answerTitle) + '</h3><p>' + text(p.story) + ' ' + cite(p.sources) + '</p>' + quote(p.quote) + '<details class="context"><summary>' + (p.extra ? 'More context and historical writing' : 'More context') + '</summary><p>' + text(p.more) + (p.moreSources ? ' ' + cite(p.moreSources) : '') + '</p>' + (readingAdditions[p.id] || '') + (p.extra || '') + '</details></div><div class="history-photos' + (p.photos.length > 1 ? ' multiple' : '') + '">' + p.photos.map(id => photo(id)).join('') + '</div></article>').join('') +
-  '<div class="reading-end"><p>New forms could solve one problem while creating another. Their usefulness depended on the people and institutions around them.</p><a class="button secondary" href="project.html">My journey and reflection</a></div></div>';
+  periods.map(historyPeriod).join('') +
+  '<div class="reading-end"><p>New forms could solve one problem while creating another. Their usefulness depended on the people and institutions around them.</p><a class="button secondary" href="project.html">My reflection</a></div></div>';
 
-const project = '<div class="wrap project-page"><header class="page-heading"><h1>My journey and reflection</h1><p class="lead">Why I chose money, how the website changed, and what HY2206 helped me see.</p><a class="text-link" href="index.html#videos">Watch the project videos</a></header>' +
+const project = '<div class="wrap project-page"><header class="page-heading"><h1>My reflection</h1><p class="lead">Why I chose money, how the website changed, and what HY2206 helped me see.</p><a class="text-link" href="index.html#videos">Watch the project videos</a></header>' +
   '<div class="project-layout"><aside class="project-intro"><h2>Who is this for?</h2><p>Students who use money every day but may be new to Chinese history.</p><h2>What I want to share</h2><p>Monetary change was shaped by practical needs, political choices and social acceptance. A new form could join older ones, rather than replace them.</p></aside><div class="project-writing">' +
   '<section><h2>From an interest to a website</h2><p>I first considered two topics: the development of money and the development of architecture. I chose money because it connects ancient objects with something familiar in daily life. Song jiaozi（交子）was my starting point, but I wanted to understand the longer history around it.</p><p>A website let me put objects, historical writing and my own explanation together. Based on the feedback, I reconsidered the website in this order: audience, message, then form. I focused on students encountering this history for the first time.</p></section>' +
   '<section><h2>Learning to simplify</h2><p>I initially wanted visible merchants and a game. As the prototype grew, its purpose became harder to follow. Long explanations and too many small headings also asked the reader to do too much at once.</p><p>I chose a deck of picture cards so the reader can focus on one period at a time. The first version became too much like a short history summary, so I brought object exploration, comparisons and historical texts back into the cards. I later added a three-dimensional museum while keeping the flashcards and a reading view, so visitors can choose how they explore. I now give the modes different roles: the museum invites close looking, the cards ask focused questions, and the history pages bring together the fuller narrative and historical sources.</p></section>' +
-  '<section><h2>Reflections on HY2206</h2><h3>Who sets the rules?</h3><p>The course’s discussion of Qin standardisation helped me see how political authority could shape everyday money. The Han Salt and Iron Debate raised a related question: how far should government intervene in economic life? I began to look at coins alongside the decisions about who could produce them and set their standards. ' + cite([16]) + '</p><h3>What do people trust?</h3><p>The Song lectures connected commercial growth with monetary innovation. ' + cite([17]) + ' This led me to think about the psychology of trust: do people trust the material, the issuer, or the expectation that someone else will accept it?</p><p>The <cite>History of the Song</cite> describes jiaozi issuers who could not repay what they owed. ' + cite([1, 6]) + ' I read this as a problem of confidence in a promise. Carrying paper was easier, but people still had to judge whether that promise would be kept.</p></section>' +
-  '<section><h2>How my understanding changed</h2><p>I began by looking at the shapes and materials of money. I now also look at the people behind it: who issues it, who accepts it, and why they trust it. The change from coins to paper makes more sense to me when I consider both convenience and confidence.</p><p>Building the website changed how I communicate history, too. A long page could contain plenty of information and still be difficult to follow. Organising the material into galleries and cards taught me to give visitors one clear question and an object or source to examine at a time.</p></section>' +
+  '<section><h2>Reflections on HY2206</h2><h3>Political authority shapes monetary rules</h3><p>Governments could shape money by setting coin standards and deciding who could mint it. The course’s discussion of Qin standardisation and the Han Salt and Iron Debate helped me interpret monetary change as part of government and economic policy. ' + cite([16]) + '</p><p>A Han coin could retain the inscription “half-liang” after its prescribed weight changed. ' + cite([11]) + ' My conclusion is that familiar money could depend on rules that people made and revised. Its appearance alone cannot explain how it worked.</p><h3>People trust what they expect to work</h3><p>My interpretation is that people accept money when they expect others to accept it, or an issuer to honour its promise. Trust therefore concerns an expected future action: something accepted now should remain useful later.</p><p>The Song lectures connect commercial growth with monetary innovation. ' + cite([17]) + ' Jiaozi made carrying money easier, but the <cite>History of the Song</cite> records private issuers who could no longer pay holders what they owed. ' + cite([6]) + ' This gives my interpretation a concrete basis: a lighter note did not guarantee repayment. Confidence in the issuer depended on its ability to fulfil the promise.</p></section>' +
+  '<section><h2>How my understanding changed</h2><p>I now understand monetary development as changes in convenience, rules and trust. Paper reduced carrying weight; the issuer’s ability to pay still mattered. Modern payment apps also rely on accounts and services to carry out a transaction. ' + cite([6,22,23]) + ' The conclusion I draw is that convenience lasts only when the people and institutions involved can do what users expect: honour a note or complete a payment.</p><p>Building the website changed how I communicate history, too. Each question needs an answer supported by an object or source. I want visitors to leave with a reason for a historical change, and an understanding of what that change solved or left unresolved.</p></section>' +
   '</div></div></div>';
 
 const referencePage = '<div class="wrap references-page"><header class="page-heading"><h1>Reference list</h1><p>Historical sources, course readings and image credits.</p></header><ol class="reference-list">' + references.map(r => '<li id="source-' + r.id + '">' + r.html + '</li>').join('') + '</ol></div>';
@@ -70,9 +79,9 @@ for (const [filename, title, page, body] of [
   ['cards.html', 'Explore the flashcards', 'cards', cards],
   ['museum.html', 'Eight-room museum', 'museum', museumPage()],
   ['read.html', 'Read the history', 'read', read],
-  ['project.html', 'My journey and reflection', 'project', project],
+  ['project.html', 'My reflection', 'project', project],
   ['references.html', 'Reference list', 'references', referencePage],
-  ['consultation.html', 'My journey and reflection', 'project', project]
+  ['consultation.html', 'My reflection', 'project', project]
 ]) {
   await writeFile(new URL(filename, import.meta.url), layout(title, page, body));
   console.log('Built ' + filename);
