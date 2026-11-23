@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261123-gallery-titles';
+import { buildArchitecture } from './museum-architecture.js?v=20261123-gallery-dates';
 import { rooms, hallViewZ } from './museum-data.js?v=20261123-dates-redemption';
 import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-dates-redemption';
 import { photos } from './exhibit-data.js?v=20261123-dates-redemption';
