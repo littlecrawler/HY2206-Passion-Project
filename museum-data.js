@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261123-object-copy';
+import { periods } from './exhibit-data.js?v=20261123-photo-study';
 
 export const hallViewZ = 18;
 

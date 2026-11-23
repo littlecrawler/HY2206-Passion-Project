@@ -10,54 +10,6 @@ export const flashcardContent = {
   today: { intro: 'A quick scan connects people, funds and payment services.', answer: 'WeChat Pay（微信支付）and Alipay（支付寶）let people start payments with a code. Completing the payment still depends on funds, participating merchants and service providers.', sources: [22, 23], interactive: true }
 };
 
-export const cardChallenges = {
-  'early-money': {
-    title: 'What can the photograph tell you?', photos: ['cowries'],
-    prompt: 'Which question needs evidence beyond this photograph?',
-    options: [['shape', 'What shape are the shells?'], ['acceptance', 'Who accepted them as payment?']], correct: 'acceptance',
-    responses: {
-      shape: ['Look again', 'Their shape is visible. Who accepted them—and how widely—is not shown.'],
-      acceptance: ['Beyond appearance', 'The photo shows shells. Other evidence is needed to establish where they circulated and who accepted them.']
-    }, sources: [9, 10]
-  },
-  'warring-states': {
-    title: 'Compare the two forms', photos: ['spades', 'knives'],
-    prompt: 'How should these objects fit into the story?',
-    options: [['sequence', 'One form replaced the other'], ['regions', 'Different forms coexisted']], correct: 'regions',
-    responses: {
-      sequence: ['Not a simple sequence', 'These forms belonged to different regions. The photographs do not establish that one replaced the other.'],
-      regions: ['Regional variety', 'Spade and knife money coexisted across different regions. Their shapes do not mark a simple sequence of replacements.']
-    }, sources: [9, 10]
-  },
-  'qin-han': {
-    title: 'Does the name fix the weight?', photos: ['banliangDetail'],
-    prompt: 'The Han account describes four-zhu coins still inscribed “half-liang”. What follows?',
-    options: [['weight', 'The name always states the weight'], ['name', 'A name can outlast a weight standard']], correct: 'name',
-    responses: {
-      weight: ['Read the account', 'The name stayed “half-liang” while the account gives a four-zhu weight. The inscription alone is not a measurement.'],
-      name: ['Name and weight differ', 'The name remained while the prescribed weight changed. The text tells us what the inscription alone cannot.']
-    }, sources: [11]
-  },
-  tang: {
-    title: 'What changed in the inscription?', photos: ['tang'],
-    prompt: 'Banliang means “half-liang”. Kaiyuan tongbao uses the language of “circulating treasure”. What changed?',
-    options: [['naming', 'How money was named'], ['shape', 'The round, square-holed shape']], correct: 'naming',
-    responses: {
-      naming: ['A change in naming', 'The inscription moved away from a weight-based name. The round outline and square opening continued.'],
-      shape: ['The shape continued', 'Look at the outline and opening. The clearer change is the inscription: “circulating treasure” replaces a weight-based name.']
-    }, sources: [13]
-  },
-  yuan: {
-    title: 'A printed amount, a lasting value?', photos: ['yuan'],
-    prompt: 'A note keeps its printed denomination. Does that mean its value must remain stable?',
-    options: [['number', 'Yes, the printed number fixes its value'], ['system', 'No, the monetary system also matters']], correct: 'system',
-    responses: {
-      number: ['Look beyond the number', 'A printed amount does not fix a note’s value in trade. Political and fiscal conditions also mattered.'],
-      system: ['A changing system', 'As Mongol rule weakened, silver displaced notes in private commerce. Printed denominations did not guarantee lasting value.']
-    }, sources: [14]
-  }
-};
-
 export const objectNotes = {
   wechatpay: { note: 'Customers can scan a merchant’s code or show their own payment code for the merchant to scan.', sources: [22] },
   alipay: { note: 'A payment can draw on a wallet balance or a linked card.', sources: [23] },

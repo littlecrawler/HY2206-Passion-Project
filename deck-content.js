@@ -1,17 +1,16 @@
-import { photos } from './exhibit-data.js?v=20261123-object-copy';
-import { cardChallenges } from './mode-content.js?v=20261123-object-copy';
+import { photos } from './exhibit-data.js?v=20261123-photo-study';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
 export const cite = ids => ids.map(id => '<a class="citation" href="references.html#source-' + id + '" aria-label="Reference ' + id + '">[' + id + ']</a>').join(' ');
-export const defaults = () => ({ money: 'iron', issuer: 'repaid', transaction: 'market', paymentLayer: 0, response: null });
+export const defaults = () => ({ money: 'iron', issuer: 'repaid', transaction: 'market', paymentLayer: 0 });
 
 function choices(action, options, selected, label) {
   return '<div class="activity-choices" role="group" aria-label="' + label + '">' + options.map(([value, label]) => '<button type="button" data-action="' + action + '" data-value="' + value + '" aria-pressed="' + (String(selected) === String(value)) + '">' + label + '</button>').join('') + '</div>';
 }
-function picture(id, className = '') {
+function picture(id, className = '', enlargeLabel = false) {
   const p = photos[id];
-  return '<button type="button" class="activity-photo ' + className + '" data-photo="' + id + '" aria-label="Enlarge ' + escape(p.title) + '"><img src="' + p.src + '" alt="' + escape(p.alt) + '"></button>';
+  return '<button type="button" class="activity-photo ' + className + '" data-photo="' + id + '" aria-label="Enlarge ' + escape(p.title) + '"><img src="' + p.src + '" alt="' + escape(p.alt) + '">' + (enlargeLabel ? '<span class="photo-enlarge-label"><span aria-hidden="true">⤢</span> Enlarge</span>' : '') + '</button>';
 }
 function feedback(title, body, sources = []) {
   return '<div class="activity-result" role="status"><h4>' + title + '</h4><p>' + body + ' ' + cite(sources) + '</p></div>';
@@ -31,15 +30,6 @@ export const readingAdditions = {
 };
 
 export function activity(period, state) {
-  const challenge = cardChallenges[period.id];
-  if (challenge) {
-    const response = challenge.responses[state.response];
-    return '<h3 class="activity-title">' + text(challenge.title) + '</h3><div class="card-challenge"><div class="challenge-objects' + (challenge.photos.length > 1 ? ' paired' : '') + '">' +
-      challenge.photos.map(id => '<figure>' + picture(id) + '<figcaption>' + text(photos[id].title) + '</figcaption></figure>').join('') +
-      '</div><div class="challenge-decision"><p>' + text(challenge.prompt) + '</p>' +
-      choices('response', challenge.options, state.response, challenge.title) + '</div></div>' +
-      (response ? '<div class="challenge-response" data-correct="' + (state.response === challenge.correct) + '">' + feedback(response[0], text(response[1]), challenge.sources) + '</div>' : '');
-  }
   switch (period.id) {
     case 'song': {
       const isPaper = state.money === 'paper';
@@ -73,6 +63,8 @@ export function activity(period, state) {
         '<div class="payment-model" data-layer="' + state.paymentLayer + '"><div class="payment-screen"><img src="' + photos.wechatpay.src + '" alt="WeChat Pay"><img src="' + photos.alipay.src + '" alt="Alipay"><span>Scan to pay</span></div><div class="account-route"><span>Card or<br>wallet balance</span><span class="payment-connector" aria-hidden="true"><i></i></span><span>Merchant<br>receives payment</span></div><div class="institution-band">Payment providers · confirmation · records</div></div>' +
         feedback(l[0], l[1], [l[2]]);
     }
-    default: return '';
+    default:
+      return '<div class="card-photo-study' + (period.photos.length > 1 ? ' paired' : '') + '">' +
+        period.photos.map(id => '<figure>' + picture(id, '', true) + '<figcaption>' + text(photos[id].title) + '</figcaption></figure>').join('') + '</div>';
   }
 }
