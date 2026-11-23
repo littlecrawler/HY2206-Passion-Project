@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261123-smooth-navigation';
+import { periods } from './exhibit-data.js?v=20261123-reflection';
 
 export const hallViewZ = 18;
 

@@ -83,7 +83,7 @@ export const periods = [
     answerTitle: 'A payment moves money through a system.',
     story: 'Modern money includes cash and bank deposits. PayNow, a familiar Singapore example, transfers funds between participating bank or e-wallet accounts. The phone is a way to make a payment; acceptance, institutions and reliable records still matter.',
     sources: [3, 4], photos: ['paynow'],
-    more: 'Between the imperial period and today, China moved through silver-based monetary arrangements towards modern fiat currency. PayNow is a comparison from Singapore, not a Chinese currency or a direct descendant of jiaozi. The connection is the continuing question of what makes a payment work.',
+    more: 'Between the imperial period and today, China moved through silver-based monetary arrangements towards modern fiat currency.',
     moreSources: [15]
   }
 ];

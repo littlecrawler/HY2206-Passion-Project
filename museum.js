@@ -1,6 +1,6 @@
-import { rooms } from './museum-data.js?v=20261123-smooth-navigation';
-import { photos } from './exhibit-data.js?v=20261123-smooth-navigation';
-import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261123-smooth-navigation';
+import { rooms } from './museum-data.js?v=20261123-reflection';
+import { photos } from './exhibit-data.js?v=20261123-reflection';
+import { activity, evidence, defaults, text, escape, cite } from './deck-content.js?v=20261123-reflection';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
@@ -153,7 +153,7 @@ export function initMuseum() {
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261123-smooth-navigation').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+  import('./museum-scene.js?v=20261123-reflection').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
     initialRoom:current,reducedMotion:reduce.matches,onSelect:focusObject,onLeaveObject:leaveObject,onRoom:index=>goTo(index),
     onObjectPositions(positions){
       positions.forEach(({id,x,y,visible})=>{
