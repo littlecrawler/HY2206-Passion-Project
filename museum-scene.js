@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261123-dates-redemption';
+import { buildArchitecture } from './museum-architecture.js?v=20261123-gallery-titles';
 import { rooms, hallViewZ } from './museum-data.js?v=20261123-dates-redemption';
 import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-dates-redemption';
 import { photos } from './exhibit-data.js?v=20261123-dates-redemption';
@@ -47,15 +47,15 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   function box(parent, w, h, d, x, y, z, material = mats.wall) {
     const mesh = new THREE.Mesh(cube, material); mesh.scale.set(w, h, d); mesh.position.set(x, y, z);mesh.castShadow=true;mesh.receiveShadow=true; parent.add(mesh); solids.push(mesh); return mesh;
   }
-  function writing(parent, lines, w, h, x, y, z, { color = '#e0e8eb', size = 70 } = {}) {
+  function writing(parent, lines, w, h, x, y, z, { color = '#e0e8eb', size = 70, weight = 500 } = {}) {
     const c = document.createElement('canvas'); c.width = 1536; c.height = Math.round(1536 * h / w);
     const ctx = c.getContext('2d'); ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     const values = Array.isArray(lines) ? lines : [lines];
     values.forEach((value, i) => {
-      ctx.font = (i ? '400 ' : '500 ') + (i ? size * .58 : size) + 'px "Trebuchet MS","Microsoft JhengHei",sans-serif';
+      ctx.font = (i ? 400 : weight) + ' ' + (i ? size * .58 : size) + 'px "Trebuchet MS","Microsoft JhengHei",sans-serif';
       ctx.fillText(value, c.width / 2, c.height * (i + .5) / values.length, c.width - 40);
     });
-    const map = new THREE.CanvasTexture(c); map.colorSpace = THREE.SRGBColorSpace; resources.push(map);
+    const map = new THREE.CanvasTexture(c); map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); resources.push(map);
     const mat = new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, toneMapped: false, fog: false }); resources.push(mat);
     const geo = new THREE.PlaneGeometry(w, h); resources.push(geo);
     const mesh = new THREE.Mesh(geo, mat); mesh.position.set(x, y, z); parent.add(mesh); return mesh;

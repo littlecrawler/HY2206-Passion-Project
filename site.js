@@ -115,5 +115,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261123-dates-redemption').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261123-gallery-titles').then(({ initMuseum }) => initMuseum());
 }

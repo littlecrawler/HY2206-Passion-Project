@@ -54,8 +54,8 @@ export function buildArchitecture(scene, { renderer, box, writing, photograph, m
     box(group,5.65,.14,.3,0,6.55,6.15,mats.metal);
     box(group,5.5,.032,.06,0,6.53,6.33,light);
     box(group,5.4,.015,.65,0,.018,6.12,mats.metal);
-    writing(group,room.label,5.5,.72,0,7.6,6.32,{size:140});
-    writing(group,room.date,5.5,.45,0,6.94,6.32,{size:85,color:'#a9c0cd'});
+    writing(group,room.label,5.5,1.05,0,7.85,6.32,{size:196,weight:700,color:'#edf4f8'});
+    writing(group,room.date,5.5,.55,0,7.02,6.32,{size:110,color:'#bfd2dc'});
     writing(group,String(index+1).padStart(2,'0'),.8,.5,-3.5,5.9,6.3,{size:260,color:'#b3cbd6'});
     const portal=new THREE.Mesh(new THREE.PlaneGeometry(5.5,6.5),new THREE.MeshBasicMaterial({visible:false,side:THREE.DoubleSide}));portal.position.set(0,3.25,6.4);portal.userData.room=index;group.add(portal);selectables.push(portal);resources.push(portal.geometry,portal.material);
     box(group,6.7,.035,.14,0,8.25,-4.5,mats.white);
