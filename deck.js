@@ -1,7 +1,7 @@
-import { photos, periods } from './exhibit-data.js?v=20261123-pan-dismiss';
-import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-pan-dismiss';
-import { flashcardContent } from './mode-content.js?v=20261123-pan-dismiss';
-import { createMagnifiers } from './magnifier.js?v=20261123-pan-dismiss';
+import { photos, periods } from './exhibit-data.js?v=20261123-dates-redemption';
+import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-dates-redemption';
+import { flashcardContent } from './mode-content.js?v=20261123-dates-redemption';
+import { createMagnifiers } from './magnifier.js?v=20261123-dates-redemption';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -297,7 +297,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261123-pan-dismiss').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261123-dates-redemption').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
     onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}

@@ -59,7 +59,7 @@ export const periods = [
     story: 'In Sichuan, heavy iron cash made payments cumbersome. Merchants issued paper jiaozi（交子）, and the government later took over issuance. Paper reduced the burden of carrying coins, but its usefulness depended on acceptance and the issuer’s ability to honour it.',
     sources: [1, 2, 6], photos: ['iron'],
     quote: { english: 'Iron cash was heavy, inconvenient for trade.', chinese: '鐵錢重，不便貿易', attribution: 'History of the Song（宋史）, vol. 181', source: 6 },
-    more: 'The History of the Song also describes issuers who could not repay their obligations. Compiled under the Yuan, it is a later historical account of the Song. The pictured Northern Song iron coin illustrates the material; it is not a surviving jiaozi note.',
+    more: 'The History of the Song also describes private issuers who lacked the funds to redeem holders’ jiaozi for coins. Compiled under the Yuan, it is a later historical account of the Song. The pictured Northern Song iron coin illustrates the material; it is not a surviving jiaozi note.',
     extra: '<div class="text-evidence"><h3>Commerce in Song writing</h3><blockquote><p>“Night markets lasted until the third watch.”</p><p lang="zh-Hant">（夜市直至三更盡）</p><cite>Meng Yuanlao, Dreams of the Splendour of the Eastern Capital（東京夢華錄）, vol. 3. <a href="references.html#source-7">[7]</a></cite></blockquote><p>Meng recalls the markets of Kaifeng. In a different city, Liu Yong evokes Hangzhou: “Markets display pearls and gems; households brim with fine silks.” <span lang="zh-Hant">（市列珠璣，戶盈羅綺）</span> <a href="references.html#source-8">[8]</a></p><p>Memoir and poetry bring urban commerce into view. Neither passage tells us how widely jiaozi circulated in Sichuan.</p></div>'
   },
   {
@@ -79,7 +79,7 @@ export const periods = [
     more: 'The Ming note pictures strings of coins: one monetary form represented value through another. In the Qing economy, changing between silver and copper mattered because their exchange rate was not fixed everywhere or for all time.'
   },
   {
-    id: 'today', label: 'Today', date: '20th–21st centuries', era: 'Mobile payments in contemporary China',
+    id: 'today', label: 'Today', date: '21st century', era: 'Mobile payments in contemporary China',
     question: 'What happens when we scan to pay?',
     answerTitle: 'A scan starts a payment.',
     story: 'In contemporary China, people can pay with WeChat Pay（微信支付）and Alipay（支付寶）by scanning a merchant’s code or showing their own payment code. These services change how a payment begins. The money still comes from a funding source: Alipay, for example, offers payment from a wallet balance or linked bank card.',

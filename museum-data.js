@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261123-pan-dismiss';
+import { periods } from './exhibit-data.js?v=20261123-dates-redemption';
 
 export const hallViewZ = 18;
 

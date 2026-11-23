@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
 import { CSS3DObject, CSS3DRenderer } from './vendor/three/CSS3DRenderer.js';
-import { periods, photos } from './exhibit-data.js?v=20261123-pan-dismiss';
-import { flashcardContent } from './mode-content.js?v=20261123-pan-dismiss';
+import { periods, photos } from './exhibit-data.js?v=20261123-dates-redemption';
+import { flashcardContent } from './mode-content.js?v=20261123-dates-redemption';
 
 const ease = t => t * t * (3 - 2 * t);
 const settleEase = t => t * t * t * (t * (t * 6 - 15) + 10);

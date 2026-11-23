@@ -1,5 +1,5 @@
-import { photos } from './exhibit-data.js?v=20261123-pan-dismiss';
-import { initDeck } from './deck.js?v=20261123-pan-dismiss';
+import { photos } from './exhibit-data.js?v=20261123-dates-redemption';
+import { initDeck } from './deck.js?v=20261123-dates-redemption';
 
 // Keep bookmarks from earlier versions useful.
 if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) {
@@ -115,5 +115,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261123-pan-dismiss').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261123-dates-redemption').then(({ initMuseum }) => initMuseum());
 }
