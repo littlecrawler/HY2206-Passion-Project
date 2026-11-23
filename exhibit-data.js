@@ -118,8 +118,7 @@ export const references = [
   { id: 26, html: 'Shao, Zhen, Lin Zhang, Xiaotong Li, and Yue Guo. “Antecedents of Trust and Continuance Intention in Mobile Payment Platforms: The Moderating Effect of Gender.” <cite>Electronic Commerce Research and Applications</cite> 33 (2019): 100823. <a href="https://doi.org/10.1016/j.elerap.2018.100823">DOI</a>. <a href="https://kclpure.kcl.ac.uk/portal/en/publications/antecedents-of-trust-and-continuance-intention-in-mobile-payment-/">Abstract</a>.' }
 ];
 
-// Fill in these local file paths after recording. Do not publish mock recordings.
 export const recordings = [
-  { id: 'purpose', title: 'Why use this website?', description: 'Who it is for, what it explores, and how to begin.', src: '', captions: '' },
-  { id: 'journey', title: 'My Journey &amp; Reflections', description: 'How the idea took shape and what I learned.', src: '', captions: '' }
+  { id: 'purpose', title: 'Why use this website?', description: 'Who it is for, what it explores, and how to begin.', src: 'assets/videos/website-introduction.mp4', captions: 'assets/videos/website-introduction.en.vtt', poster: 'assets/videos/website-introduction.jpg' },
+  { id: 'journey', title: 'My Journey &amp; Reflections', description: 'How the idea took shape and what I learned.', src: 'assets/videos/journey-and-reflections.mp4', captions: 'assets/videos/journey-and-reflections.en.vtt', poster: 'assets/videos/journey-and-reflections.jpg' }
 ];

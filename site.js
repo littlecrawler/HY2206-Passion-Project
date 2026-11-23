@@ -44,6 +44,10 @@ window.matchMedia('(min-width: 1061px)').addEventListener('change', closeMenu);
 
 const videosSection = document.querySelector('#videos');
 if (videosSection) {
+  const recordings = [...videosSection.querySelectorAll('video')];
+  recordings.forEach(recording => recording.addEventListener('play', () => {
+    recordings.forEach(other => { if (other !== recording) other.pause(); });
+  }));
   const museumLink = navigation.querySelector('a[href="museum.html"]');
   const videosLink = navigation.querySelector('a[href="index.html#videos"]');
   function markVideos(active) {

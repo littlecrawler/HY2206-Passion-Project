@@ -4,7 +4,7 @@ import { deckPage } from './deck-template.mjs';
 import { readingAdditions } from './deck-content.js';
 import { museumPage } from './museum-template.mjs';
 
-const version = '20261123-gallery-dates';
+const version = '20261123-recorded-videos';
 await mkdir(new URL('vendor/three/', import.meta.url), { recursive: true });
 for (const [source, target] of [['build/three.module.min.js','three.module.min.js'],['build/three.core.min.js','three.core.min.js'],['examples/jsm/environments/RoomEnvironment.js','RoomEnvironment.js'],['examples/jsm/objects/Reflector.js','Reflector.js'],['examples/jsm/renderers/CSS3DRenderer.js','CSS3DRenderer.js'],['LICENSE','LICENSE']]) {
   await copyFile(new URL('node_modules/three/' + source, import.meta.url), new URL('vendor/three/' + target, import.meta.url));
@@ -51,8 +51,9 @@ function historyPeriod(period) {
 
 function recording(video) {
   const track = video.captions ? '<track kind="captions" src="' + escape(video.captions) + '" srclang="en" label="English" default>' : '';
+  const poster = video.poster ? ' poster="' + escape(video.poster) + '"' : '';
   const screen = video.src
-    ? '<video controls playsinline preload="metadata" src="' + escape(video.src) + '" aria-labelledby="' + video.id + '-title">' + track + 'Your browser does not support video playback.</video>'
+    ? '<video controls playsinline preload="metadata" src="' + escape(video.src) + '"' + poster + ' aria-labelledby="' + video.id + '-title">' + track + 'Your browser does not support video playback.</video>'
     : '<div class="video-placeholder"><svg width="52" height="44" viewBox="0 0 52 44" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="32" height="30" rx="4"/><path d="m34 16 15-8v28l-15-8z"/></svg><p>Recording coming soon</p><span>Up to 5 minutes</span></div>';
   return '<article class="recording"><h3 id="' + video.id + '-title">' + labelText(video.title) + '</h3><p>' + video.description + '</p><div class="video-screen">' + screen + '</div></article>';
 }
