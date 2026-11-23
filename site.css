@@ -80,7 +80,8 @@ button img { pointer-events: none; }
 .video-placeholder p { font-size: 23px; }
 .video-placeholder span { font-size: 19px; }
 .video-screen video { display: block; width: 100%; height: 100%; min-width: 0; object-fit: contain; background: #0b1721; }
-.video-screen video::cue { font-family: Arial, Helvetica, sans-serif; font-size: clamp(14px, 1.5vw, 26px); color: #fff; background-color: rgb(0 0 0 / 80%); text-shadow: 0 1px 2px #000; }
+.video-screen video::cue { font-family: Arial, Helvetica, sans-serif; font-size: clamp(14px, 1.15vw, 20px); color: #fff; background-color: rgb(0 0 0 / 80%); text-shadow: 0 1px 2px #000; }
+.video-screen video:fullscreen::cue { font-size: clamp(24px, 2.4vw, 44px); }
 .video-screen .plyr {
   width: 100%; height: 100%; min-width: 0;
   --plyr-color-main: #bdd6e1;
@@ -88,13 +89,15 @@ button img { pointer-events: none; }
   --plyr-font-family: Arial, Helvetica, sans-serif;
   --plyr-font-size-small: 14px;
   --plyr-font-size-base: 16px;
+  --plyr-font-size-xlarge: clamp(24px, 2.4vw, 44px);
   --plyr-menu-background: #11212f;
   --plyr-menu-color: #e4ebf0;
   --plyr-tooltip-background: #e4ebf0;
   --plyr-tooltip-color: #14232c;
 }
 .video-screen .plyr__video-wrapper { height: 100%; }
-.video-screen .plyr__captions { font-size: clamp(14px, 1.5vw, 26px); }
+.video-screen .plyr__captions { font-size: clamp(14px, 1.15vw, 20px); }
+.video-screen .plyr:is(:fullscreen, .plyr--fullscreen-fallback) .plyr__captions { font-size: clamp(24px, 2.4vw, 44px); }
 .video-screen .plyr__caption { font-family: Arial, Helvetica, sans-serif; line-height: 1.5; background: rgb(0 0 0 / 80%); }
 .video-screen .plyr__control--overlaid { color: #14232c; }
 .video-screen .plyr__menu__container { font-family: Arial, Helvetica, sans-serif; }
