@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261123-mode-roles';
-import { rooms, hallViewZ } from './museum-data.js?v=20261123-mode-roles';
-import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-mode-roles';
-import { photos } from './exhibit-data.js?v=20261123-mode-roles';
+import { buildArchitecture } from './museum-architecture.js?v=20261123-card-activities';
+import { rooms, hallViewZ } from './museum-data.js?v=20261123-card-activities';
+import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-card-activities';
+import { photos } from './exhibit-data.js?v=20261123-card-activities';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
@@ -18,16 +18,16 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   renderer.toneMappingExposure = 1.1;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#0b1722'); scene.fog = new THREE.Fog('#0b1722', 40, 85);
+  scene.background = new THREE.Color('#0b1722'); scene.fog = new THREE.Fog('#0b1722', 65, 115);
   const environment = new RoomEnvironment(), pmrem = new THREE.PMREMGenerator(renderer);
   const env = pmrem.fromScene(environment, .04);
   scene.environment = env.texture; scene.environmentIntensity = .32;
   environment.dispose(); pmrem.dispose();
   const camera = new THREE.PerspectiveCamera(61, 1, .1, 130);
   scene.add(new THREE.HemisphereLight(0xd2e4ef, 0x18222c, .95));
+  scene.add(new THREE.AmbientLight(0xd2e4ef, .35));
   const skylight = new THREE.DirectionalLight(0xeaf4fa, 2.4);
-  skylight.position.set(-7, 16, 8);skylight.castShadow=true;skylight.shadow.mapSize.set(2048,2048);skylight.shadow.camera.left=-25;skylight.shadow.camera.right=25;skylight.shadow.camera.top=25;skylight.shadow.camera.bottom=-25;skylight.shadow.normalBias=.04;skylight.shadow.bias=-.0002;scene.add(skylight);
-  const galleryLight = new THREE.PointLight(0xffe9d0, 180, 18, 1.8); scene.add(galleryLight);
+  skylight.position.set(0, 18, 0);skylight.castShadow=true;skylight.shadow.mapSize.set(2048,2048);skylight.shadow.camera.left=-25;skylight.shadow.camera.right=25;skylight.shadow.camera.top=25;skylight.shadow.camera.bottom=-25;skylight.shadow.normalBias=.04;skylight.shadow.bias=-.0002;scene.add(skylight);
   const mats = {
     wall: new THREE.MeshStandardMaterial({ color: '#253744', roughness: .85 }),
     gallery: new THREE.MeshStandardMaterial({ color: '#1e2c37', roughness: .9 }),
@@ -56,7 +56,7 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
       ctx.fillText(value, c.width / 2, c.height * (i + .5) / values.length, c.width - 40);
     });
     const map = new THREE.CanvasTexture(c); map.colorSpace = THREE.SRGBColorSpace; resources.push(map);
-    const mat = new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, toneMapped: false }); resources.push(mat);
+    const mat = new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, toneMapped: false, fog: false }); resources.push(mat);
     const geo = new THREE.PlaneGeometry(w, h); resources.push(geo);
     const mesh = new THREE.Mesh(geo, mat); mesh.position.set(x, y, z); parent.add(mesh); return mesh;
   }
@@ -91,7 +91,8 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
       const pw = Math.min(w - .18, (h - .18) * ratio), ph = pw / ratio;
       target.w=pw;target.h=ph;
       const geo = new THREE.PlaneGeometry(pw, ph); resources.push(geo);
-      const mat = new THREE.MeshBasicMaterial({ map, toneMapped: false }); resources.push(mat);
+      // Documentary images keep their source brightness at every viewing distance.
+      const mat = new THREE.MeshBasicMaterial({ map, toneMapped: false, fog: false }); resources.push(mat);
       const photo = new THREE.Mesh(geo, mat); photo.position.z = .101; photo.userData = { photo: id, room: roomIndex, hallPreview };
       group.add(photo); selectables.push(photo); requestFrame();
       if(!hallPreview&&roomIndex===current&&focusedPhoto===id)focusPhoto(id,false);
@@ -146,10 +147,6 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
     spherical.theta += yaw; spherical.phi = clamp(spherical.phi + pitch, .35, Math.PI - .35);
     camera.lookAt(pose.position.clone().add(new THREE.Vector3().setFromSpherical(spherical)));
   }
-  function setLight(index) {
-    galleryLight.intensity = index < 0 ? 0 : 100;
-    if (index >= 0) galleryLight.position.copy(localPoint(index, 0, 7, 1));
-  }
   function projection() {
     return {fov:camera.fov,x:camera.view?.enabled?camera.view.offsetX:0,y:camera.view?.enabled?camera.view.offsetY:0};
   }
@@ -174,7 +171,7 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
     const fromProjection=projection();
     const previous = current; current = index; yaw = pitch = 0; focusedPhoto=null;
     camera.fov=small?68:(index<0?58:50);setFraming();camera.updateProjectionMatrix();
-    const end = destination(index); setLight(index);
+    const end = destination(index);
     if (!animate || reducedMotion) {
       moving = null; pose.position.copy(end.position); pose.target.copy(end.target); onTravel?.(false); requestFrame(); return;
     }
@@ -265,7 +262,7 @@ export async function createMuseum(canvas, { onSelect, onLeaveObject, onRoom, on
   function visibility() { if (document.hidden) { cancelAnimationFrame(frame); frame = 0; } else requestFrame(); }
   document.addEventListener('visibilitychange', visibility);
   const observer = new ResizeObserver(resize); observer.observe(canvas.parentElement);
-  resize();setLight(current);cameraUpdate();renderer.render(scene,camera);onReady?.();
+  resize();cameraUpdate();renderer.render(scene,camera);onReady?.();
   Promise.all(photoTasks).then(requestFrame);
   return {
     show,focusPhoto,

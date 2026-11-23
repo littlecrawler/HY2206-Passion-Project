@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
 import { CSS3DObject, CSS3DRenderer } from './vendor/three/CSS3DRenderer.js';
-import { periods, photos } from './exhibit-data.js?v=20261123-mode-roles';
+import { periods, photos } from './exhibit-data.js?v=20261123-card-activities';
+import { flashcardContent } from './mode-content.js?v=20261123-card-activities';
 
 const ease = t => t * t * (3 - 2 * t);
 const settleEase = t => t * t * t * (t * (t * 6 - 15) + 10);
@@ -62,25 +63,29 @@ export async function createDeckScene(canvas, { initialIndex=0, photoId, backEle
     geometryResources.push(g);return g;
   }
   function wrap(ctx,value,x,y,maxWidth,lineHeight,maxLines=4) {
-    const words=value.split(' ');let line='',lines=0;
-    for(const word of words){const next=line?line+' '+word:word;if(ctx.measureText(next).width>maxWidth&&line){ctx.fillText(line,x,y);y+=lineHeight;line=word;lines++;if(lines>=maxLines-1)break;}else line=next;}
-    ctx.fillText(line,x,y);return y+lineHeight;
+    const lines=[];let line='';
+    for(const word of value.split(' ')){const next=line?line+' '+word:word;if(ctx.measureText(next).width>maxWidth&&line){lines.push(line);line=word;}else line=next;}
+    lines.push(line);
+    if(lines.length>maxLines){lines.length=maxLines;let last=lines[maxLines-1];while(ctx.measureText(last+'…').width>maxWidth)last=last.slice(0,-1);lines[maxLines-1]=last+'…';}
+    lines.forEach((line,i)=>ctx.fillText(line,x,y+i*lineHeight));return y+lines.length*lineHeight;
   }
   function baseCanvas() { const c=document.createElement('canvas');c.width=(small?720:1400)*2;c.height=(small?1024:750)*2;c.getContext('2d').scale(2,2);return c; }
   async function frontTexture(index,id) {
     const portrait=small,c=baseCanvas(),ctx=c.getContext('2d'),w=c.width/2,h=c.height/2,p=periods[index],img=await loadImage(id);
     const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#1b3549');bg.addColorStop(1,'#0b1828');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
     ctx.strokeStyle=colors[index]+'99';ctx.lineWidth=2;ctx.strokeRect(20,20,w-40,h-40);
-    const x=portrait?42:48,y=portrait?230:130,boxW=portrait?w-84:590,boxH=portrait?440:530;
+    const x=portrait?42:48,y=portrait?230:130,boxW=portrait?w-84:590,boxH=portrait?365:530;
     ctx.fillStyle=photos[id].background||'#0c1821';ctx.fillRect(x,y,boxW,boxH);
     if(img){const padding=photos[id].background ? .82 : 1,ratio=Math.min(boxW/img.width,boxH/img.height)*padding;ctx.drawImage(img,x+(boxW-img.width*ratio)/2,y+(boxH-img.height*ratio)/2,img.width*ratio,img.height*ratio);}
     ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle=colors[index];ctx.font='500 '+(portrait?30:30)+'px "Trebuchet MS",sans-serif';
     ctx.fillText(String(index+1).padStart(2,'0')+' / 08',portrait?46:50,portrait?70:72);
     ctx.fillStyle='#f0f4f1';ctx.font='500 '+(portrait?72:82)+'px "Trebuchet MS",sans-serif';
-    let end=wrap(ctx,p.label,portrait?42:700,portrait?150:205,portrait?630:520,portrait?67:82,2);
+    let end=wrap(ctx,p.label,portrait?42:700,portrait?150:180,portrait?630:520,portrait?67:82,2);
     ctx.fillStyle=colors[index];ctx.font=(portrait?38:34)+'px "Trebuchet MS",sans-serif';ctx.fillText(p.date,portrait?44:704,portrait?204:end+12);
-    ctx.fillStyle='#e1eaf0';ctx.font=(portrait?54:53)+'px "Times New Roman",serif';
-    wrap(ctx,p.question,portrait?44:704,portrait?740:end+99,portrait?625:500,portrait?62:65,4);
+    ctx.fillStyle='#e1eaf0';ctx.font=(portrait?50:48)+'px "Times New Roman",serif';
+    const questionEnd=wrap(ctx,p.question,portrait?44:704,portrait?665:end+90,portrait?625:500,portrait?58:56,3);
+    ctx.fillStyle='#bcd1dd';ctx.font=(portrait?44:34)+'px "Times New Roman",serif';
+    wrap(ctx,flashcardContent[p.id].intro,portrait?44:704,questionEnd+20,portrait?625:500,portrait?52:42,3);
     return texture(c);
   }
   function clearRig() {

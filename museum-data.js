@@ -1,4 +1,4 @@
-import { periods } from './exhibit-data.js?v=20261123-mode-roles';
+import { periods } from './exhibit-data.js?v=20261123-card-activities';
 
 export const hallViewZ = 18;
 

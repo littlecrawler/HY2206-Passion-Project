@@ -1,6 +1,6 @@
-import { photos, periods } from './exhibit-data.js?v=20261123-mode-roles';
-import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-mode-roles';
-import { flashcardContent } from './mode-content.js?v=20261123-mode-roles';
+import { photos, periods } from './exhibit-data.js?v=20261123-card-activities';
+import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-card-activities';
+import { flashcardContent } from './mode-content.js?v=20261123-card-activities';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -123,9 +123,10 @@ export function initDeck() {
     document.querySelector('#card-title').textContent = p.label;
     document.querySelector('#back-title').textContent = p.label;
     document.querySelector('#card-question').textContent = p.question;
+    document.querySelector('#card-intro').textContent = flashcardContent[p.id].intro;
     document.querySelectorAll('.deck-number').forEach(node => { node.textContent = String(current + 1).padStart(2, '0'); });
     document.querySelector('#read-current').href = 'read.html#' + p.id;
-    stage.setAttribute('aria-label', p.label + '. ' + p.date + '. ' + p.question + ' Enter turns the card; left and right keys change periods.');
+    stage.setAttribute('aria-label', p.label + '. ' + p.date + '. ' + p.question + ' ' + flashcardContent[p.id].intro + ' Enter turns the card; left and right keys change periods.');
     document.querySelector('#photo-choices').innerHTML = p.photos.length > 1 ? p.photos.map(id => '<button class="photo-choice" type="button" data-object="' + id + '" aria-pressed="false">' + text(photos[id].title.split('（')[0].trim()) + '</button>').join('') : '';
     document.querySelector('#deck-photo-options').innerHTML = p.photos.length > 1 ? p.photos.map(id => '<button class="photo-choice" type="button" data-deck-photo="' + id + '" aria-pressed="false">' + text(photos[id].title.split('（')[0].trim()) + '</button>').join('') : '';
     deckScene?.show(current,states[current].photo||p.photos[0],enter);
@@ -235,7 +236,7 @@ export function initDeck() {
     states[current].pane = button.dataset.pane;
     renderPanel();
   });
-  const actionKeys = { money: 'money', issuer: 'issuer', transaction: 'transaction', payment: 'paymentLayer' };
+  const actionKeys = { money: 'money', issuer: 'issuer', transaction: 'transaction', payment: 'paymentLayer', response: 'response' };
   panel.addEventListener('click', event => {
     const button = event.target.closest('button[data-action]');
     if (!button) return;
@@ -248,6 +249,12 @@ export function initDeck() {
     panel.querySelectorAll('button[data-action]').forEach(candidate => {
       if (candidate.dataset.action === action && candidate.dataset.value === value) candidate.focus({ preventScroll: true });
     });
+    if (action === 'response') {
+      const result = panel.querySelector('.challenge-response');
+      const resultBox = result.getBoundingClientRect(), cardBox = back.getBoundingClientRect();
+      const overflow = resultBox.height > cardBox.height - 48 ? resultBox.top - cardBox.top - 20 : resultBox.bottom - cardBox.bottom + 24;
+      if (overflow > 0) back.scrollBy({ top: overflow, behavior: reduce.matches ? 'instant' : 'smooth' });
+    }
   });
   stage.addEventListener('keydown', event => {
     if (event.target !== stage) return;
@@ -280,7 +287,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261123-mode-roles').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261123-card-activities').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
     onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}

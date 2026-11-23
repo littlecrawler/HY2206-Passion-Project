@@ -1,9 +1,10 @@
-import { photos } from './exhibit-data.js?v=20261123-mode-roles';
+import { photos } from './exhibit-data.js?v=20261123-card-activities';
+import { cardChallenges } from './mode-content.js?v=20261123-card-activities';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
 export const cite = ids => ids.map(id => '<a class="citation" href="references.html#source-' + id + '" aria-label="Reference ' + id + '">[' + id + ']</a>').join(' ');
-export const defaults = () => ({ money: 'iron', issuer: 'repaid', transaction: 'market', paymentLayer: 0 });
+export const defaults = () => ({ money: 'iron', issuer: 'repaid', transaction: 'market', paymentLayer: 0, response: null });
 
 function choices(action, options, selected, label) {
   return '<div class="activity-choices" role="group" aria-label="' + label + '">' + options.map(([value, label]) => '<button type="button" data-action="' + action + '" data-value="' + value + '" aria-pressed="' + (String(selected) === String(value)) + '">' + label + '</button>').join('') + '</div>';
@@ -30,13 +31,22 @@ export const readingAdditions = {
 };
 
 export function activity(period, state) {
+  const challenge = cardChallenges[period.id];
+  if (challenge) {
+    const response = challenge.responses[state.response];
+    return '<h3 class="activity-title">' + text(challenge.title) + '</h3><div class="card-challenge"><div class="challenge-objects' + (challenge.photos.length > 1 ? ' paired' : '') + '">' +
+      challenge.photos.map(id => '<figure>' + picture(id) + '<figcaption>' + text(photos[id].title) + '</figcaption></figure>').join('') +
+      '</div><div class="challenge-decision"><p>' + text(challenge.prompt) + '</p>' +
+      choices('response', challenge.options, state.response, challenge.title) + '</div></div>' +
+      (response ? '<div class="challenge-response" data-correct="' + (state.response === challenge.correct) + '">' + feedback(response[0], text(response[1]), challenge.sources) + '</div>' : '');
+  }
   switch (period.id) {
     case 'song': {
       const isPaper = state.money === 'paper';
       const repaid = state.issuer === 'repaid';
       return '<h3 class="activity-title">What would you carry to market?</h3>' +
         choices('money', [['iron','Iron cash'],['paper','Paper note']], state.money, 'Choose what to carry') +
-        '<div class="journey-comparison"><div class="journey-object">' + (isPaper ? '<figure class="paper-photograph">' + picture('songpaper') + '<figcaption>Reproduction<span lang="zh-Hant">（復刻圖）</span> ' + cite([20]) + '</figcaption></figure>' : picture('iron')) + '</div><dl class="trade-measures"><div><dt>Carrying it</dt><dd>' + (isPaper ? 'Lighter' : 'Heavy') + '</dd><span class="burden-track" aria-hidden="true"><span style="width:' + (isPaper ? '18%' : '90%') + '"></span></span></div><div><dt>What matters?</dt><dd>' + (isPaper ? 'The issuer’s promise' : 'Local acceptance') + '</dd></div></dl></div>' +
+        '<div class="journey-comparison"><div class="journey-object">' + (isPaper ? '<figure class="paper-photograph">' + picture('songpaper') + '<figcaption>Jiaozi illustration<span lang="zh-Hant">（交子示意圖）</span> ' + cite([20,25]) + '</figcaption></figure>' : picture('iron')) + '</div><dl class="trade-measures"><div><dt>Carrying it</dt><dd>' + (isPaper ? 'Lighter' : 'Heavy') + '</dd><span class="burden-track" aria-hidden="true"><span style="width:' + (isPaper ? '18%' : '90%') + '"></span></span></div><div><dt>What matters?</dt><dd>' + (isPaper ? 'The issuer’s promise' : 'Local acceptance') + '</dd></div></dl></div>' +
         (isPaper ? choices('issuer', [['repaid','If the issuer repays'],['failed','If repayment fails']], state.issuer, 'Compare repayment outcomes') : '') +
         feedback(isPaper ? (repaid ? 'A promise honoured' : 'A problem recorded in the source') : 'Metal has a carrying cost', isPaper ? (repaid ? 'If the issuer fulfils the promise, the holder can receive the money owed. The paper saves carrying weight; repayment makes the promise useful.' : 'The History of the Song records private issuers who “could not repay what they owed”（不能償所負）, followed by continuing disputes. Carrying less weight did not remove this risk.') : 'The History of the Song describes heavy iron money as inconvenient for trade. Try paper to see which problem changes—and which remains.', [6]);
     }

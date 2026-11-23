@@ -51,9 +51,9 @@ All eight files below are Gary Lee Todd photographs, released under **CC0 1.0** 
 
 The Northern Song iron coin is an illustration of the material, not an identified early Sichuan specimen. The Yuan image is identified as a museum display; the photograph alone is not an independent authentication of the object. The PayNow logo is official artwork, not an artefact photograph.
 
-## Paper-note reproduction
+## Jiaozi illustration
 
-`assets/museum/song-paper-reproduction.jpg`: unchanged 308 × 537 scan from *社會歷史博物館*, ISBN 7-5347-1397-8. [Wikimedia Commons source](https://commons.wikimedia.org/wiki/File:Jiao_zi.jpg), public domain. This is a reproduced image commonly associated with jiaozi, not a photograph of an extant original note; its identification is not treated as independent evidence. Displayed as “Reproduction（復刻圖）”.
+`assets/museum/song-paper-reproduction.jpg`: unchanged 308 × 537 scan from *社會歷史博物館*, ISBN 7-5347-1397-8. [Wikimedia Commons source](https://commons.wikimedia.org/wiki/File:Jiao_zi.jpg), public domain. Displayed as “Jiaozi illustration（交子示意圖）”. The printing-plate design’s identification is disputed; see [Xie Yuanlu’s interview](https://www.sicnu.edu.cn/info/1121/32821.htm). This is not a photograph of a surviving original jiaozi note.
 
 ## Banliang close-up
 

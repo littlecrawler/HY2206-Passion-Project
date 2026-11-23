@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Reflector } from './vendor/three/Reflector.js';
-import { rooms } from './museum-data.js?v=20261123-mode-roles';
+import { rooms } from './museum-data.js?v=20261123-card-activities';
 
 // Architectural surfaces only. Every object on display is a credited photograph.
 export function buildArchitecture(scene, { renderer, box, writing, photograph, mats, resources, selectables }) {
@@ -46,7 +46,7 @@ export function buildArchitecture(scene, { renderer, box, writing, photograph, m
     box(group,1.5,9.2,.5,-3.5,4.6,6,mats.wall);
     box(group,1.5,9.2,.5,3.5,4.6,6,mats.wall);
     box(group,5.5,2.65,.5,0,7.88,6,mats.wall);
-    const light=new THREE.MeshBasicMaterial({color:'#93b1c0',toneMapped:false});resources.push(light);portals.push(light);
+    const light=new THREE.MeshBasicMaterial({color:'#93b1c0',toneMapped:false,fog:false});resources.push(light);portals.push(light);
     for(const x of [-2.76,2.76]) {
       box(group,.14,6.55,.3,x,3.28,6.15,mats.metal);
       box(group,.032,6.5,.06,x,3.25,6.33,light);
@@ -65,7 +65,7 @@ export function buildArchitecture(scene, { renderer, box, writing, photograph, m
     room.photos.slice(1).forEach((id,n)=>{const side=n%2?1:-1;photograph(group,id,index,side*4.04,3.35,-.6,3.5,3.6,-side*Math.PI/2);});
     const entryPhoto={0:'cowries',3:'tang',6:'ming'}[index];
     if(entryPhoto) photograph(group,entryPhoto,index,-3.5,2.9,6.34,1.1,entryPhoto==='ming'?1.8:1.1,0,true);
-    const lightPool = new THREE.PointLight(0xc7dce9,38,12,2);lightPool.position.set(0,6,-2);group.add(lightPool);
+    const lightPool = new THREE.PointLight(0xe3edf2,100,18,1.8);lightPool.position.set(0,7,1);group.add(lightPool);
   });
   for(const side of [-1,1]) {
     const bench=new THREE.Group();bench.position.set(side*11,.0,3);bench.rotation.y=side*-.5;hall.add(bench);
