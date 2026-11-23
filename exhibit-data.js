@@ -121,5 +121,5 @@ export const references = [
 // Fill in these local file paths after recording. Do not publish mock recordings.
 export const recordings = [
   { id: 'purpose', title: 'Why use this website?', description: 'Who it is for, what it explores, and how to begin.', src: '', captions: '' },
-  { id: 'journey', title: 'My journey and reflection', description: 'How the idea took shape and what I learned.', src: '', captions: '' }
+  { id: 'journey', title: 'My Journey &amp; Reflections', description: 'How the idea took shape and what I learned.', src: '', captions: '' }
 ];

@@ -13,7 +13,7 @@ const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '
 const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
 const cite = ids => ids.map(id => '<a class="citation" href="references.html#source-' + id + '" aria-label="Reference ' + id + '">[' + id + ']</a>').join(' ');
 const brand = '<a class="brand" href="index.html" aria-label="Money in China home"><img src="assets/coin-mark.svg" width="38" height="38" alt=""><span>Money in China</span></a>';
-const navItems = [['museum', '3D Museum', 'museum.html'], ['cards', 'Flashcards', 'cards.html'], ['read', 'Read the history', 'read.html'], ['videos', 'Videos', 'index.html#videos'], ['project', 'My reflection', 'project.html'], ['references', 'References', 'references.html']];
+const navItems = [['museum', '3D Museum', 'museum.html'], ['cards', 'Flashcards', 'cards.html'], ['read', 'Read the history', 'read.html'], ['videos', 'Videos', 'index.html#videos'], ['project', 'My Journey &amp; Reflections', 'project.html'], ['references', 'References', 'references.html']];
 
 function layout(title, page, body) {
   const nav = navItems.map(([id, label, href]) => '<a href="' + href + '"' + (page === id ? ' aria-current="page"' : '') + '>' + label + '</a>').join('');
@@ -57,14 +57,14 @@ function recording(video) {
 }
 
 const home = museumPage() +
-  '<section class="videos-section wrap" id="videos"><h2>About this project</h2><div class="video-grid">' + recordings.map(recording).join('') + '</div><div class="actions"><a class="text-link" href="project.html">Read my reflection</a><a class="text-link" href="#hall">Return to the museum</a></div></section>';
+  '<section class="videos-section wrap" id="videos"><h2>About this project</h2><div class="video-grid">' + recordings.map(recording).join('') + '</div><div class="actions"><a class="text-link" href="project.html">Read my journey &amp; reflections</a><a class="text-link" href="#hall">Return to the museum</a></div></section>';
 const cards = deckPage(timeline('cards.html'));
 
 const read = '<div class="wrap"><header class="page-heading"><h1>Read the history</h1><p class="lead">From early shells to modern payments, with historical texts and analysis.</p><a class="text-link" href="museum.html">Visit the museum</a></header>' + timeline('read.html') +
   periods.map(historyPeriod).join('') +
-  '<div class="reading-end"><p>New forms could solve one problem while creating another. Their usefulness depended on the people and institutions around them.</p><a class="button secondary" href="project.html">My reflection</a></div></div>';
+  '<div class="reading-end"><p>New forms could solve one problem while creating another. Their usefulness depended on the people and institutions around them.</p><a class="button secondary" href="project.html">My Journey &amp; Reflections</a></div></div>';
 
-const project = '<div class="wrap project-page"><header class="page-heading"><h1>My reflection</h1><p class="lead">Why I chose money, how the website changed, and what HY2206 helped me see.</p><a class="text-link" href="index.html#videos">Watch the project videos</a></header>' +
+const project = '<div class="wrap project-page"><header class="page-heading"><h1>My Journey &amp; Reflections</h1><p class="lead">Why I chose money, how the website changed, and what HY2206 helped me see.</p><a class="text-link" href="index.html#videos">Watch the project videos</a></header>' +
   '<div class="project-layout"><aside class="project-intro"><h2>Who is this for?</h2><p>Students who use money every day but may be new to Chinese history.</p><h2>What I want to share</h2><p>Monetary change was shaped by practical needs, political choices and social acceptance. A new form could join older ones, rather than replace them.</p></aside><div class="project-writing">' +
   '<section><h2>From an interest to a website</h2><p>I first considered two topics: the development of money and the development of architecture. I chose money because it connects ancient objects with something familiar in daily life. Song jiaozi（交子）was my starting point, but I wanted to understand the longer history around it.</p><p>A website let me put objects, historical writing and my own explanation together. Based on consultation feedback, I reconsidered the website in this order: audience, message, then form. I focused on students encountering this history for the first time.</p></section>' +
   '<section><h2>Learning to simplify</h2><p>I initially wanted visible merchants and a game. As the prototype grew, its purpose became harder to follow. Long explanations and too many small headings also asked the reader to do too much at once.</p><p>I chose a deck of picture cards so the reader can focus on one period at a time. The first version became too much like a short history summary, so I brought object exploration, comparisons and historical texts back into the cards. I later added a three-dimensional museum while keeping the flashcards and a reading view, so visitors can choose how they explore. I now give the modes different roles: the museum invites close looking, the cards ask focused questions, and the history pages bring together the fuller narrative and historical sources.</p></section>' +
@@ -79,9 +79,9 @@ for (const [filename, title, page, body] of [
   ['cards.html', 'Explore the flashcards', 'cards', cards],
   ['museum.html', 'Eight-room museum', 'museum', museumPage()],
   ['read.html', 'Read the history', 'read', read],
-  ['project.html', 'My reflection', 'project', project],
+  ['project.html', 'My Journey &amp; Reflections', 'project', project],
   ['references.html', 'Reference list', 'references', referencePage],
-  ['consultation.html', 'My reflection', 'project', project]
+  ['consultation.html', 'My Journey &amp; Reflections', 'project', project]
 ]) {
   await writeFile(new URL(filename, import.meta.url), layout(title, page, body));
   console.log('Built ' + filename);
