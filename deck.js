@@ -1,6 +1,7 @@
-import { photos, periods } from './exhibit-data.js?v=20261123-magnification';
-import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-magnification';
-import { flashcardContent } from './mode-content.js?v=20261123-magnification';
+import { photos, periods } from './exhibit-data.js?v=20261123-pan-dismiss';
+import { activity, defaults, escape, text, cite } from './deck-content.js?v=20261123-pan-dismiss';
+import { flashcardContent } from './mode-content.js?v=20261123-pan-dismiss';
+import { createMagnifiers } from './magnifier.js?v=20261123-pan-dismiss';
 
 export function initDeck() {
   const experience = document.querySelector('#card-experience');
@@ -31,6 +32,7 @@ export function initDeck() {
   let deckScene;
   let engineReady = false;
   let loading = true;
+  const magnifiers = createMagnifiers(panel, () => states[current]);
 
   function fitCard() {
     if (finished) return;
@@ -102,6 +104,7 @@ export function initDeck() {
     fitCard();
   }
   function renderPanel() {
+    magnifiers.stop();
     const p = periods[current];
     const state = states[current];
     const content = flashcardContent[p.id];
@@ -109,6 +112,7 @@ export function initDeck() {
     if (!content.interactive) state.pane = 'answer';
     document.querySelectorAll('[data-pane]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pane === state.pane)));
     panel.innerHTML = state.pane === 'activity' ? activity(p, state) : '<div class="card-answer"><h3 class="activity-title">' + text(p.answerTitle) + '</h3><p>' + text(content.answer) + ' ' + cite(content.sources) + '</p></div>';
+    magnifiers.refresh();
     document.querySelector('#card-reading').href = 'read.html#' + p.id;
     fitCard();
   }
@@ -257,7 +261,7 @@ export function initDeck() {
     if (!periods[current].photos.includes(id)) return;
     const zoom = Math.min(2.5, Math.max(1, Number(input.value)));
     states[current].zoom[id] = zoom;
-    panel.querySelector('#lens-photo-' + id).style.transform = 'scale(' + zoom + ')';
+    magnifiers.update(id);
     panel.querySelector('#zoom-value-' + id).textContent = zoom.toFixed(1) + '×';
     input.setAttribute('aria-valuetext', zoom.toFixed(1) + ' times');
   });
@@ -269,7 +273,8 @@ export function initDeck() {
     if (event.key === 'Enter' || event.key === ' ') showSide(!flipped);
   });
   stage.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || event.target.closest('input,select,textarea,[data-action],[data-pane]')) return;
+    pointerStart = null;
+    if (event.button !== 0 || event.target.closest('input,select,textarea,[data-action],[data-pane],[data-lens-photo]')) return;
     pointerStart = { x: event.clientX, y: event.clientY };
   });
   stage.addEventListener('pointercancel', () => { pointerStart = null; });
@@ -292,7 +297,7 @@ export function initDeck() {
   });
   followHash();
   const canvas=document.querySelector('#deck-canvas');
-  import('./deck-scene.js?v=20261123-magnification').then(({createDeckScene})=>createDeckScene(canvas,{
+  import('./deck-scene.js?v=20261123-pan-dismiss').then(({createDeckScene})=>createDeckScene(canvas,{
     initialIndex:current,photoId:states[current].photo,backElement:back,reducedMotion:reduce.matches,
     onFlipEnd(){if(turning)settleFlip();},
     onFlip(){if(!busy&&!turning){flip.focus({preventScroll:true});showSide(!flipped);}}

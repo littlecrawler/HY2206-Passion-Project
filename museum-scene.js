@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
-import { buildArchitecture } from './museum-architecture.js?v=20261123-magnification';
-import { rooms, hallViewZ } from './museum-data.js?v=20261123-magnification';
-import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-magnification';
-import { photos } from './exhibit-data.js?v=20261123-magnification';
+import { buildArchitecture } from './museum-architecture.js?v=20261123-pan-dismiss';
+import { rooms, hallViewZ } from './museum-data.js?v=20261123-pan-dismiss';
+import { roomPoint, travelPath, travelMotion } from './museum-navigation.js?v=20261123-pan-dismiss';
+import { photos } from './exhibit-data.js?v=20261123-pan-dismiss';
 
 const clamp = THREE.MathUtils.clamp;
 const ease = t => t * t * t * (t * (t * 6 - 15) + 10);

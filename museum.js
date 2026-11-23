@@ -1,7 +1,7 @@
-import { rooms } from './museum-data.js?v=20261123-magnification';
-import { photos } from './exhibit-data.js?v=20261123-magnification';
-import { text, escape, cite } from './deck-content.js?v=20261123-magnification';
-import { objectNotes } from './mode-content.js?v=20261123-magnification';
+import { rooms } from './museum-data.js?v=20261123-pan-dismiss';
+import { photos } from './exhibit-data.js?v=20261123-pan-dismiss';
+import { text, escape, cite } from './deck-content.js?v=20261123-pan-dismiss';
+import { objectNotes } from './mode-content.js?v=20261123-pan-dismiss';
 
 export function initMuseum() {
   const $=selector=>document.querySelector(selector);
@@ -104,6 +104,21 @@ export function initMuseum() {
   rail.forEach(button=>button.addEventListener('click',()=>goTo(Number(button.dataset.room))));
   $('#open-room-map').addEventListener('click',()=>setDirectory(directory.hidden,true));
   $('#directory-close').addEventListener('click',()=>setDirectory(false,true));
+  let directoryPointer=null;
+  const outsideDirectory=target=>!target.closest('#museum-directory,#open-room-map,dialog');
+  document.addEventListener('pointerdown',event=>{
+    directoryPointer=!directory.hidden&&event.isPrimary&&event.button===0&&outsideDirectory(event.target)
+      ? {id:event.pointerId,x:event.clientX,y:event.clientY} : null;
+  },true);
+  document.addEventListener('pointermove',event=>{
+    if(directoryPointer?.id===event.pointerId&&Math.hypot(event.clientX-directoryPointer.x,event.clientY-directoryPointer.y)>8)directoryPointer=null;
+  },true);
+  document.addEventListener('pointercancel',()=>{directoryPointer=null;},true);
+  document.addEventListener('click',event=>{
+    const dismiss=directoryPointer&&!directory.hidden&&outsideDirectory(event.target);
+    directoryPointer=null;
+    if(dismiss)setDirectory(false);
+  });
   $('#room-objects').addEventListener('click',event=>{
     const button=event.target.closest('button');if(!button||travelling||!entered)return;
     const id=button.dataset.focusObject;
@@ -117,7 +132,6 @@ export function initMuseum() {
   document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>document.getElementById(button.dataset.close).close()));
   for(const dialog of [exhibit,finish]) {
     dialog.addEventListener('close',()=>{scene?.setPaused(false);lastOpener?.focus({preventScroll:true});});
-    dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();});
   }
   $('#restart-museum').addEventListener('click',()=>{finish.close();goTo(-1);});
   $('#exhibit-photos').addEventListener('click',event=>{const b=event.target.closest('[data-exhibit-photo]');if(b)selectPhoto(b.dataset.exhibitPhoto);});
@@ -129,7 +143,7 @@ export function initMuseum() {
   });
   directory.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();setDirectory(false,true);}});
   window.addEventListener('hashchange',followHash);followHash();updateRoom();
-  import('./museum-scene.js?v=20261123-magnification').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
+  import('./museum-scene.js?v=20261123-pan-dismiss').then(({createMuseum})=>createMuseum($('#museum-canvas'),{
     initialRoom:current,reducedMotion:reduce.matches,onSelect:focusObject,onLeaveObject:leaveObject,onRoom:index=>goTo(index),
     onObjectPositions(positions){
       positions.forEach(({id,x,y,visible})=>{

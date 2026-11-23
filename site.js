@@ -1,5 +1,5 @@
-import { photos } from './exhibit-data.js?v=20261123-magnification';
-import { initDeck } from './deck.js?v=20261123-magnification';
+import { photos } from './exhibit-data.js?v=20261123-pan-dismiss';
+import { initDeck } from './deck.js?v=20261123-pan-dismiss';
 
 // Keep bookmarks from earlier versions useful.
 if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) {
@@ -69,6 +69,34 @@ if (videosSection) {
 }
 
 const dialog = document.querySelector('#photo-dialog');
+// Only a gesture that starts and ends on the backdrop dismisses a dialog.
+// Dragging out of its content must not close it or an underlying dialog.
+document.querySelectorAll('dialog').forEach(popup => {
+  let backdropPointer = null;
+  let backdropRelease = false;
+  function onBackdrop(event) {
+    if (event.target !== popup) return false;
+    const bounds = popup.getBoundingClientRect();
+    return event.clientX < bounds.left || event.clientX > bounds.right ||
+      event.clientY < bounds.top || event.clientY > bounds.bottom;
+  }
+  popup.addEventListener('pointerdown', event => {
+    backdropPointer = event.isPrimary && event.button === 0 && onBackdrop(event) ? event.pointerId : null;
+    backdropRelease = false;
+  });
+  popup.addEventListener('pointerup', event => {
+    backdropRelease = event.pointerId === backdropPointer && onBackdrop(event);
+  });
+  popup.addEventListener('click', event => {
+    const dismiss = backdropRelease && onBackdrop(event);
+    backdropPointer = null;
+    backdropRelease = false;
+    if (dismiss) popup.close();
+  });
+  for (const type of ['pointercancel', 'close', 'cancel']) {
+    popup.addEventListener(type, () => { backdropPointer = null; backdropRelease = false; });
+  }
+});
 let photoOpener;
 document.addEventListener('click', event => {
   const button = event.target.closest('[data-photo]');
@@ -87,5 +115,5 @@ dialog.addEventListener('close', () => photoOpener?.focus());
 
 initDeck();
 if (document.body.dataset.page === 'museum') {
-  import('./museum.js?v=20261123-magnification').then(({ initMuseum }) => initMuseum());
+  import('./museum.js?v=20261123-pan-dismiss').then(({ initMuseum }) => initMuseum());
 }

@@ -1,9 +1,9 @@
-import { photos } from './exhibit-data.js?v=20261123-magnification';
+import { photos } from './exhibit-data.js?v=20261123-pan-dismiss';
 
 export const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 export const text = value => escape(value).replace(/（([^）]+)）/g, '<span lang="zh-Hant">（$1）</span>');
 export const cite = ids => ids.map(id => '<a class="citation" href="references.html#source-' + id + '" aria-label="Reference ' + id + '">[' + id + ']</a>').join(' ');
-export const defaults = () => ({ money: 'iron', issuer: 'repaid', transaction: 'market', paymentLayer: 0, zoom: {} });
+export const defaults = () => ({ money: 'iron', issuer: 'repaid', transaction: 'market', paymentLayer: 0, zoom: {}, pan: {} });
 
 function choices(action, options, selected, label) {
   return '<div class="activity-choices" role="group" aria-label="' + label + '">' + options.map(([value, label]) => '<button type="button" data-action="' + action + '" data-value="' + value + '" aria-pressed="' + (String(selected) === String(value)) + '">' + label + '</button>').join('') + '</div>';
@@ -16,7 +16,7 @@ function magnifier(id, zoom) {
   const photo = photos[id], inputId = 'object-zoom-' + id;
   return '<figure><label class="range-label" for="' + inputId + '">Magnification <output id="zoom-value-' + id + '" for="' + inputId + '">' + zoom.toFixed(1) + '×</output></label>' +
     '<input class="activity-range" id="' + inputId + '" data-action="zoom" data-zoom-photo="' + id + '" type="range" min="1" max="2.5" step="0.1" value="' + zoom + '" aria-label="Magnification: ' + escape(photo.title) + '" aria-valuetext="' + zoom.toFixed(1) + ' times">' +
-    '<div class="object-lens"><img id="lens-photo-' + id + '" src="' + photo.src + '" alt="' + escape(photo.alt) + '" style="transform:scale(' + zoom + ');transform-origin:50% ' + (id === 'cowries' ? '75%' : '50%') + '"></div><figcaption>' + text(photo.title) + '</figcaption></figure>';
+    '<div class="object-lens" data-lens-photo="' + id + '" role="group" tabindex="-1" aria-label="' + escape(photo.title) + '. Zoom, then drag or use arrow keys to inspect."><img id="lens-photo-' + id + '" src="' + photo.src + '" alt="' + escape(photo.alt) + '" draggable="false" style="transform:scale(' + zoom + ')"><span class="lens-hint" aria-hidden="true">Drag to explore</span></div><figcaption>' + text(photo.title) + '</figcaption></figure>';
 }
 function feedback(title, body, sources = []) {
   return '<div class="activity-result" role="status"><h4>' + title + '</h4><p>' + body + ' ' + cite(sources) + '</p></div>';

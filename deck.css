@@ -71,8 +71,14 @@ body[data-page="cards"] { background: #eef2e8; overflow-x: clip; }
   .card-photo-study.paired { grid-template-columns:1fr; }
   .card-photo-study .object-lens { height:200px; }
 }
-.object-lens { height: 235px; background: #e1e7d7; border-radius: 8px; overflow: hidden; }
-.object-lens img { width: 100%; height: 100%; object-fit: contain; transform-origin: 50% 75%; transition: transform .16s ease-out; }
+.object-lens { position:relative; height:235px; background:#e1e7d7; border-radius:8px; overflow:hidden; }
+.object-lens img { display:block; width:100%; height:100%; object-fit:contain; transform-origin:center; transition:transform .16s ease-out; pointer-events:none; user-select:none; -webkit-user-drag:none; }
+.object-lens.is-zoomed { cursor:grab; touch-action:none; user-select:none; }
+.object-lens.is-dragging { cursor:grabbing; }
+.object-lens.is-dragging img { transition:none; }
+.object-lens:focus-visible { outline:2px solid var(--green); outline-offset:3px; }
+.lens-hint { display:none; position:absolute; right:10px; bottom:10px; padding:5px 10px; border-radius:4px; background:#0b1825db; color:#eef5f7; font:14px/1.4 Arial,sans-serif; pointer-events:none; }
+.object-lens.is-zoomed:not(.is-dragging) .lens-hint { display:block; }
 .range-label { display: flex; justify-content: space-between; margin-top: 13px; font-size: 19px; }
 .activity-range { display: block; width: 100%; height: 34px; accent-color: var(--green); margin: 4px 0 0; cursor: ew-resize; }
 .image-comparison { position: relative; height: 235px; border-radius: 8px; background: #e1e7d7; overflow: hidden; }
